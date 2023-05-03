@@ -1,6 +1,5 @@
-package cat.petrushkacat.audiobookplayer.data.model
+package cat.petrushkacat.audiobookplayer.core.models
 
-import android.net.Uri
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 

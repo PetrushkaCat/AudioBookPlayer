@@ -44,6 +44,7 @@ compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
 compose-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest" }
 activity-compose = "androidx.activity:activity-compose:1.7.1"
 coil-compose = "io.coil-kt:coil-compose:2.3.0"
+gson = "com.google.code.gson:gson:2.10"
 
 junit-junit = "junit:junit:4.13.2"
 androidx-test-ext-junit = "androidx.test.ext:junit:1.1.5"

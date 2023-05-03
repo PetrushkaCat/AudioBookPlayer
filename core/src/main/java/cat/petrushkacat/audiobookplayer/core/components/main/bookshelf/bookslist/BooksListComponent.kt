@@ -10,9 +10,9 @@ interface BooksListComponent {
     fun onBookClick(uri: Uri)
 
     data class Model(
-        val image: Uri? = null,
+        val imageUri: String? = null,
         val name: String,
-        val folderUri: Uri,
+        val folderUri: String,
         val currentTime: Long = -1,
         val duration: Long = -1,
     )

@@ -1,5 +1,6 @@
 package cat.petrushkacat.audiobookplayer.app.ui
 
+import android.net.Uri
 import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -15,13 +16,14 @@ import cat.petrushkacat.audiobookplayer.core.components.main.bookshelf.bookslist
 
 @Composable
 fun BooksListComponentUi(component: BooksListComponent) {
+
 val model by component.models.collectAsState()
 
     Log.d("folder7", model.toString())
     LazyColumn() {
         items(model.size) {
             BookItem(model = model[it], Modifier.clickable {
-                component.onBookClick(model[it].folderUri)
+                component.onBookClick(Uri.parse(model[it].folderUri))
             })
         }
     }

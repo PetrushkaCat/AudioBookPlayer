@@ -4,6 +4,9 @@ import android.content.Context
 import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
 import cat.petrushkacat.audiobookplayer.core.components.main.bookshelf.isAudio
+import cat.petrushkacat.audiobookplayer.core.models.BookEntity
+import cat.petrushkacat.audiobookplayer.core.models.Chapters
+import cat.petrushkacat.audiobookplayer.core.repository.AudiobooksRepository
 import cat.petrushkacat.audiobookplayer.core.util.componentCoroutineScopeDefault
 import com.arkivanov.decompose.ComponentContext
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,37 +16,19 @@ import kotlinx.coroutines.launch
 class BookComponentImpl(
     componentContext: ComponentContext,
     private val context: Context,
+    audiobooksRepository: AudiobooksRepository,
     private val bookUri: Uri
 ) : BookComponent, ComponentContext by componentContext {
 
     private val scope = componentContext.componentCoroutineScopeDefault()
 
-    override val models: MutableStateFlow<BookComponent.Model> = MutableStateFlow(BookComponent.Model(bookUri, "name", emptyList(), imageUri = null))
+    override val models: MutableStateFlow<BookEntity> = MutableStateFlow(BookEntity(bookUri.toString(), "null", Chapters(emptyList()), imageUri = null, rootFolderUri = bookUri.toString()))
 
     init {
-        parseBook()
-    }
-
-    private fun parseBook() {
         scope.launch {
-            val file = DocumentFile.fromTreeUri(context, bookUri)
-            val name = file!!.name!!
-            val chapters = mutableListOf<BookComponent.Chapter>()
-            for(chapter in file.listFiles()) {
-                if(chapter.isAudio()) {
-                    chapters.add(BookComponent.Chapter(chapter.name!!, chapter.uri))
-                }
+            audiobooksRepository.getBook(bookUri).collect {
+                models.value = it
             }
-            val sortedChapters = chapters.sortedWith { a, b ->
-                extractInt(a) - extractInt(b)
-            }
-            models.value = BookComponent.Model(bookUri, name, sortedChapters, imageUri = null)
         }
-    }
-
-    fun extractInt(chapter: BookComponent.Chapter): Int {
-        val num = chapter.name.replace("\\D".toRegex(), "")
-        // return 0 if no digits found
-        return if (num.isEmpty()) 0 else Integer.parseInt(num)
     }
 }

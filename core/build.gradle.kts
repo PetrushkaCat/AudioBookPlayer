@@ -48,6 +48,7 @@ dependencies {
     implementation(libs.coroutines.android)
 
     implementation(libs.androidx.documentfile)
+    implementation("androidx.room:room-common:2.5.1")
 
     testImplementation(libs.junit.junit)
     androidTestImplementation(libs.androidx.test.ext.junit)

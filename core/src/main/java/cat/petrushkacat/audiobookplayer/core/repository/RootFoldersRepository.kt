@@ -1,14 +1,14 @@
 package cat.petrushkacat.audiobookplayer.core.repository
 
-import android.net.Uri
-import cat.petrushkacat.audiobookplayer.core.components.main.bookshelf.toolbar.folderselector.FolderSelectorComponent
+import cat.petrushkacat.audiobookplayer.core.models.RootFolderEntity
+import kotlinx.coroutines.flow.Flow
 
 interface RootFoldersRepository {
 
-    fun getFolders(): List<FolderSelectorComponent.Model>
+    suspend fun getFolders(): Flow<List<RootFolderEntity>>
 
-    fun addFolder(folder: FolderSelectorComponent.Model)
+    suspend fun addFolder(folder: RootFolderEntity)
 
-    fun deleteFolder(folderUri: Uri)
+    suspend fun deleteFolder(folder: RootFolderEntity)
 
 }

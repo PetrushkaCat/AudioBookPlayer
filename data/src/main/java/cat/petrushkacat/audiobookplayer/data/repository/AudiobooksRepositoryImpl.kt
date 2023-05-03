@@ -1,58 +1,50 @@
 package cat.petrushkacat.audiobookplayer.data.repository
 
 import android.net.Uri
-import cat.petrushkacat.audiobookplayer.core.components.main.bookplayer.book.BookComponent
-import cat.petrushkacat.audiobookplayer.core.components.main.bookshelf.bookslist.BooksListComponent
+import android.util.Log
+import cat.petrushkacat.audiobookplayer.core.models.BookEntity
 import cat.petrushkacat.audiobookplayer.core.repository.AudiobooksRepository
 import cat.petrushkacat.audiobookplayer.data.db.AudiobooksDao
-import cat.petrushkacat.audiobookplayer.data.model.BookEntity
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
+
 
 class AudiobooksRepositoryImpl(
     private val audiobooksDao: AudiobooksDao
 ): AudiobooksRepository {
-    override fun saveAfterParse(books: List<BookComponent.Model>) {
-        TODO("Not yet implemented")
+    override suspend fun saveAfterParse(books: List<BookEntity>) {
+        deleteBooksNotExist(books)
+        audiobooksDao.saveAfterParse(books)
     }
 
-    override fun saveBook(book: BookComponent.Model) {
-        TODO("Not yet implemented")
+    override suspend fun saveBookAfterParse(book: BookEntity) {
+        audiobooksDao.saveBookAfterParse(book)
     }
 
-    override fun getAllBooks(): List<BooksListComponent.Model> {
-        TODO("Not yet implemented")
+    override suspend fun getAllBooks() = audiobooksDao.getAll()
+
+    override suspend fun getBooksInFolder(rootFolder: Uri) = audiobooksDao.getBooksInFolder(rootFolder.toString())
+
+    override suspend fun updateBook(book: BookEntity) {
+        audiobooksDao.updateBook(book)
     }
 
-    override fun getBooksInFolder(rootFolder: Uri): List<BooksListComponent.Model> {
-        TODO("Not yet implemented")
-    }
-
-    override fun getBook(bookFolder: Uri): BookComponent.Model {
-        TODO("Not yet implemented")
-    }
+    override suspend fun getBook(bookFolder: Uri) = audiobooksDao.getBook(bookFolder.toString())
 
 
-    companion object {
-        private fun mapToDB(book: BookComponent.Model): BookEntity {
-            return BookEntity(
-                folderUri = book.folderUri.toString(),
-                name = book.name,
-                currentTime = book.currentTime,
-                duration = book.duration,
-                rootFolderUri = book.rootFolderUri.toString(),
-                imageUri = book.imageUri.toString()
-            )
-        }
-
-        private fun mapToCore(book: BookEntity): BookComponent.Model {
-            return BookComponent.Model(
-                folderUri = Uri.parse(book.folderUri),
-                name = book.name,
-                currentTime = book.currentTime,
-                duration = book.duration,
-                rootFolderUri = Uri.parse(book.rootFolderUri),
-                imageUri = Uri.parse(book.imageUri),
-                chapters = emptyList()
-            )
+    private fun deleteBooksNotExist(books: List<BookEntity>) {
+        CoroutineScope(SupervisorJob() + Dispatchers.Default).launch {
+            val listFromDB = audiobooksDao.getUris().map {
+                it.folderUri
+            }
+            val listFromParse = books.map {
+                it.folderUri
+            }
+            val listUrisToDelete = listFromDB.toSet().minus(listFromParse.toSet()).toList()
+            audiobooksDao.deleteByUris(listUrisToDelete)
         }
     }
+
 }

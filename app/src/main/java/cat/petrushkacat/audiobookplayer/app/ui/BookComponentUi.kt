@@ -19,8 +19,8 @@ fun BookComponentUi(component: BookComponent) {
         Text("---")
 
         LazyColumn {
-            items(model.chapters.size) {
-                Text(model.chapters[it].name)
+            items(model.chapters.chapters.size) {
+                Text(model.chapters.chapters[it].name)
                 //Text(model.chapters[it].uri.toString())
                 Text("+++")
             }

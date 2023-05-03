@@ -3,16 +3,21 @@ package cat.petrushkacat.audiobookplayer.core.repository
 import android.net.Uri
 import cat.petrushkacat.audiobookplayer.core.components.main.bookplayer.book.BookComponent
 import cat.petrushkacat.audiobookplayer.core.components.main.bookshelf.bookslist.BooksListComponent
+import cat.petrushkacat.audiobookplayer.core.models.BookEntity
+import kotlinx.coroutines.flow.Flow
 
 interface AudiobooksRepository {
 
-    fun saveAfterParse(books: List<BookComponent.Model>)
+    suspend fun saveAfterParse(books: List<BookEntity>)
 
-    fun saveBook(book: BookComponent.Model)
+    suspend fun saveBookAfterParse(book: BookEntity)
 
-    fun getAllBooks(): List<BooksListComponent.Model>
+    suspend fun getAllBooks(): Flow<List<BooksListComponent.Model>>
 
-    fun getBooksInFolder(rootFolder: Uri): List<BooksListComponent.Model>
+    suspend fun getBooksInFolder(rootFolder: Uri): Flow<List<BooksListComponent.Model>>
 
-    fun getBook(bookFolder: Uri): BookComponent.Model
+
+    suspend fun updateBook(book: BookEntity)
+
+    suspend fun getBook(bookFolder: Uri): Flow<BookEntity>
 }

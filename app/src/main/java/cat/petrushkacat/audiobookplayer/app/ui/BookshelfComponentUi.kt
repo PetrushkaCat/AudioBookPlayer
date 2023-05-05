@@ -17,14 +17,18 @@ import kotlinx.coroutines.launch
 @Composable
 fun BookshelfComponentUi(component: BookshelfComponent) {
     val folders = component.folder.collectAsState()
+    val foldersToProcess = component.foldersToProcess.collectAsState()
+    val foldersProcessed = component.foldersProcessed.collectAsState()
 
     Column {
         ToolbarComponentUi(component = component.toolbarComponent)
         BooksListComponentUi(component = component.booksListComponent)
-        Text("++++++++++")
-        LazyColumn(modifier = Modifier.weight(1f)) {
-            items(count = folders.value.size) {
-                Text(folders.value[it].name)
+        Column {
+            Text("Folders processed: ${foldersProcessed.value} of ${foldersToProcess.value}")
+            LazyColumn() {
+                items(count = folders.value.size) {
+                    Text(folders.value[it].name)
+                }
             }
         }
     }

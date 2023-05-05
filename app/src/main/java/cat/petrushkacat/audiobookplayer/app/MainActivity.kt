@@ -1,5 +1,6 @@
 package cat.petrushkacat.audiobookplayer.app
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -18,13 +19,22 @@ import cat.petrushkacat.audiobookplayer.app.ui.BookshelfComponentUi
 import cat.petrushkacat.audiobookplayer.app.ui.MainComponentUi
 import cat.petrushkacat.audiobookplayer.core.components.RootComponent
 import cat.petrushkacat.audiobookplayer.app.ui.theme.AudioBookPlayerTheme
+import cat.petrushkacat.audiobookplayer.audioservice.AudiobookMediaService
+import cat.petrushkacat.audiobookplayer.audioservice.AudiobookServiceHandler
+import cat.petrushkacat.audiobookplayer.audioservice.di.AudiobookPlayerModule
 import cat.petrushkacat.audiobookplayer.core.components.main.MainComponentImpl
 import cat.petrushkacat.audiobookplayer.core.components.main.bookshelf.BookshelfComponentImpl
 import cat.petrushkacat.audiobookplayer.data.repository.AudiobooksRepositoryImpl
 import cat.petrushkacat.audiobookplayer.data.repository.RootFoldersRepositoryImpl
 import com.arkivanov.decompose.defaultComponentContext
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+    @Inject
+    lateinit var audiobookServiceHandler: AudiobookServiceHandler
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -32,7 +42,8 @@ class MainActivity : ComponentActivity() {
             defaultComponentContext(),
             this,
             RootFoldersRepositoryImpl(App.database.rootFoldersDao()),
-            AudiobooksRepositoryImpl(App.database.audiobooksDao())
+            AudiobooksRepositoryImpl(App.database.audiobooksDao()),
+            audiobookServiceHandler
         )
 
         setContent {
@@ -46,6 +57,11 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        stopService(Intent(this, AudiobookMediaService::class.java))
     }
 }
 

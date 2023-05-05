@@ -25,6 +25,20 @@ fun ComponentContext.componentCoroutineScopeMain(): CoroutineScope {
     return scope
 }
 
+fun ComponentContext.componentCoroutineScopeIO(): CoroutineScope {
+    val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+
+    if (lifecycle.state != Lifecycle.State.DESTROYED) {
+        lifecycle.doOnDestroy {
+            scope.cancel()
+        }
+    } else {
+        scope.cancel()
+    }
+
+    return scope
+}
+
 fun ComponentContext.componentCoroutineScopeDefault(): CoroutineScope {
     val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 

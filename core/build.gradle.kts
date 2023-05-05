@@ -2,6 +2,8 @@ plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
     id ("kotlin-parcelize")
+    id ("kotlin-kapt")
+    id("dagger.hilt.android.plugin")
 }
 
 android {
@@ -25,30 +27,37 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "17"
     }
 }
 
 dependencies {
 
+    implementation(project(":audioservice"))
+    
     implementation (libs.androidx.core.ktx)
     implementation (libs.androidx.lifecycle.runtime.ktx)
 
     implementation(libs.decompose)
     implementation(libs.decompose.compose)
 
-    implementation(libs.koin.core)
-    implementation(libs.koin.android)
+    /*implementation(libs.koin.core)
+    implementation(libs.koin.android)*/
 
     implementation(libs.coroutines.core)
     implementation(libs.coroutines.android)
 
     implementation(libs.androidx.documentfile)
     implementation("androidx.room:room-common:2.5.1")
+
+    implementation(libs.media3.session)
+
+    implementation(libs.hilt.android)
+    kapt(libs.hilt.compiler)
 
     testImplementation(libs.junit.junit)
     androidTestImplementation(libs.androidx.test.ext.junit)

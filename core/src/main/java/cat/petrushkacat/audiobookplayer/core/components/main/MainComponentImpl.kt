@@ -2,6 +2,7 @@ package cat.petrushkacat.audiobookplayer.core.components.main
 
 import android.content.Context
 import android.net.Uri
+import cat.petrushkacat.audiobookplayer.audioservice.AudiobookServiceHandler
 import cat.petrushkacat.audiobookplayer.core.components.main.bookplayer.BookPlayerComponentImpl
 import cat.petrushkacat.audiobookplayer.core.components.main.bookshelf.BookshelfComponentImpl
 import cat.petrushkacat.audiobookplayer.core.repository.AudiobooksRepository
@@ -15,13 +16,16 @@ import com.arkivanov.decompose.router.stack.push
 import com.arkivanov.essenty.parcelable.Parcelable
 import com.arkivanov.essenty.parcelable.Parcelize
 import kotlinx.coroutines.flow.StateFlow
+import javax.inject.Inject
 
-class MainComponentImpl(
+class MainComponentImpl (
     componentContext: ComponentContext,
     private val context: Context,
     private val rootFoldersRepository: RootFoldersRepository,
-    private val audiobooksRepository: AudiobooksRepository
-) : MainComponent, ComponentContext by componentContext {
+    private val audiobooksRepository: AudiobooksRepository,
+    private val audiobookServiceHandler: AudiobookServiceHandler
+    ) : MainComponent, ComponentContext by componentContext {
+
 
     private val navigation = StackNavigation<ChildConfig>()
 
@@ -43,7 +47,8 @@ class MainComponentImpl(
             }))
         }
         is ChildConfig.BookPlayer -> {
-            MainComponent.Child.BookPlayer(BookPlayerComponentImpl(componentContext, context, audiobooksRepository, config.bookUri))
+            MainComponent.Child.BookPlayer(BookPlayerComponentImpl(componentContext, context,
+                audiobooksRepository, audiobookServiceHandler, config.bookUri))
         }
     }
 

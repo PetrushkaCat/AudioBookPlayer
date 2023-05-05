@@ -1,8 +1,10 @@
 plugins {
     id ("com.android.application")
     id ("org.jetbrains.kotlin.android")
-    id ("com.google.devtools.ksp")
-    id ("kotlin-parcelize")
+    //id ("com.google.devtools.ksp")
+    //id ("kotlin-parcelize")
+    id ("kotlin-kapt")
+    id("dagger.hilt.android.plugin")
 }
 
 android {
@@ -54,6 +56,7 @@ dependencies {
 
     implementation(project(":core"))
     implementation(project(":data"))
+    implementation(project(":audioservice"))
 
 
     implementation (libs.androidx.core.ktx)
@@ -80,8 +83,8 @@ dependencies {
     implementation ("com.arkivanov.mvikotlin:mvikotlin-timetravel:$mvikotlinVersion")
     implementation ("com.arkivanov.mvikotlin:mvikotlin-extensions-coroutines:$mvikotlinVersion")*/
 
-    implementation(libs.koin.core)
-    implementation(libs.koin.android)
+    /*implementation(libs.koin.core)
+    implementation(libs.koin.android)*/
 
     implementation(libs.coroutines.core)
     implementation(libs.coroutines.android)
@@ -89,9 +92,12 @@ dependencies {
     implementation(libs.media3.exoplayer)
     implementation(libs.media3.session)
 
+    implementation(libs.hilt.android)
+    kapt(libs.hilt.compiler)
+
     implementation(libs.room.runtime)
     annotationProcessor(libs.room.compiler)
-    ksp(libs.room.compiler)
+    kapt(libs.room.compiler)
     implementation(libs.room.ktx)
     testImplementation(libs.room.testing)
 

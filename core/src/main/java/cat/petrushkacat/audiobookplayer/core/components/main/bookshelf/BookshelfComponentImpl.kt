@@ -5,37 +5,35 @@ import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.util.Log
 import androidx.documentfile.provider.DocumentFile
-import cat.petrushkacat.audiobookplayer.core.components.main.bookplayer.book.BookComponent
 import cat.petrushkacat.audiobookplayer.core.components.main.bookshelf.bookslist.BooksListComponent
 import cat.petrushkacat.audiobookplayer.core.components.main.bookshelf.bookslist.BooksListComponentImpl
 import cat.petrushkacat.audiobookplayer.core.components.main.bookshelf.toolbar.ToolbarComponentImpl
-import cat.petrushkacat.audiobookplayer.core.components.main.bookshelf.toolbar.folderselector.FolderSelectorComponent
 import cat.petrushkacat.audiobookplayer.core.models.BookEntity
 import cat.petrushkacat.audiobookplayer.core.models.Chapter
 import cat.petrushkacat.audiobookplayer.core.models.Chapters
 import cat.petrushkacat.audiobookplayer.core.models.RootFolderEntity
 import cat.petrushkacat.audiobookplayer.core.repository.AudiobooksRepository
 import cat.petrushkacat.audiobookplayer.core.repository.RootFoldersRepository
-import cat.petrushkacat.audiobookplayer.core.util.componentCoroutineScopeDefault
+import cat.petrushkacat.audiobookplayer.core.util.componentCoroutineScopeIO
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.childContext
-import kotlinx.coroutines.NonCancellable.join
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.observeOn
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class BookshelfComponentImpl(
     componentContext: ComponentContext,
-    val context: Context,
+    private val context: Context,
     private val rootFoldersRepository: RootFoldersRepository,
     private val audiobooksRepository: AudiobooksRepository,
     onBookSelect: (Uri) -> Unit
 ) : BookshelfComponent, ComponentContext by componentContext {
 
-    val scope = componentContext.componentCoroutineScopeDefault()
+    private val scope = componentContext.componentCoroutineScopeIO()
+
     override val folder: MutableStateFlow<MutableList<RootFolderEntity>> =
         MutableStateFlow(
             mutableListOf()
@@ -45,6 +43,9 @@ class BookshelfComponentImpl(
         MutableStateFlow(mutableListOf())
 
     //private val booksToSave: MutableList<BookEntity> = mutableListOf()
+
+    override val foldersToProcess = _foldersToProcess.asStateFlow()
+    override val foldersProcessed = _foldersProcessed.asStateFlow()
 
 
     init {
@@ -75,6 +76,9 @@ class BookshelfComponentImpl(
 
     private fun addFolder(folderUri: Uri) {
         scope.launch {
+            _foldersToProcess.value = 0
+            _foldersProcessed.value = 0
+
             val file = DocumentFile.fromTreeUri(context, folderUri)!!
             val newFolder = RootFolderEntity(
                 uri = folderUri.toString(),
@@ -98,7 +102,8 @@ class BookshelfComponentImpl(
     }
 
     private fun parseCycle(bookFolder: DocumentFile, rootFolderUri: Uri) {
-        scope.launch {
+        CoroutineScope(SupervisorJob() + Dispatchers.IO).launch {
+            _foldersToProcess.value += 1
             var name: String? = null
             var imageUri: Uri? = null
             var bookDuration: Long = 0
@@ -126,7 +131,6 @@ class BookshelfComponentImpl(
                 }
             }
 
-            Log.d("folder5", name ?: "null")
             name?.let {
                 /*val temp = books.value.toMutableList()
                 val book = BooksListComponent.Model(imageUri.toString(), name, bookFolder.uri.toString())
@@ -155,6 +159,7 @@ class BookshelfComponentImpl(
 
                 audiobooksRepository.saveBookAfterParse(BookEntity(
                     folderUri = bookFolder.uri.toString(),
+                    folderName = bookFolder.name!!,
                     name = name,
                     chapters = Chapters(sortedChapters),
                     currentChapter = -1,
@@ -165,9 +170,14 @@ class BookshelfComponentImpl(
                     imageUri = imageUri.toString()
                 ))
             }
-            Log.d("folder5.5", books.value.toString())
+            _foldersProcessed.value += 1
             //Log.d("folder5.6", booksToSave.toString())
         }
+    }
+
+    companion object {
+        private val _foldersToProcess = MutableStateFlow(0)
+        private val _foldersProcessed = MutableStateFlow(0)
     }
 }
 

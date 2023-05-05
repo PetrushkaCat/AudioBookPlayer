@@ -16,3 +16,4 @@ rootProject.name = "AudioBook Player"
 include (":app")
 include(":core")
 include(":data")
+include(":audioservice")

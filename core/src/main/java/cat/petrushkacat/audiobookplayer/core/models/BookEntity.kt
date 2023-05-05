@@ -3,9 +3,10 @@ package cat.petrushkacat.audiobookplayer.core.models
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(primaryKeys = ["name", "duration"])
+@Entity(primaryKeys = ["folderName", "duration"])
 data class BookEntity(
     val folderUri: String,
+    val folderName: String,
     val name: String,
     val chapters: Chapters,
     val currentChapter: Int = -1,

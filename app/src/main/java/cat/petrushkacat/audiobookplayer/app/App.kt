@@ -3,7 +3,9 @@ package cat.petrushkacat.audiobookplayer.app
 import android.app.Application
 import androidx.room.Room
 import cat.petrushkacat.audiobookplayer.data.db.AudiobooksDatabase
+import dagger.hilt.android.HiltAndroidApp
 
+@HiltAndroidApp
 class App: Application() {
 
     override fun onCreate() {

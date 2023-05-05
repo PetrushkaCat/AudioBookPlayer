@@ -8,4 +8,20 @@ interface BookComponent {
 
     val models: StateFlow<BookEntity>
 
+    fun onButtonPrevChapterClick()
+
+    fun onButtonNextChapterClick()
+
+    fun onButtonPlusTimeClick()
+
+    fun onButtonMinusButtonClick()
+
+    fun onButtonPlayPauseClick()
+
+    fun onChapterSelectedManually(chapterNumber: Int)
+
+    data class Model(
+        val isPaused: Boolean
+    )
+
 }

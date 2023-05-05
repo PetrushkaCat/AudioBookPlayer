@@ -4,6 +4,7 @@ import cat.petrushkacat.audiobookplayer.core.components.main.bookshelf.bookslist
 import cat.petrushkacat.audiobookplayer.core.components.main.bookshelf.toolbar.ToolbarComponent
 import cat.petrushkacat.audiobookplayer.core.models.RootFolderEntity
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
 interface BookshelfComponent {
 
@@ -12,4 +13,8 @@ interface BookshelfComponent {
     val booksListComponent: BooksListComponent
 
     val folder: MutableStateFlow<MutableList<RootFolderEntity>>
+
+    val foldersToProcess: StateFlow<Int>
+
+    val foldersProcessed: StateFlow<Int>
 }

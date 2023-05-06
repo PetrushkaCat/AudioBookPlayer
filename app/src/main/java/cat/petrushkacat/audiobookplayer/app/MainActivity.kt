@@ -14,6 +14,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.exoplayer.ExoPlayer
 import cat.petrushkacat.audiobookplayer.app.ui.BooksListComponentUi
 import cat.petrushkacat.audiobookplayer.app.ui.BookshelfComponentUi
 import cat.petrushkacat.audiobookplayer.app.ui.MainComponentUi
@@ -23,7 +25,11 @@ import cat.petrushkacat.audiobookplayer.audioservice.AudiobookMediaService
 import cat.petrushkacat.audiobookplayer.audioservice.AudiobookServiceHandler
 import cat.petrushkacat.audiobookplayer.audioservice.di.AudiobookPlayerModule
 import cat.petrushkacat.audiobookplayer.core.components.main.MainComponentImpl
+import cat.petrushkacat.audiobookplayer.core.components.main.bookplayer.book.BookComponentImpl
 import cat.petrushkacat.audiobookplayer.core.components.main.bookshelf.BookshelfComponentImpl
+import cat.petrushkacat.audiobookplayer.core.repository.AudiobooksRepository
+import cat.petrushkacat.audiobookplayer.core.repository.RootFoldersRepository
+import cat.petrushkacat.audiobookplayer.data.db.AudiobooksDatabase
 import cat.petrushkacat.audiobookplayer.data.repository.AudiobooksRepositoryImpl
 import cat.petrushkacat.audiobookplayer.data.repository.RootFoldersRepositoryImpl
 import com.arkivanov.decompose.defaultComponentContext
@@ -35,14 +41,24 @@ class MainActivity : ComponentActivity() {
 
     @Inject
     lateinit var audiobookServiceHandler: AudiobookServiceHandler
+
+    @Inject
+    lateinit var player: ExoPlayer
+
+    @Inject
+    lateinit var audiobooksRepository: AudiobooksRepository
+
+    @Inject
+    lateinit var rootFoldersRepository: RootFoldersRepository
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         val root = MainComponentImpl(
             defaultComponentContext(),
             this,
-            RootFoldersRepositoryImpl(App.database.rootFoldersDao()),
-            AudiobooksRepositoryImpl(App.database.audiobooksDao()),
+            rootFoldersRepository,
+            audiobooksRepository,
             audiobookServiceHandler
         )
 
@@ -53,15 +69,10 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    MainComponentUi(component = root)
+                    MainComponentUi(component = root, player)
                 }
             }
         }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        stopService(Intent(this, AudiobookMediaService::class.java))
     }
 }
 

@@ -2,6 +2,7 @@ package cat.petrushkacat.audiobookplayer.data.repository
 
 import android.net.Uri
 import android.util.Log
+import cat.petrushkacat.audiobookplayer.core.components.main.bookplayer.book.BookComponent
 import cat.petrushkacat.audiobookplayer.core.models.BookEntity
 import cat.petrushkacat.audiobookplayer.core.repository.AudiobooksRepository
 import cat.petrushkacat.audiobookplayer.data.db.AudiobooksDao
@@ -27,7 +28,7 @@ class AudiobooksRepositoryImpl(
 
     override suspend fun getBooksInFolder(rootFolder: Uri) = audiobooksDao.getBooksInFolder(rootFolder.toString())
 
-    override suspend fun updateBook(book: BookEntity) {
+    override suspend fun updateBook(book: BookComponent.UpdateInfo) {
         audiobooksDao.updateBook(book)
     }
 

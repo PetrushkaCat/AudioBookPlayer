@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
+import cat.petrushkacat.audiobookplayer.core.components.main.bookplayer.book.BookComponent
 import cat.petrushkacat.audiobookplayer.core.components.main.bookshelf.bookslist.BooksListComponent
 import cat.petrushkacat.audiobookplayer.core.models.BookEntity
 import cat.petrushkacat.audiobookplayer.core.models.BookUri
@@ -25,8 +26,8 @@ interface AudiobooksDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun saveBookAfterParse(book: BookEntity)
 
-    @Update
-    fun updateBook(book: BookEntity)
+    @Update(entity = BookEntity::class)
+    fun updateBook(book: BookComponent.UpdateInfo)
 
     @Query("SELECT * FROM BookEntity WHERE folderUri = :bookFolderUri")
     fun getBook(bookFolderUri: String): Flow<BookEntity>

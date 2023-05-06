@@ -14,7 +14,8 @@ class BookPlayerComponentImpl(
     context: Context,
     audiobooksRepository: AudiobooksRepository,
     audiobookServiceHandler: AudiobookServiceHandler,
-    private val bookUri: Uri
+    private val bookUri: Uri,
+    private val onBack: () -> Unit
 ) : BookPlayerComponent, ComponentContext by componentContext {
     override val toolbarComponent: ToolbarComponent
         get() = TODO("Not yet implemented")
@@ -24,7 +25,8 @@ class BookPlayerComponentImpl(
         context,
         audiobooksRepository,
         audiobookServiceHandler,
-        bookUri
+        bookUri,
+        onBack
     )
 
 }

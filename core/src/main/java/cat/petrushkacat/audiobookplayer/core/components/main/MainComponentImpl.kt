@@ -1,9 +1,12 @@
 package cat.petrushkacat.audiobookplayer.core.components.main
 
 import android.content.Context
+import android.content.Intent
 import android.net.Uri
+import cat.petrushkacat.audiobookplayer.audioservice.AudiobookMediaService
 import cat.petrushkacat.audiobookplayer.audioservice.AudiobookServiceHandler
 import cat.petrushkacat.audiobookplayer.core.components.main.bookplayer.BookPlayerComponentImpl
+import cat.petrushkacat.audiobookplayer.core.components.main.bookplayer.book.BookComponentImpl
 import cat.petrushkacat.audiobookplayer.core.components.main.bookshelf.BookshelfComponentImpl
 import cat.petrushkacat.audiobookplayer.core.repository.AudiobooksRepository
 import cat.petrushkacat.audiobookplayer.core.repository.RootFoldersRepository
@@ -12,7 +15,9 @@ import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.childStack
+import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.router.stack.push
+import com.arkivanov.essenty.lifecycle.doOnDestroy
 import com.arkivanov.essenty.parcelable.Parcelable
 import com.arkivanov.essenty.parcelable.Parcelize
 import kotlinx.coroutines.flow.StateFlow
@@ -36,7 +41,6 @@ class MainComponentImpl (
         childFactory = ::createChild
     ).toStateFlow(lifecycle)
 
-
     private fun createChild(
         config: ChildConfig,
         componentContext: ComponentContext
@@ -48,7 +52,9 @@ class MainComponentImpl (
         }
         is ChildConfig.BookPlayer -> {
             MainComponent.Child.BookPlayer(BookPlayerComponentImpl(componentContext, context,
-                audiobooksRepository, audiobookServiceHandler, config.bookUri))
+                audiobooksRepository, audiobookServiceHandler, config.bookUri, {
+                    navigation.pop()
+                }))
         }
     }
 

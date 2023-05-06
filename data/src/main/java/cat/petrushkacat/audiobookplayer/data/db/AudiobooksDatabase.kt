@@ -12,4 +12,6 @@ abstract class AudiobooksDatabase: RoomDatabase() {
     abstract fun audiobooksDao(): AudiobooksDao
 
     abstract fun rootFoldersDao(): RootFoldersDao
+
+    abstract fun timeUpdateDao(): TimeUpdateDao
 }

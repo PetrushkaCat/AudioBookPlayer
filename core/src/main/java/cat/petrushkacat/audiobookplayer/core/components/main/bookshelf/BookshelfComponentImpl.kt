@@ -112,8 +112,8 @@ class BookshelfComponentImpl(
 
             val mmr = MediaMetadataRetriever()
 
-            for (content in bookFolder.listFiles()) {
-                if (content == null) break
+            bookFolder.listFiles().forEachIndexed { index, content ->
+                if (content == null) return@forEachIndexed
                 if (content.isDirectory) {
                     parseCycle(content, rootFolderUri)
                 }
@@ -124,7 +124,7 @@ class BookshelfComponentImpl(
                     val chapterDuration = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)?.toLong()!!
                     bookDuration += chapterDuration
 
-                    chapters.add(Chapter(bookFolder.uri.toString(), content.name!!, chapterDuration, content.uri.toString()))
+                    chapters.add(Chapter(bookFolder.uri.toString(), content.name?.substringBeforeLast('.') ?: "Chapter ${index + 1}", chapterDuration, content.uri.toString()))
                 }
                 if (content.isImage()) {
                     imageUri = content.uri
@@ -132,26 +132,6 @@ class BookshelfComponentImpl(
             }
 
             name?.let {
-                /*val temp = books.value.toMutableList()
-                val book = BooksListComponent.Model(imageUri.toString(), name, bookFolder.uri.toString())
-                if (!temp.contains(book)) {
-                    temp.add(book)
-                }
-                books.value = temp*/
-
-                /*booksToSave.add(
-                    BookEntity(
-                        folderUri = bookFolder.uri.toString(),
-                        name = name,
-                        chapters = Chapters(chapters),
-                        currentChapter = -1,
-                        currentChapterTime = -1,
-                        currentTime = -1,
-                        duration = bookDuration,
-                        rootFolderUri = rootFolderUri.toString(),
-                        imageUri = imageUri.toString()
-                    )
-                )*/
 
                 val sortedChapters = chapters.sortedWith { a, b ->
                     extractInt(a) - extractInt(b)
@@ -160,11 +140,11 @@ class BookshelfComponentImpl(
                 audiobooksRepository.saveBookAfterParse(BookEntity(
                     folderUri = bookFolder.uri.toString(),
                     folderName = bookFolder.name!!,
-                    name = name,
+                    name = name!!,
                     chapters = Chapters(sortedChapters),
-                    currentChapter = -1,
-                    currentChapterTime = -1,
-                    currentTime = -1,
+                    currentChapter = 0,
+                    currentChapterTime = 0,
+                    currentTime = 0,
                     duration = bookDuration,
                     rootFolderUri = rootFolderUri.toString(),
                     imageUri = imageUri.toString()

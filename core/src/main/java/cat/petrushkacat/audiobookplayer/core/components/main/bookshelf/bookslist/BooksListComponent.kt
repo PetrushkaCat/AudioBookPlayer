@@ -13,7 +13,9 @@ interface BooksListComponent {
         val imageUri: String? = null,
         val name: String,
         val folderUri: String,
-        val currentTime: Long = -1,
-        val duration: Long = -1,
+        val currentTime: Long = 0,
+        val duration: Long = 0,
+        val isStarted: Boolean = false,
+        val isCompleted: Boolean = false
     )
 }

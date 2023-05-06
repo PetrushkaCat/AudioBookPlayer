@@ -48,6 +48,12 @@ dependencies {
     implementation(libs.hilt.android)
     kapt(libs.hilt.compiler)
 
+    implementation(libs.room.runtime)
+    annotationProcessor(libs.room.compiler)
+    kapt(libs.room.compiler)
+    implementation(libs.room.ktx)
+    testImplementation(libs.room.testing)
+
     implementation("com.github.bumptech.glide:glide:4.15.1")
 
     testImplementation("junit:junit:4.13.2")

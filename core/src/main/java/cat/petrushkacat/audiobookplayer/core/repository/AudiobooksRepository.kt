@@ -17,7 +17,7 @@ interface AudiobooksRepository {
     suspend fun getBooksInFolder(rootFolder: Uri): Flow<List<BooksListComponent.Model>>
 
 
-    suspend fun updateBook(book: BookEntity)
+    suspend fun updateBook(book: BookComponent.UpdateInfo)
 
     suspend fun getBook(bookFolder: Uri): Flow<BookEntity>
 }

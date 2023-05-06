@@ -43,6 +43,10 @@ class AudiobookNotificationManager @Inject constructor(
         startForegroundNotification(mediaSessionService)
     }
 
+    fun removeNotification() {
+        notificationManager.cancelAll()
+    }
+
     private fun buildNotification(mediaSession: MediaSession) {
         PlayerNotificationManager.Builder(context, NOTIFICATION_ID, NOTIFICATION_CHANNEL_ID)
             .setMediaDescriptionAdapter(
@@ -57,7 +61,7 @@ class AudiobookNotificationManager @Inject constructor(
                 it.setMediaSessionToken(mediaSession.sessionCompatToken)
                 it.setUseFastForwardActionInCompactView(true)
                 it.setUseRewindActionInCompactView(true)
-                it.setUseNextActionInCompactView(false)
+                it.setUseNextActionInCompactView(true)
                 it.setPriority(NotificationCompat.PRIORITY_LOW)
                 it.setPlayer(player)
             }

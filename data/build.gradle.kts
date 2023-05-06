@@ -38,6 +38,7 @@ android {
 dependencies {
 
     implementation(project(":core"))
+    implementation(project(":audioservice"))
 
     implementation (libs.androidx.core.ktx)
 
@@ -47,6 +48,9 @@ dependencies {
     implementation(libs.room.ktx)
     testImplementation(libs.room.testing)
     implementation(libs.gson)
+
+    implementation(libs.hilt.android)
+    kapt(libs.hilt.compiler)
 
     testImplementation(libs.junit.junit)
     androidTestImplementation(libs.androidx.test.ext.junit)

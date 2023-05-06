@@ -8,7 +8,7 @@ import dagger.hilt.android.HiltAndroidApp
 @HiltAndroidApp
 class App: Application() {
 
-    override fun onCreate() {
+/*    override fun onCreate() {
         super.onCreate()
         instance = this
 
@@ -18,9 +18,10 @@ class App: Application() {
         ).build()
     }
 
+
     companion object {
         lateinit var instance: App
 
         lateinit var database: AudiobooksDatabase
-    }
+    }*/
 }

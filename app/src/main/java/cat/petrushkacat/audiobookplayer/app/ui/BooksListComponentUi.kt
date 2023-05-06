@@ -2,17 +2,33 @@ package cat.petrushkacat.audiobookplayer.app.ui
 
 import android.net.Uri
 import android.util.Log
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyGridState
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
+import cat.petrushkacat.audiobookplayer.R
 import cat.petrushkacat.audiobookplayer.core.components.main.bookshelf.BookshelfComponent
 import cat.petrushkacat.audiobookplayer.core.components.main.bookshelf.bookslist.BooksListComponent
+import coil.compose.AsyncImage
+import coil.compose.rememberImagePainter
+import coil.request.ImageRequest
 
 @Composable
 fun BooksListComponentUi(component: BooksListComponent) {
@@ -20,7 +36,11 @@ fun BooksListComponentUi(component: BooksListComponent) {
 val model by component.models.collectAsState()
 
     Log.d("folder7", model.toString())
-    LazyColumn() {
+    LazyVerticalGrid(
+        columns = GridCells.Adaptive(150.dp),
+        modifier = Modifier,
+        state = rememberLazyGridState(0)
+    ) {
         items(model.size) {
             BookItem(model = model[it], Modifier.clickable {
                 component.onBookClick(Uri.parse(model[it].folderUri))
@@ -32,12 +52,22 @@ val model by component.models.collectAsState()
 
 @Composable
 fun BookItem(model: BooksListComponent.Model, modifier: Modifier) {
-    Column(modifier = modifier.wrapContentSize()) {
-        Text(model.name)
-        Text("+++")
-        //Text(model.folderUri.toString())
-        Text("+++")
-        //Text(model.image.toString())
-        Text("---------")
+
+    Box(modifier = modifier.padding(4.dp)) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            AsyncImage(
+               modifier = Modifier.fillMaxSize(),
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(model.imageUri)
+                    .error(R.drawable.round_play_button)
+                    .build(),
+                contentDescription = null,
+            )
+            Text(model.name, maxLines = 3)
+        }
+        
     }
 }

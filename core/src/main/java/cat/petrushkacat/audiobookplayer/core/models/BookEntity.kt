@@ -9,13 +9,15 @@ data class BookEntity(
     val folderName: String,
     val name: String,
     val chapters: Chapters,
-    val currentChapter: Int = -1,
-    val currentChapterTime: Long = -1,
-    val currentTime: Long = -1,
-    val duration: Long = -1,
+    val currentChapter: Int = 0,
+    val currentChapterTime: Long = 0,
+    val currentTime: Long = 0,
+    val duration: Long = 0,
     val rootFolderUri: String,
-    val imageUri: String?
-)
+    val imageUri: String?,
+    val isStarted: Boolean = false,
+    val isCompleted: Boolean = false
+    )
 
 data class Chapters(
     val chapters: List<Chapter>

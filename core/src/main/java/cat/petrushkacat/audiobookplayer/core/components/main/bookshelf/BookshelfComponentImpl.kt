@@ -15,6 +15,8 @@ import cat.petrushkacat.audiobookplayer.core.models.RootFolderEntity
 import cat.petrushkacat.audiobookplayer.core.repository.AudiobooksRepository
 import cat.petrushkacat.audiobookplayer.core.repository.RootFoldersRepository
 import cat.petrushkacat.audiobookplayer.core.util.componentCoroutineScopeIO
+import cat.petrushkacat.audiobookplayer.core.util.supportedAudioFormats
+import cat.petrushkacat.audiobookplayer.core.util.supportedImageFormats
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.childContext
 import kotlinx.coroutines.CoroutineScope
@@ -23,6 +25,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.lang.NumberFormatException
 
 class BookshelfComponentImpl(
     componentContext: ComponentContext,
@@ -164,19 +167,23 @@ class BookshelfComponentImpl(
 fun extractInt(chapter: Chapter): Int {
     val num = chapter.name.replace("\\D".toRegex(), "")
     // return 0 if no digits found
-    return if (num.isEmpty()) 0 else Integer.parseInt(num)
+    return try {
+        if (num.isEmpty()) 0 else Integer.parseInt(num)
+    } catch (e: NumberFormatException) {
+        Integer.parseInt(num.subSequence(num.length - 9, num.length).toString())
+    }
 }
 
 fun DocumentFile.isAudio(): Boolean {
     if(!isFile) return false
     val name = name ?: return false
-    if(name.substringAfterLast(".").lowercase() == "mp3") return true
+    if(name.substringAfterLast(".").lowercase() in supportedAudioFormats) return true
     return false
 }
 
 fun DocumentFile.isImage(): Boolean {
     if(!isFile) return false
     val name = name ?: return false
-    if(name.substringAfterLast(".").lowercase() == "jpg") return true
+    if(name.substringAfterLast(".").lowercase() in supportedImageFormats ) return true
     return false
 }

@@ -10,6 +10,7 @@ import androidx.media3.session.MediaSession
 import cat.petrushkacat.audiobookplayer.audioservice.AudiobookMediaService
 import cat.petrushkacat.audiobookplayer.audioservice.AudiobookServiceHandler
 import cat.petrushkacat.audiobookplayer.audioservice.notification.AudiobookNotificationManager
+import cat.petrushkacat.audiobookplayer.audioservice.sensors.SensorListener
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -70,10 +71,16 @@ class AudiobookPlayerModule {
 
     @Provides
     @Singleton
+    fun provideSensorListener(): SensorListener = SensorListener()
+
+    @Provides
+    @Singleton
     fun provideServiceHandler(
-        player: ExoPlayer
+        player: ExoPlayer,
+        sensorListener: SensorListener
     ): AudiobookServiceHandler =
         AudiobookServiceHandler(
-            player = player
+            player = player,
+            sensorListener = sensorListener
         )
 }

@@ -6,7 +6,7 @@ import androidx.room.TypeConverters
 import cat.petrushkacat.audiobookplayer.core.models.BookEntity
 import cat.petrushkacat.audiobookplayer.core.models.RootFolderEntity
 
-@TypeConverters(value = [ChapterTypeConverters::class])
+@TypeConverters(value = [AudiobookTypeConverters::class])
 @Database(entities = [BookEntity::class, RootFolderEntity::class], version = 1)
 abstract class AudiobooksDatabase: RoomDatabase() {
     abstract fun audiobooksDao(): AudiobooksDao

@@ -16,6 +16,7 @@ interface BooksListComponent {
         val currentTime: Long = 0,
         val duration: Long = 0,
         val isStarted: Boolean = false,
-        val isCompleted: Boolean = false
+        val isCompleted: Boolean = false,
+        val lastTimeListened: Long = 0L
     )
 }

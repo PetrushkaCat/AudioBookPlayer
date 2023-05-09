@@ -1,80 +1,80 @@
-package cat.petrushkacat.audiobookplayer.core.components.main.bookshelf
+package cat.petrushkacat.audiobookplayer.core.components.main.folderselector
 
 import android.content.Context
+import android.media.MediaMetadataRetriever
 import android.net.Uri
-import cat.petrushkacat.audiobookplayer.core.components.main.bookshelf.bookslist.BooksListComponent
-import cat.petrushkacat.audiobookplayer.core.components.main.bookshelf.bookslist.BooksListComponentImpl
-import cat.petrushkacat.audiobookplayer.core.components.main.bookshelf.toolbar.BookshelfToolbarComponentImpl
+import android.util.Log
+import androidx.documentfile.provider.DocumentFile
+import cat.petrushkacat.audiobookplayer.core.models.BookEntity
+import cat.petrushkacat.audiobookplayer.core.models.Chapter
+import cat.petrushkacat.audiobookplayer.core.models.Chapters
 import cat.petrushkacat.audiobookplayer.core.models.RootFolderEntity
 import cat.petrushkacat.audiobookplayer.core.repository.AudiobooksRepository
 import cat.petrushkacat.audiobookplayer.core.repository.RootFoldersRepository
+import cat.petrushkacat.audiobookplayer.core.util.componentCoroutineScopeDefault
 import cat.petrushkacat.audiobookplayer.core.util.componentCoroutineScopeIO
+import cat.petrushkacat.audiobookplayer.core.util.supportedAudioFormats
+import cat.petrushkacat.audiobookplayer.core.util.supportedImageFormats
 import com.arkivanov.decompose.ComponentContext
-import com.arkivanov.decompose.childContext
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
-class BookshelfComponentImpl(
+class FoldersComponentImpl(
     componentContext: ComponentContext,
     private val context: Context,
-    private val rootFoldersRepository: RootFoldersRepository,
     private val audiobooksRepository: AudiobooksRepository,
-    onBookSelect: (Uri) -> Unit,
-    onFolderButtonClick: () -> Unit
+    private val rootFoldersRepository: RootFoldersRepository,
+    val onFolderSelect: () -> Unit,
+    val onFolderRemoveClicked: () -> Unit
+) : FoldersComponent, ComponentContext by componentContext {
 
-) : BookshelfComponent, ComponentContext by componentContext {
+    private val scopeDefault = componentCoroutineScopeDefault()
+    private val scopeIO = componentCoroutineScopeIO()
 
-    private val scope = componentContext.componentCoroutineScopeIO()
+    private val _models: MutableStateFlow<List<RootFolderEntity>> = MutableStateFlow(emptyList())
+    override val models: StateFlow<List<RootFolderEntity>> = _models.asStateFlow()
 
-    override val folder: MutableStateFlow<MutableList<RootFolderEntity>> =
-        MutableStateFlow(
-            mutableListOf()
-        )
-
-    private val books: MutableStateFlow<MutableList<BooksListComponent.Model>> =
-        MutableStateFlow(mutableListOf())
-
-    //private val booksToSave: MutableList<BookEntity> = mutableListOf()
-
-    /*override val foldersToProcess = _foldersToProcess.asStateFlow()
-    override val foldersProcessed = _foldersProcessed.asStateFlow()*/
-
+    override val foldersToProcess = _foldersToProcess.asStateFlow()
+    override val foldersProcessed = _foldersProcessed.asStateFlow()
 
     init {
-        scope.launch {
-            rootFoldersRepository.getFolders().collect() {
-                folder.value = it.toMutableList()
-            }
-        }
-        scope.launch {
-            audiobooksRepository.getAllBooks().collect() {
-                books.value = it.toMutableList()
+        scopeDefault.launch {
+            rootFoldersRepository.getFolders().collect {
+                _models.value = it
             }
         }
     }
 
-    override val bookshelfToolbarComponent = BookshelfToolbarComponentImpl(
-        childContext("toolbar_component"),
-        onFolderButtonClicked = onFolderButtonClick
-    )
+    override fun onFolderSelected(uri: Uri?) {
+        uri?.let {
+            Log.d("folder_uri", uri.path!!)
+            addFolder(uri)
+            onFolderSelect()
+        }
+    }
 
-    override val booksListComponent = BooksListComponentImpl(
-        childContext("books_list_component"),
-        onBookSelected = onBookSelect,
-        books
-    )
-}
-
-/*
+    override fun onFolderRemoveButtonClick(rootFolderEntity: RootFolderEntity) {
+        scopeDefault.launch {
+            rootFoldersRepository.deleteFolder(rootFolderEntity)
+            audiobooksRepository.deleteAllInFolder(rootFolderEntity.uri)
+        }
+        onFolderRemoveClicked()
+    }
     private fun addFolder(folderUri: Uri) {
-        scope.launch {
+        scopeIO.launch {
             _foldersToProcess.value = 0
             _foldersProcessed.value = 0
 
             val file = DocumentFile.fromTreeUri(context, folderUri)!!
             val newFolder = RootFolderEntity(
                 uri = folderUri.toString(),
-                name = file.name!!,
+                name = folderUri.lastPathSegment!!,
                 isCurrent = true
             )
             rootFoldersRepository.addFolder(newFolder)
@@ -84,12 +84,9 @@ class BookshelfComponentImpl(
     }
 
     private fun parseBooks(folderUri: Uri) {
-        scope.launch {
+        scopeIO.launch {
             val file = DocumentFile.fromTreeUri(context, folderUri)!!
             parseCycle(file, folderUri)
-            Log.d("folder6", books.value.toString())
-
-            //audiobooksRepository.saveAfterParse(booksToSave)
         }
     }
 
@@ -112,12 +109,17 @@ class BookshelfComponentImpl(
                 if (content.isAudio()) {
                     mmr.setDataSource(context, content.uri)
                     name = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM) ?: bookFolder.name!!
-                    
+
                     val chapterDuration = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)?.toLong()!!
                     bookDuration += chapterDuration
 
-                    chapters.add(Chapter(bookFolder.uri.toString(), content.name?.substringBeforeLast('.') ?: "Chapter ${index + 1}", chapterDuration, content.uri.toString()))
+                    chapters.add(Chapter(bookFolder.uri.toString(),
+                        content.name?.substringBeforeLast('.') ?: "Chapter ${index + 1}",
+                        chapterDuration,
+                        0,
+                        content.uri.toString()))
                 }
+
                 if (content.isImage()) {
                     imageUri = content.uri
                 }
@@ -129,7 +131,15 @@ class BookshelfComponentImpl(
                     extractInt(a) - extractInt(b)
                 }
 
-                audiobooksRepository.saveBookAfterParse(BookEntity(
+                var timeFromBeginning = 0L
+                sortedChapters.forEach {
+                    it.timeFromBeginning = timeFromBeginning
+                    timeFromBeginning += it.duration
+                }
+
+
+                audiobooksRepository.saveBookAfterParse(
+                    BookEntity(
                     folderUri = bookFolder.uri.toString(),
                     folderName = bookFolder.name!!,
                     name = name!!,
@@ -139,8 +149,9 @@ class BookshelfComponentImpl(
                     currentTime = 0,
                     duration = bookDuration,
                     rootFolderUri = rootFolderUri.toString(),
-                    imageUri = imageUri.toString()
-                ))
+                    imageUri = imageUri.toString(),
+                )
+                )
             }
             _foldersProcessed.value += 1
             //Log.d("folder5.6", booksToSave.toString())
@@ -175,4 +186,4 @@ fun DocumentFile.isImage(): Boolean {
     val name = name ?: return false
     if(name.substringAfterLast(".").lowercase() in supportedImageFormats ) return true
     return false
-}*/
+}

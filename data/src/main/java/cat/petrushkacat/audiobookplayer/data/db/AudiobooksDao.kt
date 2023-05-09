@@ -5,7 +5,9 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
-import cat.petrushkacat.audiobookplayer.core.components.main.bookplayer.book.BookComponent
+import cat.petrushkacat.audiobookplayer.core.components.main.bookplayer.book.bookplayer.BookPlayerComponent
+import cat.petrushkacat.audiobookplayer.core.components.main.bookplayer.book.toolbar.BookPlayerToolbarComponent
+import cat.petrushkacat.audiobookplayer.core.components.main.bookplayer.notes.NotesComponent
 import cat.petrushkacat.audiobookplayer.core.components.main.bookshelf.bookslist.BooksListComponent
 import cat.petrushkacat.audiobookplayer.core.models.BookEntity
 import cat.petrushkacat.audiobookplayer.core.models.BookUri
@@ -27,7 +29,10 @@ interface AudiobooksDao {
     fun saveBookAfterParse(book: BookEntity)
 
     @Update(entity = BookEntity::class)
-    fun updateBook(book: BookComponent.UpdateInfo)
+    fun updateBook(book: BookPlayerComponent.UpdateInfo)
+
+    @Update(entity = BookEntity::class)
+    fun updateBook(book: NotesComponent.Model)
 
     @Query("SELECT * FROM BookEntity WHERE folderUri = :bookFolderUri")
     fun getBook(bookFolderUri: String): Flow<BookEntity>
@@ -37,4 +42,7 @@ interface AudiobooksDao {
 
     @Query("SELECT * FROM BookEntity")
     fun getUris(): List<BookUri>
+
+    @Query("DELETE FROM BookEntity WHERE rootFolderUri = :rootFolderUri")
+    fun deleteAllInFolder(rootFolderUri: String)
 }

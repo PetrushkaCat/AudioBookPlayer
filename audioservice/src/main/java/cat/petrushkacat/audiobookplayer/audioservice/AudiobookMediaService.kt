@@ -12,6 +12,8 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.util.Calendar
+import java.util.GregorianCalendar
 import javax.inject.Inject
 
 const val FOLDER_NAME_EXTRA = "folder_name_extra"
@@ -60,6 +62,8 @@ class AudiobookMediaService : MediaSessionService() {
             var currentTime = currentChapterTime
             var isStarted = false
             var isCompleted = false
+            val playSpeed = player.playbackParameters.speed
+            val volume = player.volume
 
             repeat(currentChapter) {
                 currentTime += chapterDurations[it]
@@ -77,7 +81,10 @@ class AudiobookMediaService : MediaSessionService() {
                         currentTime = currentTime,
                         duration = duration,
                         isStarted = isStarted,
-                        isCompleted = isCompleted
+                        isCompleted = isCompleted,
+                        playSpeed = playSpeed,
+                        volumeUp = volume,
+                        lastTimeListened = GregorianCalendar().timeInMillis
                     )
                 )
             }
@@ -106,5 +113,8 @@ data class UpdateTime(
     val currentTime: Long,
     val duration: Long,
     val isStarted: Boolean,
-    val isCompleted: Boolean
+    val isCompleted: Boolean,
+    val playSpeed: Float,
+    val volumeUp: Float,
+    val lastTimeListened: Long,
 )

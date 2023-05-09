@@ -1,35 +1,53 @@
 package cat.petrushkacat.audiobookplayer.app.ui
 
-import android.annotation.SuppressLint
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.DrawerState
+import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ModalNavigationDrawer
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import cat.petrushkacat.audiobookplayer.core.components.main.bookshelf.BookshelfComponent
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BookshelfComponentUi(component: BookshelfComponent) {
-    val folders = component.folder.collectAsState()
-    val foldersToProcess = component.foldersToProcess.collectAsState()
-    val foldersProcessed = component.foldersProcessed.collectAsState()
+    val scope = rememberCoroutineScope()
 
-    Column {
-        ToolbarComponentUi(component = component.toolbarComponent)
-        BooksListComponentUi(component = component.booksListComponent)
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+
+    ModalNavigationDrawer(
+        drawerContent = {
+        DrawerContent()
+    },
+        drawerState = drawerState
+
+    ) {
         Column {
-            Text("Folders processed: ${foldersProcessed.value} of ${foldersToProcess.value}")
-            LazyColumn() {
-                items(count = folders.value.size) {
-                    Text(folders.value[it].name)
+            BookshelfToolbarComponentUi(component = component.bookshelfToolbarComponent, {
+                scope.launch {
+                    drawerState.open()
                 }
-            }
+            })
+            BooksListComponentUi(component = component.booksListComponent)
         }
+    }
+}
+
+@Composable
+fun DrawerContent() {
+    Column(modifier = Modifier.fillMaxHeight().background(color = Color.Black)) {
+        Text("133")
     }
 }

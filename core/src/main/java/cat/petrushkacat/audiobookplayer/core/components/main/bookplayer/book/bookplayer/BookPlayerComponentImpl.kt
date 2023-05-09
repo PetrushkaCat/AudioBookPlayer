@@ -1,10 +1,13 @@
-package cat.petrushkacat.audiobookplayer.core.components.main.bookplayer.book
+package cat.petrushkacat.audiobookplayer.core.components.main.bookplayer.book.bookplayer
 
 import android.content.Context
 import android.content.Intent
+import android.hardware.Sensor
+import android.hardware.SensorManager
 import android.net.Uri
 import android.os.Build
 import android.util.Log
+import androidx.activity.ComponentActivity
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import cat.petrushkacat.audiobookplayer.audioservice.AudiobookMediaService
@@ -13,6 +16,7 @@ import cat.petrushkacat.audiobookplayer.audioservice.CHAPTER_DURATIONS
 import cat.petrushkacat.audiobookplayer.audioservice.DURATION_EXTRA
 import cat.petrushkacat.audiobookplayer.audioservice.FOLDER_NAME_EXTRA
 import cat.petrushkacat.audiobookplayer.audioservice.PlayerEvent
+import cat.petrushkacat.audiobookplayer.audioservice.sensors.SensorListener
 import cat.petrushkacat.audiobookplayer.core.models.BookEntity
 import cat.petrushkacat.audiobookplayer.core.models.Chapter
 import cat.petrushkacat.audiobookplayer.core.models.Chapters
@@ -24,39 +28,48 @@ import com.arkivanov.essenty.backhandler.BackCallback
 import com.arkivanov.essenty.lifecycle.doOnDestroy
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-class BookComponentImpl(
+class BookPlayerComponentImpl(
     componentContext: ComponentContext,
     private val context: Context,
     private val audiobooksRepository: AudiobooksRepository,
     private val audiobookServiceHandler: AudiobookServiceHandler,
+    sensorListener: SensorListener,
     private val bookUri: Uri,
     private val onBack: () -> Unit
-    ) : BookComponent, ComponentContext by componentContext {
+) : BookPlayerComponent, ComponentContext by componentContext {
 
     private val scope = componentContext.componentCoroutineScopeDefault()
     private val scopeMain = componentContext.componentCoroutineScopeMain()
 
     private val mediaItems: MutableList<MediaItem> = mutableListOf()
+    private lateinit var sensorManager: SensorManager
 
     override val currentTimings = audiobookServiceHandler.currentTimings
-
 
     override val models: MutableStateFlow<BookEntity> = MutableStateFlow(
         BookEntity(
             bookUri.toString(),
             "null",
             "null",
-            Chapters(listOf(Chapter(
-                "null",
-                "null",
-                0,
-                "null"
-            ))),
+            Chapters(
+                listOf(
+                    Chapter(
+                        "null",
+                        "null",
+                        0,
+                        0L,
+                        "null"
+                    )
+                )
+            ),
             imageUri = null,
-            rootFolderUri = bookUri.toString()
+            rootFolderUri = bookUri.toString(),
+            lastTimeListened = 0L
         )
     )
 
@@ -65,56 +78,74 @@ class BookComponentImpl(
             audiobookServiceHandler.onPlayerEvent(playerEvent)
         }
     }
+
+    override val isPlaying = audiobookServiceHandler.isPlaying.asStateFlow()
+
     init {
-       backHandler.register(BackCallback{
-               context.stopService(Intent(context, AudiobookMediaService::class.java))
-               audiobookServiceHandler.stopProgressUpdate()
-               onBack()
-
-       })
-
-        /*scopeMain.launch {
-            audiobookServiceHandler.onPlayerEvent(PlayerEvent.PlayPause)
-        }*/
+        backHandler.register(BackCallback {
+            context.stopService(Intent(context, AudiobookMediaService::class.java))
+            audiobookServiceHandler.stopProgressUpdate()
+            sensorManager.unregisterListener(sensorListener)
+            onBack()
+        })
 
         lifecycle.doOnDestroy {
-            onDestroy()
+            //onDestroy()
         }
-         scope.launch {
-                audiobooksRepository.getBook(bookUri).collect {
-                    models.value = it
+        scope.launch {
+            audiobooksRepository.getBook(bookUri).collect {
+                models.value = it
 
-                    for (chapter in models.value.chapters.chapters) {
-                        val mediaItem = MediaItem.Builder()
-                            .setUri(chapter.uri)
-                            .setMediaMetadata(
-                                MediaMetadata.Builder()
-                                    .setFolderType(MediaMetadata.FOLDER_TYPE_ALBUMS)
-                                    .setArtworkUri(Uri.parse(models.value.imageUri))
-                                    .setAlbumTitle(models.value.name)
-                                    .setDisplayTitle(chapter.name)
-                                    .build()
-                            ).build()
+                for (chapter in models.value.chapters.chapters) {
+                    val mediaItem = MediaItem.Builder()
+                        .setUri(chapter.uri)
+                        .setMediaMetadata(
+                            MediaMetadata.Builder()
+                                .setFolderType(MediaMetadata.FOLDER_TYPE_ALBUMS)
+                                .setArtworkUri(Uri.parse(models.value.imageUri))
+                                .setAlbumTitle(models.value.name)
+                                .setDisplayTitle(chapter.name)
+                                .build()
+                        ).build()
 
-                        mediaItems.add(mediaItem)
-                    }
-                    Log.d("player-1", "items: " + mediaItems.toString())
-
-                    withContext(Dispatchers.Main) {
-                        audiobookServiceHandler.addMediaItemList(mediaItems)
-                        audiobookServiceHandler.setTimings(models.value.currentChapter, models.value.currentChapterTime)
-                    }
-
-                    startService()
+                    mediaItems.add(mediaItem)
                 }
-            }
+                Log.d("player-1", "items: " + mediaItems.toString())
 
+                if (!isInitialized) {
+                withContext(Dispatchers.Main) {
+                    audiobookServiceHandler.addMediaItemList(mediaItems)
+                    audiobookServiceHandler.setTimings(
+                        models.value.currentChapter,
+                        models.value.currentChapterTime
+                    )
+                }
+                    startService()
+                    isInitialized = true
+                }
+
+            }
+        }
+
+        sensorManager = context.getSystemService(ComponentActivity.SENSOR_SERVICE) as SensorManager
+        val sensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
+
+        try {
+            sensorManager.registerListener(
+                sensorListener,
+                sensor!!,
+                SensorManager.SENSOR_DELAY_NORMAL
+            )
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Log.d("sensor", "no sensor Registered")
+        }
     }
 
     private fun startService() {
 
         val chapterDurations: MutableList<Long> = mutableListOf()
-        for(chapter in models.value.chapters.chapters) {
+        for (chapter in models.value.chapters.chapters) {
             chapterDurations.add(chapter.duration)
         }
         val intent = Intent(context, AudiobookMediaService::class.java)
@@ -126,10 +157,9 @@ class BookComponentImpl(
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             context.startForegroundService(intent)
         }
-
     }
 
-    private fun onDestroy() {
+    /*private fun onDestroy() {
 
         val currentChapterTime = audiobookServiceHandler.getPosition()
         var currentTime = currentChapterTime
@@ -147,7 +177,7 @@ class BookComponentImpl(
             isCompleted = (currentTime >= models.value.duration)
 
             audiobooksRepository.updateBook(
-                BookComponent.UpdateInfo(
+                BookPlayerComponent.UpdateInfo(
                     folderName = models.value.folderName,
                     name = models.value.name,
                     currentChapter = index,
@@ -159,5 +189,9 @@ class BookComponentImpl(
                 )
             )
         }
+    }*/
+
+    companion object {
+        var isInitialized = false
     }
 }

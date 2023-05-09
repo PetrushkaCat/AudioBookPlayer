@@ -1,8 +1,9 @@
 package cat.petrushkacat.audiobookplayer.data.repository
 
 import android.net.Uri
-import android.util.Log
-import cat.petrushkacat.audiobookplayer.core.components.main.bookplayer.book.BookComponent
+import cat.petrushkacat.audiobookplayer.core.components.main.bookplayer.book.bookplayer.BookPlayerComponent
+import cat.petrushkacat.audiobookplayer.core.components.main.bookplayer.book.toolbar.BookPlayerToolbarComponent
+import cat.petrushkacat.audiobookplayer.core.components.main.bookplayer.notes.NotesComponent
 import cat.petrushkacat.audiobookplayer.core.models.BookEntity
 import cat.petrushkacat.audiobookplayer.core.repository.AudiobooksRepository
 import cat.petrushkacat.audiobookplayer.data.db.AudiobooksDao
@@ -28,11 +29,18 @@ class AudiobooksRepositoryImpl(
 
     override suspend fun getBooksInFolder(rootFolder: Uri) = audiobooksDao.getBooksInFolder(rootFolder.toString())
 
-    override suspend fun updateBook(book: BookComponent.UpdateInfo) {
+    override suspend fun updateBook(book: BookPlayerComponent.UpdateInfo) {
+        audiobooksDao.updateBook(book)
+    }
+
+    override suspend fun updateBook(book: NotesComponent.Model) {
         audiobooksDao.updateBook(book)
     }
 
     override suspend fun getBook(bookFolder: Uri) = audiobooksDao.getBook(bookFolder.toString())
+    override suspend fun deleteAllInFolder(rootFolderUri: String) {
+        audiobooksDao.deleteAllInFolder(rootFolderUri)
+    }
 
 
     private fun deleteBooksNotExist(books: List<BookEntity>) {

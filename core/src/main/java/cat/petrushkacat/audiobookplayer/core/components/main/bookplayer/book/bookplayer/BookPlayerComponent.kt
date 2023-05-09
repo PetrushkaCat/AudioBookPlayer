@@ -1,20 +1,22 @@
-package cat.petrushkacat.audiobookplayer.core.components.main.bookplayer.book
+package cat.petrushkacat.audiobookplayer.core.components.main.bookplayer.book.bookplayer
 
-import android.net.Uri
-import androidx.room.Entity
 import cat.petrushkacat.audiobookplayer.audioservice.CurrentTimings
 import cat.petrushkacat.audiobookplayer.audioservice.PlayerEvent
+import cat.petrushkacat.audiobookplayer.core.components.main.bookplayer.book.toolbar.BookPlayerToolbarComponent
 import cat.petrushkacat.audiobookplayer.core.models.BookEntity
-import cat.petrushkacat.audiobookplayer.core.models.Chapters
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
-interface BookComponent {
+interface BookPlayerComponent {
 
     val models: StateFlow<BookEntity>
 
+    val currentTimings: StateFlow<CurrentTimings>
+
     fun onPlayerEvent(playerEvent: PlayerEvent)
 
-    val currentTimings: StateFlow<CurrentTimings>
+    val isPlaying: StateFlow<Boolean>
+
 
     data class Model(
         val isPaused: Boolean

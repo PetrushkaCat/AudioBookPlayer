@@ -7,5 +7,5 @@ import androidx.room.PrimaryKey
 data class RootFolderEntity(
     @PrimaryKey val uri: String,
     val name: String,
-    val isCurrent: Boolean
+    val isCurrent: Boolean,
 )

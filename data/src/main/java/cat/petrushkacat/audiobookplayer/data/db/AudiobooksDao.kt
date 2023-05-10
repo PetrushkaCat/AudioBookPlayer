@@ -45,4 +45,5 @@ interface AudiobooksDao {
 
     @Query("DELETE FROM BookEntity WHERE rootFolderUri = :rootFolderUri")
     fun deleteAllInFolder(rootFolderUri: String)
+
 }

@@ -15,6 +15,13 @@ android {
 
         testInstrumentationRunner = "android.support.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
+        javaCompileOptions {
+            annotationProcessorOptions {
+                compilerArgumentProviders(
+                    RoomSchemaArgProvider(File(projectDir, "schemas"))
+                )
+            }
+        }
     }
 
     buildTypes {
@@ -56,4 +63,17 @@ dependencies {
     androidTestImplementation(libs.androidx.test.ext.junit)
     androidTestImplementation(libs.androidx.test.espresso.core)
 
+}
+
+class RoomSchemaArgProvider(
+    @get:InputDirectory
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    val schemaDir: File
+) : CommandLineArgumentProvider {
+
+    override fun asArguments(): Iterable<String> {
+        // Note: If you're using KSP, change the line below to return
+        // listOf("room.schemaLocation=${schemaDir.path}").
+        return listOf("-Aroom.schemaLocation=${schemaDir.path}")
+    }
 }

@@ -8,8 +8,10 @@ import cat.petrushkacat.audiobookplayer.core.components.main.bookplayer.BookComp
 import cat.petrushkacat.audiobookplayer.core.components.main.bookplayer.book.bookplayer.BookPlayerComponentImpl
 import cat.petrushkacat.audiobookplayer.core.components.main.bookshelf.BookshelfComponentImpl
 import cat.petrushkacat.audiobookplayer.core.components.main.folderselector.FoldersComponentImpl
+import cat.petrushkacat.audiobookplayer.core.components.main.settings.SettingsComponentImpl
 import cat.petrushkacat.audiobookplayer.core.repository.AudiobooksRepository
 import cat.petrushkacat.audiobookplayer.core.repository.RootFoldersRepository
+import cat.petrushkacat.audiobookplayer.core.repository.SettingsRepository
 import cat.petrushkacat.audiobookplayer.core.util.toStateFlow
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.ChildStack
@@ -27,6 +29,7 @@ class MainComponentImpl(
     private val rootFoldersRepository: RootFoldersRepository,
     private val audiobooksRepository: AudiobooksRepository,
     private val audiobookServiceHandler: AudiobookServiceHandler,
+    private val settingsRepository: SettingsRepository,
     private val sensorListener: SensorListener
 ) : MainComponent, ComponentContext by componentContext {
 
@@ -46,12 +49,15 @@ class MainComponentImpl(
     ): MainComponent.Child = when (config) {
         is ChildConfig.Bookshelf -> {
             MainComponent.Child.Bookshelf(
-                BookshelfComponentImpl(componentContext, context, rootFoldersRepository, audiobooksRepository,
+                BookshelfComponentImpl(componentContext, context, rootFoldersRepository, audiobooksRepository, settingsRepository,
                     {
                         navigation.push(ChildConfig.Book(it))
                     },
                     {
                         navigation.push(ChildConfig.Folders)
+                    },
+                    {
+                        navigation.push(ChildConfig.Settings)
                     }
                 ))
         }
@@ -71,6 +77,12 @@ class MainComponentImpl(
                 FoldersComponentImpl(componentContext, context, audiobooksRepository, rootFoldersRepository, {  }, {  })
             )
         }
+
+        is ChildConfig.Settings -> {
+            MainComponent.Child.Settings(
+                SettingsComponentImpl(componentContext, settingsRepository)
+            )
+        }
     }
 
     private sealed interface ChildConfig : Parcelable {
@@ -82,5 +94,8 @@ class MainComponentImpl(
 
         @Parcelize
         object Folders: ChildConfig
+
+        @Parcelize
+        object Settings: ChildConfig
     }
 }

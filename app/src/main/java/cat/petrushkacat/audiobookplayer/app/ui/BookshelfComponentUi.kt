@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -29,10 +30,9 @@ fun BookshelfComponentUi(component: BookshelfComponent) {
 
     ModalNavigationDrawer(
         drawerContent = {
-        DrawerContent()
+        DrawerComponentUi(component = component.drawerComponent)
     },
-        drawerState = drawerState
-
+        drawerState = drawerState,
     ) {
         Column {
             BookshelfToolbarComponentUi(component = component.bookshelfToolbarComponent, {
@@ -42,12 +42,5 @@ fun BookshelfComponentUi(component: BookshelfComponent) {
             })
             BooksListComponentUi(component = component.booksListComponent)
         }
-    }
-}
-
-@Composable
-fun DrawerContent() {
-    Column(modifier = Modifier.fillMaxHeight().background(color = Color.Black)) {
-        Text("133")
     }
 }

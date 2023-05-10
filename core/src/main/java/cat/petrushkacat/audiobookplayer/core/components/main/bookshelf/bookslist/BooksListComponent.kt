@@ -1,11 +1,14 @@
 package cat.petrushkacat.audiobookplayer.core.components.main.bookshelf.bookslist
 
 import android.net.Uri
+import cat.petrushkacat.audiobookplayer.core.models.SettingsEntity
 import kotlinx.coroutines.flow.StateFlow
 
 interface BooksListComponent {
 
     val models: StateFlow<List<Model>>
+
+    val settings: StateFlow<SettingsEntity>
 
     fun onBookClick(uri: Uri)
 

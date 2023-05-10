@@ -2,15 +2,19 @@ package cat.petrushkacat.audiobookplayer.data.di
 
 import android.content.Context
 import androidx.room.Room
-import cat.petrushkacat.audiobookplayer.audioservice.TimeUpdateRepository
+import cat.petrushkacat.audiobookplayer.audioservice.repository.AudioServiceSettingsRepository
+import cat.petrushkacat.audiobookplayer.audioservice.repository.TimeUpdateRepository
 import cat.petrushkacat.audiobookplayer.core.repository.AudiobooksRepository
 import cat.petrushkacat.audiobookplayer.core.repository.RootFoldersRepository
+import cat.petrushkacat.audiobookplayer.core.repository.SettingsRepository
 import cat.petrushkacat.audiobookplayer.data.db.AudiobooksDao
 import cat.petrushkacat.audiobookplayer.data.db.AudiobooksDatabase
 import cat.petrushkacat.audiobookplayer.data.db.RootFoldersDao
+import cat.petrushkacat.audiobookplayer.data.db.SettingsDao
 import cat.petrushkacat.audiobookplayer.data.db.TimeUpdateDao
 import cat.petrushkacat.audiobookplayer.data.repository.AudiobooksRepositoryImpl
 import cat.petrushkacat.audiobookplayer.data.repository.RootFoldersRepositoryImpl
+import cat.petrushkacat.audiobookplayer.data.repository.SettingsRepositoryImpl
 import cat.petrushkacat.audiobookplayer.data.repository.TimeUpdateRepositoryImpl
 import dagger.Module
 import dagger.Provides
@@ -60,4 +64,15 @@ class DataModule {
     @Singleton
     fun provideTimeUpdateRepository(timeUpdateDao: TimeUpdateDao): TimeUpdateRepository = TimeUpdateRepositoryImpl(timeUpdateDao)
 
+    @Provides
+    @Singleton
+    fun provideSettingsDao(db: AudiobooksDatabase) = db.settingsDao()
+
+    @Provides
+    @Singleton
+    fun provideSettingsRepository(settingsDao: SettingsDao): SettingsRepository = SettingsRepositoryImpl(settingsDao)
+
+    @Provides
+    @Singleton
+    fun provideAudioServiceSettingsRepository(settingsDao: SettingsDao): AudioServiceSettingsRepository = SettingsRepositoryImpl(settingsDao)
 }

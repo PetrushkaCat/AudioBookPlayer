@@ -20,8 +20,9 @@ private val DarkColorScheme = darkColorScheme(
     primary = Purple80,
     secondary = PurpleGrey80,
     tertiary = Pink80,
-    //surfaceTint = Color.White,
 
+    background = Color.Black,
+    surface = Color.Black,
     )
 
 private val LightColorScheme = lightColorScheme(
@@ -54,7 +55,8 @@ fun AudioBookPlayerTheme(
         }
 
         darkTheme -> DarkColorScheme
-        else -> DarkColorScheme
+        else ->
+            DarkColorScheme
             //LightColorScheme
     }
     val view = LocalView.current

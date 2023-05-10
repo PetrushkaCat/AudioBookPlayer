@@ -1,13 +1,17 @@
 package cat.petrushkacat.audiobookplayer.core.components.main.bookshelf
 
 import android.content.Context
+import android.content.Intent
 import android.net.Uri
 import cat.petrushkacat.audiobookplayer.core.components.main.bookshelf.bookslist.BooksListComponent
 import cat.petrushkacat.audiobookplayer.core.components.main.bookshelf.bookslist.BooksListComponentImpl
+import cat.petrushkacat.audiobookplayer.core.components.main.bookshelf.drawer.DrawerComponent
+import cat.petrushkacat.audiobookplayer.core.components.main.bookshelf.drawer.DrawerComponentImpl
 import cat.petrushkacat.audiobookplayer.core.components.main.bookshelf.toolbar.BookshelfToolbarComponentImpl
 import cat.petrushkacat.audiobookplayer.core.models.RootFolderEntity
 import cat.petrushkacat.audiobookplayer.core.repository.AudiobooksRepository
 import cat.petrushkacat.audiobookplayer.core.repository.RootFoldersRepository
+import cat.petrushkacat.audiobookplayer.core.repository.SettingsRepository
 import cat.petrushkacat.audiobookplayer.core.util.componentCoroutineScopeIO
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.childContext
@@ -19,10 +23,12 @@ class BookshelfComponentImpl(
     private val context: Context,
     private val rootFoldersRepository: RootFoldersRepository,
     private val audiobooksRepository: AudiobooksRepository,
+    private val settingsRepository: SettingsRepository,
     onBookSelect: (Uri) -> Unit,
-    onFolderButtonClick: () -> Unit
+    onFolderButtonClick: () -> Unit,
+    onSettingsClicked: () ->Unit,
 
-) : BookshelfComponent, ComponentContext by componentContext {
+    ) : BookshelfComponent, ComponentContext by componentContext {
 
     private val scope = componentContext.componentCoroutineScopeIO()
 
@@ -55,13 +61,20 @@ class BookshelfComponentImpl(
 
     override val bookshelfToolbarComponent = BookshelfToolbarComponentImpl(
         childContext("toolbar_component"),
+        settingsRepository,
         onFolderButtonClicked = onFolderButtonClick
     )
 
     override val booksListComponent = BooksListComponentImpl(
         childContext("books_list_component"),
+        settingsRepository,
+        context,
         onBookSelected = onBookSelect,
         books
+    )
+    override val drawerComponent = DrawerComponentImpl(
+        childContext("drawer_component"),
+        onSettingsClicked = onSettingsClicked
     )
 }
 

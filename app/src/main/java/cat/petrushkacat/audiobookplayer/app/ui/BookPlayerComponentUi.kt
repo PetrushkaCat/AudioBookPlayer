@@ -1,18 +1,26 @@
 package cat.petrushkacat.audiobookplayer.app.ui
 
+import android.content.res.Configuration
 import android.util.Log
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredHeight
+import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIos
 import androidx.compose.material.icons.filled.ArrowForwardIos
@@ -35,8 +43,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.HorizontalAlignmentLine
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.media3.common.util.UnstableApi
@@ -80,24 +91,44 @@ fun BookPlayerComponentUi(component: BookPlayerComponent) {
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .scrollable(rememberScrollState(), Orientation.Vertical)
             .padding(4.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.SpaceBetween
     ) {
-        LinearProgressIndicator(currentProgress, modifier = Modifier
-            .fillMaxWidth()
-            .padding(2.dp))
-        Row(modifier = Modifier
-            .fillMaxWidth()
-            .padding(4.dp, 2.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Text(formatDuration(currentTime), style = TextStyle(fontSize = 13.sp))
-            Text(formatDuration(model.duration), style = TextStyle(fontSize = 13.sp))
+        Column {
+            LinearProgressIndicator(
+                currentProgress, modifier = Modifier
+                    //.weight(0.1f)
+                    .requiredHeight(8.dp)
+                    .fillMaxWidth()
+                    .padding(2.dp)
+            )
+            Row(
+                modifier = Modifier
+                    //.weight(0.3f)
+                    .fillMaxWidth()
+                    .padding(4.dp, 2.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(formatDuration(currentTime), style = TextStyle(fontSize = 13.sp))
+                Text(formatDuration(model.duration), style = TextStyle(fontSize = 13.sp))
+            }
         }
-        Text(model.name, style = TextStyle(fontSize = 17.sp))
+        Text(model.name, style = TextStyle(fontSize = 17.sp), //modifier = Modifier.weight(0.7f)
+        )
 
         AsyncImage(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = if(LocalConfiguration.current.orientation == Configuration.ORIENTATION_PORTRAIT ) {
+                val width = LocalConfiguration.current.screenHeightDp.dp - 400.dp
+                if(width > LocalConfiguration.current.screenWidthDp.dp) {
+                    Modifier.height(LocalConfiguration.current.screenWidthDp.dp)
+                } else Modifier.height(width)
+            } else {
+                Modifier.height(LocalConfiguration.current.screenHeightDp.dp - 300.dp)
+
+                //Modifier.weight(0.3f)
+            },
             model = ImageRequest.Builder(LocalContext.current)
                 .data(model.imageUri)
                 .error(R.drawable.round_play_button)
@@ -110,13 +141,15 @@ fun BookPlayerComponentUi(component: BookPlayerComponent) {
             currentTimings = currentTimings,
             progress,
             model.duration,
-            isPlaying
+            isPlaying,
+            Modifier.defaultMinSize(minHeight = 170.dp)
         )
+        Spacer(modifier = Modifier.height(20.dp))
 
     }
 }
 
-// TODO add content description
+// TODO add content description for all screens
 @Composable
 fun PlayerControllers(
     onPlayerEvent: (PlayerEvent) -> Unit,
@@ -124,11 +157,12 @@ fun PlayerControllers(
     currentTimings: CurrentTimings,
     progress: Float,
     duration: Long,
-    isPlaying: Boolean
+    isPlaying: Boolean,
+    modifier: Modifier = Modifier
 ) {
 
-    val iconsSize = 50.dp
-    val iconsSize2 = 30.dp
+    val iconsSize = 40.dp
+    val iconsSize2 = 25.dp
     //val isPlaying = rememberSaveable { mutableStateOf(false) }
     val currentChapterName = try {
         chapters.chapters[currentTimings.currentChapterIndex].name
@@ -146,8 +180,8 @@ fun PlayerControllers(
     }
 
     Column(
-        modifier = Modifier
-            .padding(10.dp),
+        modifier = modifier
+            .padding(horizontal = 10.dp),
         verticalArrangement = Arrangement.SpaceAround
     ) {
         if (chapters.chapters.size > 1) {
@@ -160,14 +194,21 @@ fun PlayerControllers(
                     null,
                     modifier = Modifier
                         .size(iconsSize2)
+                        .weight(1f)
                         .clickable {
                             onPlayerEvent(PlayerEvent.PreviousChapter)
                         })
-                Row(modifier = Modifier.clickable {
-                    showDialog.value = true
-                }) {
-                    Text(currentChapterName, modifier = Modifier.align(Alignment.CenterVertically))
-                    Icon(Icons.Default.ExpandMore, null, modifier = Modifier.size(iconsSize2))
+                Row(modifier = Modifier
+                    .weight(9f)
+                    .clickable {
+                        showDialog.value = true
+                    },
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Text(currentChapterName)
+                    Icon(Icons.Default.ExpandMore, null, modifier = Modifier
+                        .size(iconsSize2)
+                        .defaultMinSize(30.dp))
                 }
 
                 Icon(
@@ -175,13 +216,13 @@ fun PlayerControllers(
                     contentDescription = null,
                     modifier = Modifier
                         .size(iconsSize2)
+                        .weight(1f)
                         .clickable {
                             onPlayerEvent(PlayerEvent.NextChapter)
                         }
                 )
             }
         }
-        Spacer(modifier = Modifier.size(10.dp))
 
         PlayerBar(
             progress = progress,
@@ -191,8 +232,6 @@ fun PlayerControllers(
             } catch (e: IndexOutOfBoundsException) { 0 },
             onPlayerEvent = onPlayerEvent
         )
-
-        Spacer(modifier = Modifier.size(10.dp))
 
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -292,8 +331,8 @@ fun PlayerBar(
         )
         Row(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 20.dp),
+                .fillMaxWidth(),
+                //.padding(bottom = 10.dp),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(progressString)

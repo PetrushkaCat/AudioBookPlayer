@@ -1,6 +1,7 @@
 package cat.petrushkacat.audiobookplayer.core.components.main.folderselector
 
 import android.content.Context
+import android.content.Intent
 import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.util.Log
@@ -77,6 +78,12 @@ class FoldersComponentImpl(
                 name = folderUri.lastPathSegment!!,
                 isCurrent = true
             )
+            val contentResolver = context.contentResolver
+
+            val takeFlags: Int = Intent.FLAG_GRANT_READ_URI_PERMISSION or
+                    Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+            contentResolver.takePersistableUriPermission(folderUri, takeFlags)
+
             rootFoldersRepository.addFolder(newFolder)
             parseBooks(folderUri)
         }

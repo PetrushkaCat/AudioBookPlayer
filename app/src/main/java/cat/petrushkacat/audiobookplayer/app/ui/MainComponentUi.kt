@@ -18,6 +18,7 @@ fun MainComponentUi(component: MainComponent) {
             is MainComponent.Child.Bookshelf -> BookshelfComponentUi(component = instance.component)
             is MainComponent.Child.Book -> BookComponentUi(component = instance.component)
             is MainComponent.Child.Folder -> FoldersComponentUi(component = instance.component)
+            is MainComponent.Child.Settings -> SettingsComponentUi(component = instance.component)
         }
 
     }

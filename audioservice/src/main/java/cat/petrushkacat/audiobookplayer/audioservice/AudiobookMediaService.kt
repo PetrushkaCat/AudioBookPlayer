@@ -1,18 +1,16 @@
 package cat.petrushkacat.audiobookplayer.audioservice
 
-import android.app.Service
 import android.content.Intent
 import android.util.Log
-import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.session.MediaSession
 import androidx.media3.session.MediaSessionService
 import cat.petrushkacat.audiobookplayer.audioservice.notification.AudiobookNotificationManager
+import cat.petrushkacat.audiobookplayer.audioservice.repository.TimeUpdateRepository
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.util.Calendar
 import java.util.GregorianCalendar
 import javax.inject.Inject
 

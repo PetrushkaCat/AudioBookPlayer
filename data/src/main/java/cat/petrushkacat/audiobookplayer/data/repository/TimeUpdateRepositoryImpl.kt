@@ -1,6 +1,6 @@
 package cat.petrushkacat.audiobookplayer.data.repository
 
-import cat.petrushkacat.audiobookplayer.audioservice.TimeUpdateRepository
+import cat.petrushkacat.audiobookplayer.audioservice.repository.TimeUpdateRepository
 import cat.petrushkacat.audiobookplayer.audioservice.UpdateTime
 import cat.petrushkacat.audiobookplayer.data.db.TimeUpdateDao
 

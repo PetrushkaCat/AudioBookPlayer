@@ -1,10 +1,7 @@
 package cat.petrushkacat.audiobookplayer.core.components.main.bookplayer.notes
 
 import android.net.Uri
-import android.provider.ContactsContract
 import cat.petrushkacat.audiobookplayer.audioservice.AudiobookServiceHandler
-import cat.petrushkacat.audiobookplayer.audioservice.CurrentTimings
-import cat.petrushkacat.audiobookplayer.core.components.main.bookplayer.BookComponent
 import cat.petrushkacat.audiobookplayer.core.models.Note
 import cat.petrushkacat.audiobookplayer.core.models.Notes
 import cat.petrushkacat.audiobookplayer.core.repository.AudiobooksRepository
@@ -13,7 +10,6 @@ import com.arkivanov.decompose.ComponentContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class NotesComponentImpl(

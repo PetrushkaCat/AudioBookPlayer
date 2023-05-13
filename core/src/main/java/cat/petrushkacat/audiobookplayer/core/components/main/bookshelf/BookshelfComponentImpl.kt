@@ -1,11 +1,9 @@
 package cat.petrushkacat.audiobookplayer.core.components.main.bookshelf
 
 import android.content.Context
-import android.content.Intent
 import android.net.Uri
 import cat.petrushkacat.audiobookplayer.core.components.main.bookshelf.bookslist.BooksListComponent
 import cat.petrushkacat.audiobookplayer.core.components.main.bookshelf.bookslist.BooksListComponentImpl
-import cat.petrushkacat.audiobookplayer.core.components.main.bookshelf.drawer.DrawerComponent
 import cat.petrushkacat.audiobookplayer.core.components.main.bookshelf.drawer.DrawerComponentImpl
 import cat.petrushkacat.audiobookplayer.core.components.main.bookshelf.toolbar.BookshelfToolbarComponentImpl
 import cat.petrushkacat.audiobookplayer.core.models.RootFolderEntity
@@ -40,10 +38,8 @@ class BookshelfComponentImpl(
     private val books: MutableStateFlow<MutableList<BooksListComponent.Model>> =
         MutableStateFlow(mutableListOf())
 
-    //private val booksToSave: MutableList<BookEntity> = mutableListOf()
-
-    /*override val foldersToProcess = _foldersToProcess.asStateFlow()
-    override val foldersProcessed = _foldersProcessed.asStateFlow()*/
+    private val searchedBooks: MutableStateFlow<List<BooksListComponent.Model>> =
+        MutableStateFlow(mutableListOf())
 
 
     init {
@@ -55,6 +51,7 @@ class BookshelfComponentImpl(
         scope.launch {
             audiobooksRepository.getAllBooks().collect() {
                 books.value = it.toMutableList()
+                searchedBooks.value = it
             }
         }
     }
@@ -62,130 +59,30 @@ class BookshelfComponentImpl(
     override val bookshelfToolbarComponent = BookshelfToolbarComponentImpl(
         childContext("toolbar_component"),
         settingsRepository,
-        onFolderButtonClicked = onFolderButtonClick
+        onFolderButtonClicked = onFolderButtonClick,
+        { text ->
+            if(text.isNotEmpty()) {
+                searchedBooks.value = books.value.filter { book ->
+                    book.name.lowercase().contains(Regex(text.lowercase()))
+                }
+            } else {
+                searchedBooks.value = books.value
+                }
+        }
     )
 
     override val booksListComponent = BooksListComponentImpl(
         childContext("books_list_component"),
         settingsRepository,
+        audiobooksRepository,
+        rootFoldersRepository,
         context,
         onBookSelected = onBookSelect,
-        books
+        searchedBooks
     )
     override val drawerComponent = DrawerComponentImpl(
         childContext("drawer_component"),
+        context,
         onSettingsClicked = onSettingsClicked
     )
 }
-
-/*
-    private fun addFolder(folderUri: Uri) {
-        scope.launch {
-            _foldersToProcess.value = 0
-            _foldersProcessed.value = 0
-
-            val file = DocumentFile.fromTreeUri(context, folderUri)!!
-            val newFolder = RootFolderEntity(
-                uri = folderUri.toString(),
-                name = file.name!!,
-                isCurrent = true
-            )
-            rootFoldersRepository.addFolder(newFolder)
-            parseBooks(folderUri)
-        }
-
-    }
-
-    private fun parseBooks(folderUri: Uri) {
-        scope.launch {
-            val file = DocumentFile.fromTreeUri(context, folderUri)!!
-            parseCycle(file, folderUri)
-            Log.d("folder6", books.value.toString())
-
-            //audiobooksRepository.saveAfterParse(booksToSave)
-        }
-    }
-
-    private fun parseCycle(bookFolder: DocumentFile, rootFolderUri: Uri) {
-        CoroutineScope(SupervisorJob() + Dispatchers.IO).launch {
-            _foldersToProcess.value += 1
-            var name: String? = null
-            var imageUri: Uri? = null
-            var bookDuration: Long = 0
-
-            val chapters: MutableList<Chapter> = mutableListOf()
-
-            val mmr = MediaMetadataRetriever()
-
-            bookFolder.listFiles().forEachIndexed { index, content ->
-                if (content == null) return@forEachIndexed
-                if (content.isDirectory) {
-                    parseCycle(content, rootFolderUri)
-                }
-                if (content.isAudio()) {
-                    mmr.setDataSource(context, content.uri)
-                    name = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM) ?: bookFolder.name!!
-                    
-                    val chapterDuration = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)?.toLong()!!
-                    bookDuration += chapterDuration
-
-                    chapters.add(Chapter(bookFolder.uri.toString(), content.name?.substringBeforeLast('.') ?: "Chapter ${index + 1}", chapterDuration, content.uri.toString()))
-                }
-                if (content.isImage()) {
-                    imageUri = content.uri
-                }
-            }
-
-            name?.let {
-
-                val sortedChapters = chapters.sortedWith { a, b ->
-                    extractInt(a) - extractInt(b)
-                }
-
-                audiobooksRepository.saveBookAfterParse(BookEntity(
-                    folderUri = bookFolder.uri.toString(),
-                    folderName = bookFolder.name!!,
-                    name = name!!,
-                    chapters = Chapters(sortedChapters),
-                    currentChapter = 0,
-                    currentChapterTime = 0,
-                    currentTime = 0,
-                    duration = bookDuration,
-                    rootFolderUri = rootFolderUri.toString(),
-                    imageUri = imageUri.toString()
-                ))
-            }
-            _foldersProcessed.value += 1
-            //Log.d("folder5.6", booksToSave.toString())
-        }
-    }
-
-    companion object {
-        private val _foldersToProcess = MutableStateFlow(0)
-        private val _foldersProcessed = MutableStateFlow(0)
-    }
-}
-
-fun extractInt(chapter: Chapter): Int {
-    val num = chapter.name.replace("\\D".toRegex(), "")
-    // return 0 if no digits found
-    return try {
-        if (num.isEmpty()) 0 else Integer.parseInt(num)
-    } catch (e: NumberFormatException) {
-        Integer.parseInt(num.subSequence(num.length - 9, num.length).toString())
-    }
-}
-
-fun DocumentFile.isAudio(): Boolean {
-    if(!isFile) return false
-    val name = name ?: return false
-    if(name.substringAfterLast(".").lowercase() in supportedAudioFormats) return true
-    return false
-}
-
-fun DocumentFile.isImage(): Boolean {
-    if(!isFile) return false
-    val name = name ?: return false
-    if(name.substringAfterLast(".").lowercase() in supportedImageFormats ) return true
-    return false
-}*/

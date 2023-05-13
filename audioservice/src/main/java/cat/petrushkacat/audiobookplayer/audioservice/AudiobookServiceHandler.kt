@@ -1,18 +1,16 @@
 package cat.petrushkacat.audiobookplayer.audioservice
 
 import android.annotation.SuppressLint
-import android.app.Service
 import android.util.Log
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
-import androidx.media3.exoplayer.source.MediaSource
+import cat.petrushkacat.audiobookplayer.audioservice.repository.AudioServiceSettingsRepository
 import cat.petrushkacat.audiobookplayer.audioservice.sensors.SensorListener
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -23,12 +21,9 @@ import javax.inject.Inject
 
 class AudiobookServiceHandler @Inject constructor(
     private val player: ExoPlayer,
-    private val sensorListener: SensorListener
+    private val sensorListener: SensorListener,
+    private val settingsRepository: AudioServiceSettingsRepository
 ) : Player.Listener {
-
-/*    private val _audiobookMediaState =
-        MutableStateFlow<AudiobookMediaState>(AudiobookMediaState.Initial)
-    val audiobookMediaState = _audiobookMediaState.asStateFlow()*/
 
     private val _currentTimings = MutableStateFlow(CurrentTimings(player.currentPosition, player.currentMediaItemIndex))
     val currentTimings = _currentTimings.asStateFlow()
@@ -39,7 +34,18 @@ class AudiobookServiceHandler @Inject constructor(
 
     private var isProgressBeingWatched = false
 
+    private var autoSeekBack: Long = 0
+    private var seek: Long = 0
+
     init {
+        CoroutineScope(SupervisorJob() + Dispatchers.Default).launch {
+            settingsRepository.getAudioServiceSettings().collect {
+                //it can be null, do not touch
+                    autoSeekBack = it?.autoRewindBackTime ?: 0
+                    seek = it?.rewindTime ?: 0
+                Log.d("Audiobook service handler init settings", it?.toString() ?: "null")
+            }
+        }
         player.addListener(this)
         job = Job()
     }
@@ -72,26 +78,29 @@ class AudiobookServiceHandler @Inject constructor(
     suspend fun onPlayerEvent(playerEvent: PlayerEvent) {
         when (playerEvent) {
             is PlayerEvent.Backward -> {
-                player.seekBack()
+                player.seekTo(
+                    if(currentTimings.value.currentTimeInChapter > seek)
+                        currentTimings.value.currentTimeInChapter - seek
+                    else 0
+                )
                 _currentTimings.value = CurrentTimings(player.currentPosition, player.currentMediaItemIndex)
             }
             is PlayerEvent.Forward -> {
-                player.seekForward()
+                player.seekTo(currentTimings.value.currentTimeInChapter + seek)
                 _currentTimings.value = CurrentTimings(player.currentPosition, player.currentMediaItemIndex)
             }
             PlayerEvent.PlayPause -> {
                 if (player.isPlaying) {
                     player.pause()
                     player.seekTo(
-                        if(currentTimings.value.currentTimeInChapter > 1000)
-                            currentTimings.value.currentTimeInChapter - 1000
+                        if(currentTimings.value.currentTimeInChapter > autoSeekBack)
+                            currentTimings.value.currentTimeInChapter - autoSeekBack
                         else 0
                     )
                     stopProgressUpdate()
                 } else {
                     Log.d("player-1", "playing")
                     player.play()
-                    //_audiobookMediaState.value = AudiobookMediaState.Playing(isPlaying = true)
                     startProgressUpdate()
                 }
             }
@@ -117,23 +126,20 @@ class AudiobookServiceHandler @Inject constructor(
 
     @SuppressLint("SwitchIntDef")
     override fun onPlaybackStateChanged(playbackState: Int) {
-        /*when (playbackState) {
-            ExoPlayer.STATE_BUFFERING -> _audiobookMediaState.value =
-                AudiobookMediaState.Buffering(player.currentPosition)
 
-            ExoPlayer.STATE_READY -> _audiobookMediaState.value =
-                AudiobookMediaState.Ready(player.duration)
-        }*/
     }
 
     override fun onIsPlayingChanged(isPlaying: Boolean) {
-       // _audiobookMediaState.value = AudiobookMediaState.Playing(isPlaying = isPlaying)
         if (isPlaying) {
             CoroutineScope(Dispatchers.Main).launch {
                 startProgressUpdate()
             }
         } else {
             stopProgressUpdate()
+        }
+        CoroutineScope(Dispatchers.Main).launch {
+            delay(300)
+            this@AudiobookServiceHandler.isPlaying.value = player.isPlaying
         }
     }
 
@@ -152,7 +158,6 @@ class AudiobookServiceHandler @Inject constructor(
                             player.pause()
                             stopProgressUpdate()
                         }
-                        isPlaying.value = player.isPlaying
                     }
                 }
             }
@@ -162,7 +167,6 @@ class AudiobookServiceHandler @Inject constructor(
     fun stopProgressUpdate() {
         Log.d("player-2", "progress is now not updating")
         job.cancel()
-        //_audiobookMediaState.value = AudiobookMediaState.Playing(isPlaying = false)
         isProgressBeingWatched = false
     }
 }
@@ -174,20 +178,11 @@ data class CurrentTimings(
 
 sealed class PlayerEvent {
     object PlayPause : PlayerEvent()
-    data class Backward(val time: Long) : PlayerEvent()
-    data class Forward(val time: Long) : PlayerEvent()
+    object Backward : PlayerEvent()
+    object Forward : PlayerEvent()
     object NextChapter: PlayerEvent()
     object PreviousChapter: PlayerEvent()
     data class UpdateProgress(val newProgress: Float) : PlayerEvent()
 
     data class ChooseChapter(val chapterId: Int): PlayerEvent()
 }
-
-/*
-sealed class AudiobookMediaState {
-    object Initial : AudiobookMediaState()
-    data class Ready(val duration: Long) : AudiobookMediaState()
-    data class Progress(val progress: Long) : AudiobookMediaState()
-    data class Buffering(val progress: Long) : AudiobookMediaState()
-    data class Playing(val isPlaying: Boolean) : AudiobookMediaState()
-}*/

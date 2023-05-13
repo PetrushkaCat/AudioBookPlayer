@@ -2,8 +2,8 @@ plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
     id ("kotlin-parcelize")
-    id ("kotlin-kapt")
     id("dagger.hilt.android.plugin")
+    kotlin("kapt")
 }
 
 android {
@@ -11,7 +11,7 @@ android {
     compileSdk = 33
 
     defaultConfig {
-        minSdk = 24
+        minSdk = 26
 
         testInstrumentationRunner = "android.support.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
@@ -45,14 +45,11 @@ dependencies {
     implementation(libs.decompose)
     implementation(libs.decompose.compose)
 
-    /*implementation(libs.koin.core)
-    implementation(libs.koin.android)*/
-
     implementation(libs.coroutines.core)
     implementation(libs.coroutines.android)
 
     implementation(libs.androidx.documentfile)
-    implementation("androidx.room:room-common:2.5.1")
+    implementation(libs.room.common)
 
     implementation(libs.media3.session)
 

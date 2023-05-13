@@ -9,7 +9,6 @@ import androidx.media3.common.util.UnstableApi
 import androidx.media3.ui.PlayerNotificationManager
 import cat.petrushkacat.audiobookplayer.audioservice.R
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 

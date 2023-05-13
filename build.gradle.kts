@@ -1,6 +1,6 @@
 buildscript {
     dependencies {
-        classpath("com.google.dagger:hilt-android-gradle-plugin:2.44.2")
+        classpath("com.google.dagger:hilt-android-gradle-plugin:2.46")
     }
 }
 
@@ -8,6 +8,6 @@ buildscript {
 plugins {
     id ("com.android.application") version "8.0.1" apply false
     id ("com.android.library") version "8.0.1" apply false
-    id ("org.jetbrains.kotlin.android") version "1.8.20" apply false
-    //id("com.google.devtools.ksp") version "1.8.20-1.0.11" apply false
+    id ("org.jetbrains.kotlin.android") version "1.8.21" apply false
+    id("com.google.devtools.ksp") version "1.8.21-1.0.11" apply false
 }

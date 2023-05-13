@@ -3,15 +3,13 @@ package cat.petrushkacat.audiobookplayer.audioservice.sensors
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
-import android.util.Log
-import cat.petrushkacat.audiobookplayer.audioservice.repository.AudioServiceSettingsRepository
 import cat.petrushkacat.audiobookplayer.audioservice.model.AudioServiceSettings
+import cat.petrushkacat.audiobookplayer.audioservice.repository.AudioServiceSettingsRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import java.util.GregorianCalendar
-import javax.inject.Inject
 
 class SensorListener(
    private val audioServiceSettingsRepository: AudioServiceSettingsRepository

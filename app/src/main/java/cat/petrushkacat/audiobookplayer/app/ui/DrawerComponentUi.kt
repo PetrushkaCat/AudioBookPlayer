@@ -1,5 +1,6 @@
 package cat.petrushkacat.audiobookplayer.app.ui
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
@@ -15,10 +16,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Countertops
+import androidx.compose.material.icons.filled.Pets
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.StarRate
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -27,8 +29,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -38,6 +43,8 @@ import cat.petrushkacat.audiobookplayer.core.components.main.bookshelf.drawer.Dr
 @Composable
 fun DrawerComponentUi(component: DrawerComponent) {
 
+    val context = LocalContext.current
+    val version = context.packageManager.getPackageInfo("cat.petrushkacat.audiobookplayer", 1).versionName
     Column(modifier = Modifier
         .fillMaxHeight()
         .width(260.dp)
@@ -46,28 +53,45 @@ fun DrawerComponentUi(component: DrawerComponent) {
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         Column {
-            DrawerItem(
-                icon = ImageVector.vectorResource(R.drawable.ic_launcher_foreground),
-                text = "Simple AudioBook Player"
-            ) {
-
-            }
+            HeaderDrawerItem(
+                icon = painterResource(R.drawable.ic_launcher),
+                onClick = { },
+                text = stringResource(id = R.string.app_name)
+            )
             Divider(modifier = Modifier.fillMaxWidth())
         }
         Column {
-            DrawerItem(icon = Icons.Default.Countertops, text = "123") {
+            Column {
+                DrawerItem(icon = Icons.Default.StarRate, text = stringResource(id = R.string.rate_this_app), onClick = {
+                    component.onRateClick()
+                })
 
+                DrawerItem(icon = Icons.Default.Settings, text = stringResource(id = R.string.settings), onClick = {
+                    component.onSettingsClick()
+                }, stringResource(id = R.string.settings_icon_description))
+                Divider(modifier = Modifier.fillMaxWidth())
             }
-            DrawerItem(icon = Icons.Default.Settings, text = "Settings", onClick = {
-                component.onSettingsClick()
-            })
-            Spacer(modifier = Modifier.height(20.dp))
+            Column(modifier = Modifier.padding(horizontal = 6.dp, vertical = 4.dp)) {
+                Row(modifier = Modifier.width(180.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(stringResource(id = R.string.designed_with_paws))
+                    Icon(Icons.Default.Pets, stringResource(id = R.string.paws_icon))
+                }
+                Row(modifier = Modifier.width(180.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(stringResource(id = R.string.by_petrushka_cat))
+                    //Icon(Icons.Default.LocalFlorist, null)
+                }
+                Text(stringResource(id = R.string.version) + " " + version, style = TextStyle(color = Color.Gray))
+            }
         }
     }
 }
 
 @Composable
-fun DrawerItem(icon: ImageVector, text: String, onClick: () -> Unit) {
+fun DrawerItem(icon: ImageVector, text: String, onClick: () -> Unit, iconDescription: String = "") {
     Column(modifier = Modifier
         .fillMaxWidth()
         .height(50.dp)
@@ -79,10 +103,35 @@ fun DrawerItem(icon: ImageVector, text: String, onClick: () -> Unit) {
             .fillMaxWidth()) {
             Icon(
                 icon,
-                null,
+                iconDescription,
                 modifier = Modifier
                     .padding(4.dp)
                     .size(23.dp)
+            )
+            Spacer(modifier = Modifier.width(20.dp))
+            Text(text, style = TextStyle(fontSize = 17.sp), modifier = Modifier.align(Alignment.CenterVertically))
+        }
+    }
+}
+
+@Composable
+fun HeaderDrawerItem(icon: Painter, text: String, onClick: () -> Unit, iconDescription: String = "") {
+    Column(modifier = Modifier
+        .fillMaxWidth()
+        .height(50.dp)
+        .padding(horizontal = 6.dp)
+        .clickable { onClick() },
+        verticalArrangement = Arrangement.Center
+    ) {
+        Row(modifier = Modifier
+            .fillMaxWidth()) {
+            Image(
+                icon,
+                iconDescription,
+                modifier = Modifier
+                    .padding(4.dp)
+                    .size(23.dp)
+                    .background(color = Color.Transparent, shape = RoundedCornerShape(4.dp))
             )
             Spacer(modifier = Modifier.width(20.dp))
             Text(text, style = TextStyle(fontSize = 17.sp), modifier = Modifier.align(Alignment.CenterVertically))

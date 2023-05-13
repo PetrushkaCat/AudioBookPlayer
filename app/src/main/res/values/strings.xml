@@ -1,3 +1,70 @@
 <resources>
-    <string name="app_name">AudioBook Player</string>
+    <string name="app_name" translatable="false">Simple Audiobook Player</string>
+    <string name="book_cover">Book cover</string>
+    <string name="previous_chapter">Previous chapter</string>
+    <string name="expand_chapters">Tap to choose chapter</string>
+    <string name="next_chapter">Next chapter</string>
+    <string name="rewind_back">Rewind back</string>
+    <string name="play_pause">Play/Pause</string>
+    <string name="rewind_forward">Rewind forward</string>
+    <string name="speed_icon_description">Tap to change playing speed</string>
+    <string name="bookmarks_icon_description">Tap to open bookmarks screen</string>
+    <string name="ok">OK</string>
+    <string name="menu_icon_description">Tap to open app menu</string>
+    <string name="grid_icon_description">Tap to change to grid or list view</string>
+    <string name="search_icon_description">Tap to search a book</string>
+    <string name="close_search_icon">Tap to stop searching</string>
+    <string name="folders_processed">Folders processed: </string>
+    <string name="of"> of </string>
+    <string name="settings">Setting</string>
+    <string name="designed_with_paws">Designed with paws</string>
+    <string name="paws_icon">Paws</string>
+    <string name="by_petrushka_cat">By Petrushka Cat</string>
+    <string name="version">Version</string>
+    <string name="settings_icon_description">Tap to open settings</string>
+    <string name="add_folder_icon">Tap to add new books root folder</string>
+    <string name="remove_folder_icon">Tap to remove the folder</string>
+    <string name="add_note_icon">Tap to add new bookmark</string>
+    <string name="delete_note_icon">Tap to delete this bookmark</string>
+    <string name="edit_note_icon">Tap to edit this bookmark</string>
+    <string name="save">Tap to save</string>
+    <string name="icon_dark_mode">Change theme</string>
+    <string name="dark_theme">Dark theme</string>
+    <string name="rewind">Rewind</string>
+    <string name="auto_rewind_back_on_pause">Auto rewind back on pause</string>
+    <string name="auto_sleep">Auto sleep</string>
+    <string name="rate_this_app">Rate the app :)</string>
+    <string name="description">Description</string>
+    <string name="add_folder_description">(a root folder, every book must be in its own subdirectory)</string>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 </resources>

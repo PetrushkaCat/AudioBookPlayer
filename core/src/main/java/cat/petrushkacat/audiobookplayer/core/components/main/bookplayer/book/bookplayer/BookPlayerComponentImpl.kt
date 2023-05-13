@@ -7,7 +7,7 @@ import android.hardware.SensorManager
 import android.net.Uri
 import android.os.Build
 import android.util.Log
-import androidx.activity.ComponentActivity
+import androidx.core.app.ComponentActivity
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import cat.petrushkacat.audiobookplayer.audioservice.AudiobookMediaService
@@ -31,7 +31,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
 
 class BookPlayerComponentImpl(
     componentContext: ComponentContext,
@@ -50,8 +49,7 @@ class BookPlayerComponentImpl(
     private lateinit var sensorManager: SensorManager
 
     override val currentTimings = audiobookServiceHandler.currentTimings
-
-    override val models: MutableStateFlow<BookEntity> = MutableStateFlow(
+    private val _models = MutableStateFlow(
         BookEntity(
             bookUri.toString(),
             "null",
@@ -72,6 +70,7 @@ class BookPlayerComponentImpl(
             lastTimeListened = 0L
         )
     )
+    override val models = _models.asStateFlow()
 
     override fun onPlayerEvent(playerEvent: PlayerEvent) {
         scopeMain.launch {
@@ -94,9 +93,9 @@ class BookPlayerComponentImpl(
         }
         scope.launch {
             audiobooksRepository.getBook(bookUri).collect {
-                models.value = it
+                _models.value = it
 
-                for (chapter in models.value.chapters.chapters) {
+                for (chapter in it.chapters.chapters) {
                     val mediaItem = MediaItem.Builder()
                         .setUri(chapter.uri)
                         .setMediaMetadata(
@@ -116,8 +115,8 @@ class BookPlayerComponentImpl(
                 withContext(Dispatchers.Main) {
                     audiobookServiceHandler.addMediaItemList(mediaItems)
                     audiobookServiceHandler.setTimings(
-                        models.value.currentChapter,
-                        models.value.currentChapterTime
+                        it.currentChapter,
+                        it.currentChapterTime
                     )
                 }
                     startService()
@@ -158,38 +157,6 @@ class BookPlayerComponentImpl(
             context.startForegroundService(intent)
         }
     }
-
-    /*private fun onDestroy() {
-
-        val currentChapterTime = audiobookServiceHandler.getPosition()
-        var currentTime = currentChapterTime
-        val index = audiobookServiceHandler.getCurrentItemIndex()
-        var isStarted: Boolean
-        var isCompleted: Boolean
-
-        scope.launch {
-
-            repeat(index) {
-                currentTime += models.value.chapters.chapters[it].duration
-            }
-
-            isStarted = (currentTime > 0)
-            isCompleted = (currentTime >= models.value.duration)
-
-            audiobooksRepository.updateBook(
-                BookPlayerComponent.UpdateInfo(
-                    folderName = models.value.folderName,
-                    name = models.value.name,
-                    currentChapter = index,
-                    currentChapterTime = currentChapterTime,
-                    currentTime = currentTime,
-                    duration = models.value.duration,
-                    isStarted = isStarted,
-                    isCompleted = isCompleted
-                )
-            )
-        }
-    }*/
 
     companion object {
         var isInitialized = false

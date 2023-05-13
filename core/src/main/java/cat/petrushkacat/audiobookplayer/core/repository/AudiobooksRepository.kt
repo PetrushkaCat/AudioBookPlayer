@@ -2,7 +2,6 @@ package cat.petrushkacat.audiobookplayer.core.repository
 
 import android.net.Uri
 import cat.petrushkacat.audiobookplayer.core.components.main.bookplayer.book.bookplayer.BookPlayerComponent
-import cat.petrushkacat.audiobookplayer.core.components.main.bookplayer.book.toolbar.BookPlayerToolbarComponent
 import cat.petrushkacat.audiobookplayer.core.components.main.bookplayer.notes.NotesComponent
 import cat.petrushkacat.audiobookplayer.core.components.main.bookshelf.bookslist.BooksListComponent
 import cat.petrushkacat.audiobookplayer.core.models.BookEntity
@@ -25,4 +24,9 @@ interface AudiobooksRepository {
     suspend fun getBook(bookFolder: Uri): Flow<BookEntity>
 
     suspend fun deleteAllInFolder(rootFolderUri: String)
+
+    suspend fun deleteBook(uri: Uri)
+
+    suspend fun deleteIfNoInList(uris: List<Uri>)
+
 }

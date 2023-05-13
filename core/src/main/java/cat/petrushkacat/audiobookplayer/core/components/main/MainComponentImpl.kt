@@ -2,6 +2,8 @@ package cat.petrushkacat.audiobookplayer.core.components.main
 
 import android.content.Context
 import android.net.Uri
+import android.widget.Toast
+import androidx.documentfile.provider.DocumentFile
 import cat.petrushkacat.audiobookplayer.audioservice.AudiobookServiceHandler
 import cat.petrushkacat.audiobookplayer.audioservice.sensors.SensorListener
 import cat.petrushkacat.audiobookplayer.core.components.main.bookplayer.BookComponentImpl
@@ -12,6 +14,7 @@ import cat.petrushkacat.audiobookplayer.core.components.main.settings.SettingsCo
 import cat.petrushkacat.audiobookplayer.core.repository.AudiobooksRepository
 import cat.petrushkacat.audiobookplayer.core.repository.RootFoldersRepository
 import cat.petrushkacat.audiobookplayer.core.repository.SettingsRepository
+import cat.petrushkacat.audiobookplayer.core.util.componentCoroutineScopeIO
 import cat.petrushkacat.audiobookplayer.core.util.toStateFlow
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.ChildStack
@@ -22,6 +25,7 @@ import com.arkivanov.decompose.router.stack.push
 import com.arkivanov.essenty.parcelable.Parcelable
 import com.arkivanov.essenty.parcelable.Parcelize
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 
 class MainComponentImpl(
     componentContext: ComponentContext,
@@ -33,6 +37,8 @@ class MainComponentImpl(
     private val sensorListener: SensorListener
 ) : MainComponent, ComponentContext by componentContext {
 
+
+    private val scopeIO = componentCoroutineScopeIO()
 
     private val navigation = StackNavigation<ChildConfig>()
 
@@ -51,7 +57,17 @@ class MainComponentImpl(
             MainComponent.Child.Bookshelf(
                 BookshelfComponentImpl(componentContext, context, rootFoldersRepository, audiobooksRepository, settingsRepository,
                     {
-                        navigation.push(ChildConfig.Book(it))
+                        val file = DocumentFile.fromSingleUri(context, it)
+                        if(file!!.exists()) {
+                            navigation.push(ChildConfig.Book(it))
+                        } else {
+                            Toast.makeText(context,
+                                "Seems like there is no more such a book. Deleting...",
+                                Toast.LENGTH_SHORT).show()
+                            scopeIO.launch {
+                            audiobooksRepository.deleteBook(it)
+                            }
+                        }
                     },
                     {
                         navigation.push(ChildConfig.Folders)

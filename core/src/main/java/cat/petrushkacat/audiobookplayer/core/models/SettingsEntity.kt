@@ -1,6 +1,5 @@
 package cat.petrushkacat.audiobookplayer.core.models
 
-import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
@@ -11,12 +10,12 @@ data class SettingsEntity(
     val autoSleepTime: Long = 60000 * 60 * 2,
     val rewindTime: Long = 15000,
     val autoRewindBackTime: Long = 2000,
-    val theme: Theme = Theme.SYSTEM_DEFAULT,
+    val theme: Theme = Theme.DARK,
     val grid: Grid = Grid.LIST,
 )
 
 enum class Theme {
-    SYSTEM_DEFAULT,
+    //SYSTEM_DEFAULT,
     DARK,
     LIGHT,
 }

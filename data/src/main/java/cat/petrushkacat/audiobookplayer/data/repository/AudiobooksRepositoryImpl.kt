@@ -2,22 +2,16 @@ package cat.petrushkacat.audiobookplayer.data.repository
 
 import android.net.Uri
 import cat.petrushkacat.audiobookplayer.core.components.main.bookplayer.book.bookplayer.BookPlayerComponent
-import cat.petrushkacat.audiobookplayer.core.components.main.bookplayer.book.toolbar.BookPlayerToolbarComponent
 import cat.petrushkacat.audiobookplayer.core.components.main.bookplayer.notes.NotesComponent
 import cat.petrushkacat.audiobookplayer.core.models.BookEntity
 import cat.petrushkacat.audiobookplayer.core.repository.AudiobooksRepository
 import cat.petrushkacat.audiobookplayer.data.db.AudiobooksDao
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.launch
 
 
 class AudiobooksRepositoryImpl(
     private val audiobooksDao: AudiobooksDao
 ): AudiobooksRepository {
     override suspend fun saveAfterParse(books: List<BookEntity>) {
-        deleteBooksNotExist(books)
         audiobooksDao.saveAfterParse(books)
     }
 
@@ -42,18 +36,12 @@ class AudiobooksRepositoryImpl(
         audiobooksDao.deleteAllInFolder(rootFolderUri)
     }
 
+    override suspend fun deleteBook(uri: Uri) {
+        audiobooksDao.deleteBook(uri.toString())
+    }
 
-    private fun deleteBooksNotExist(books: List<BookEntity>) {
-        CoroutineScope(SupervisorJob() + Dispatchers.Default).launch {
-            val listFromDB = audiobooksDao.getUris().map {
-                it.folderUri
-            }
-            val listFromParse = books.map {
-                it.folderUri
-            }
-            val listUrisToDelete = listFromDB.toSet().minus(listFromParse.toSet()).toList()
-            audiobooksDao.deleteByUris(listUrisToDelete)
-        }
+    override suspend fun deleteIfNoInList(uris: List<Uri>) {
+        audiobooksDao.deleteIfNoInList(uris.map { it.toString() })
     }
 
 }

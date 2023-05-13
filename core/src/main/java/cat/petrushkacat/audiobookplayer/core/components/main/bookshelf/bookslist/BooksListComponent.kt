@@ -10,7 +10,13 @@ interface BooksListComponent {
 
     val settings: StateFlow<SettingsEntity>
 
+    val foldersToProcess: StateFlow<Int>
+    val foldersProcessed: StateFlow<Int>
+    val isRefreshing: StateFlow<Boolean>
+
     fun onBookClick(uri: Uri)
+
+    fun refresh()
 
     data class Model(
         val imageUri: String? = null,

@@ -1,7 +1,7 @@
 package cat.petrushkacat.audiobookplayer.data.repository
 
-import cat.petrushkacat.audiobookplayer.audioservice.repository.AudioServiceSettingsRepository
 import cat.petrushkacat.audiobookplayer.audioservice.model.AudioServiceSettings
+import cat.petrushkacat.audiobookplayer.audioservice.repository.AudioServiceSettingsRepository
 import cat.petrushkacat.audiobookplayer.core.models.SettingsEntity
 import cat.petrushkacat.audiobookplayer.core.repository.SettingsRepository
 import cat.petrushkacat.audiobookplayer.data.db.SettingsDao

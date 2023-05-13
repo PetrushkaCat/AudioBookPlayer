@@ -1,8 +1,8 @@
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
-    id("kotlin-kapt")
     id("dagger.hilt.android.plugin")
+    kotlin("kapt")
 }
 
 android {
@@ -10,7 +10,7 @@ android {
     compileSdk = 33
 
     defaultConfig {
-        minSdk = 24
+        minSdk = 26
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
@@ -36,9 +36,8 @@ android {
 
 dependencies {
 
-    implementation("androidx.core:core-ktx:1.10.0")
+    implementation (libs.androidx.core.ktx)
     implementation("androidx.appcompat:appcompat:1.6.1")
-    implementation("com.google.android.material:material:1.8.0")
     implementation("androidx.legacy:legacy-support-v4:1.0.0") // Needed MediaSessionCompat.Token
 
     implementation(libs.media3.exoplayer)
@@ -48,11 +47,7 @@ dependencies {
     implementation(libs.hilt.android)
     kapt(libs.hilt.compiler)
 
-    implementation(libs.room.runtime)
-    annotationProcessor(libs.room.compiler)
-    kapt(libs.room.compiler)
-    implementation(libs.room.ktx)
-    testImplementation(libs.room.testing)
+    implementation(libs.room.common)
 
     implementation("com.github.bumptech.glide:glide:4.15.1")
 

@@ -2,9 +2,7 @@ package cat.petrushkacat.audiobookplayer.core.components.main.bookplayer.book.bo
 
 import cat.petrushkacat.audiobookplayer.audioservice.CurrentTimings
 import cat.petrushkacat.audiobookplayer.audioservice.PlayerEvent
-import cat.petrushkacat.audiobookplayer.core.components.main.bookplayer.book.toolbar.BookPlayerToolbarComponent
 import cat.petrushkacat.audiobookplayer.core.models.BookEntity
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
 interface BookPlayerComponent {

@@ -1,7 +1,6 @@
 package cat.petrushkacat.audiobookplayer.app.ui
 
 import android.content.res.Configuration
-import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.scrollable
@@ -15,9 +14,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeight
-import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
@@ -39,19 +36,17 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.HorizontalAlignmentLine
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.media3.common.util.UnstableApi
-import androidx.media3.exoplayer.ExoPlayer
 import cat.petrushkacat.audiobookplayer.R
 import cat.petrushkacat.audiobookplayer.app.util.formatDuration
 import cat.petrushkacat.audiobookplayer.audioservice.CurrentTimings
@@ -99,14 +94,12 @@ fun BookPlayerComponentUi(component: BookPlayerComponent) {
         Column {
             LinearProgressIndicator(
                 currentProgress, modifier = Modifier
-                    //.weight(0.1f)
                     .requiredHeight(8.dp)
                     .fillMaxWidth()
                     .padding(2.dp)
             )
             Row(
                 modifier = Modifier
-                    //.weight(0.3f)
                     .fillMaxWidth()
                     .padding(4.dp, 2.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
@@ -115,8 +108,7 @@ fun BookPlayerComponentUi(component: BookPlayerComponent) {
                 Text(formatDuration(model.duration), style = TextStyle(fontSize = 13.sp))
             }
         }
-        Text(model.name, style = TextStyle(fontSize = 17.sp), //modifier = Modifier.weight(0.7f)
-        )
+        Text(model.name, style = TextStyle(fontSize = 17.sp))
 
         AsyncImage(
             modifier = if(LocalConfiguration.current.orientation == Configuration.ORIENTATION_PORTRAIT ) {
@@ -126,14 +118,12 @@ fun BookPlayerComponentUi(component: BookPlayerComponent) {
                 } else Modifier.height(width)
             } else {
                 Modifier.height(LocalConfiguration.current.screenHeightDp.dp - 300.dp)
-
-                //Modifier.weight(0.3f)
-            },
+                   },
             model = ImageRequest.Builder(LocalContext.current)
                 .data(model.imageUri)
                 .error(R.drawable.round_play_button)
                 .build(),
-            contentDescription = null,
+            contentDescription = stringResource(id = R.string.book_cover),
         )
         PlayerControllers(
             onPlayerEvent = component::onPlayerEvent,
@@ -142,14 +132,13 @@ fun BookPlayerComponentUi(component: BookPlayerComponent) {
             progress,
             model.duration,
             isPlaying,
-            Modifier.defaultMinSize(minHeight = 170.dp)
+            Modifier.defaultMinSize(minHeight = 190.dp)
         )
         Spacer(modifier = Modifier.height(20.dp))
 
     }
 }
 
-// TODO add content description for all screens
 @Composable
 fun PlayerControllers(
     onPlayerEvent: (PlayerEvent) -> Unit,
@@ -163,15 +152,12 @@ fun PlayerControllers(
 
     val iconsSize = 40.dp
     val iconsSize2 = 25.dp
-    //val isPlaying = rememberSaveable { mutableStateOf(false) }
     val currentChapterName = try {
         chapters.chapters[currentTimings.currentChapterIndex].name
     } catch (e: IndexOutOfBoundsException) {
         ""
     }
-    val showDialog = rememberSaveable {
-        mutableStateOf(false)
-    }
+    val showDialog = rememberSaveable { mutableStateOf(false) }
 
     val icon = if (!isPlaying) {
         Icons.Default.PlayArrow
@@ -180,18 +166,18 @@ fun PlayerControllers(
     }
 
     Column(
-        modifier = modifier
-            .padding(horizontal = 10.dp),
+        modifier = modifier.padding(horizontal = 10.dp),
         verticalArrangement = Arrangement.SpaceAround
     ) {
         if (chapters.chapters.size > 1) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
                     Icons.Default.ArrowBackIos,
-                    null,
+                    stringResource(id = R.string.previous_chapter),
                     modifier = Modifier
                         .size(iconsSize2)
                         .weight(1f)
@@ -199,21 +185,25 @@ fun PlayerControllers(
                             onPlayerEvent(PlayerEvent.PreviousChapter)
                         })
                 Row(modifier = Modifier
-                    .weight(9f)
+                    .weight(4f)
+                    .defaultMinSize(minHeight = 40.dp)
                     .clickable {
                         showDialog.value = true
                     },
-                    horizontalArrangement = Arrangement.Center
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(currentChapterName)
-                    Icon(Icons.Default.ExpandMore, null, modifier = Modifier
-                        .size(iconsSize2)
-                        .defaultMinSize(30.dp))
+                    Icon(Icons.Default.ExpandMore,
+                        stringResource(id = R.string.expand_chapters),
+                        modifier = Modifier
+                            .size(iconsSize2)
+                            .defaultMinSize(30.dp))
                 }
 
                 Icon(
                     Icons.Default.ArrowForwardIos,
-                    contentDescription = null,
+                    contentDescription = stringResource(id = R.string.next_chapter),
                     modifier = Modifier
                         .size(iconsSize2)
                         .weight(1f)
@@ -239,25 +229,29 @@ fun PlayerControllers(
         ) {
             Icon(
                 Icons.Default.KeyboardDoubleArrowLeft,
-                contentDescription = null,
+                contentDescription = stringResource(id = R.string.rewind_back),
                 modifier = Modifier
                     .size(iconsSize)
+                    .weight(1f)
                     .clickable {
-                        onPlayerEvent(PlayerEvent.Backward(15000))
+                        onPlayerEvent(PlayerEvent.Backward)
                     })
-            Icon(icon, contentDescription = null, modifier = Modifier
-                .size(iconsSize)
-                .clickable {
-                    onPlayerEvent(PlayerEvent.PlayPause)
-                    //isPlaying.value = !isPlaying.value
-                })
+            Icon(icon,
+                contentDescription = stringResource(id = R.string.play_pause),
+                modifier = Modifier
+                    .size(iconsSize)
+                    .weight(4f)
+                    .clickable {
+                        onPlayerEvent(PlayerEvent.PlayPause)
+                    })
             Icon(
                 Icons.Default.KeyboardDoubleArrowRight,
-                contentDescription = null,
+                contentDescription = stringResource(id = R.string.rewind_forward),
                 modifier = Modifier
                     .size(iconsSize)
+                    .weight(1f)
                     .clickable {
-                        onPlayerEvent(PlayerEvent.Forward(15000))
+                        onPlayerEvent(PlayerEvent.Forward)
                     }
             )
         }
@@ -301,9 +295,10 @@ fun SelectChapterDialog(
                             },
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(text = chapters.chapters[it].name)
                         if (currentTimings.currentChapterIndex == it) {
-                            Text(" <--current:)")
+                            Text(text = chapters.chapters[it].name, style = TextStyle(textDecoration = TextDecoration.Underline))
+                        } else {
+                            Text(text = chapters.chapters[it].name)
                         }
                     }
                 }
@@ -319,8 +314,6 @@ fun PlayerBar(
     duration: Long,
     onPlayerEvent: (PlayerEvent) -> Unit
 ) {
-
-    Log.d("player-3", progress.toString())
     Column(modifier = Modifier.fillMaxWidth()) {
         Slider(
             value = progress,
@@ -330,9 +323,7 @@ fun PlayerBar(
             modifier = Modifier.padding(4.dp),
         )
         Row(
-            modifier = Modifier
-                .fillMaxWidth(),
-                //.padding(bottom = 10.dp),
+            modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(progressString)

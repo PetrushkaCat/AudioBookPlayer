@@ -3,8 +3,8 @@ plugins {
     id ("org.jetbrains.kotlin.android")
     //id ("com.google.devtools.ksp")
     //id ("kotlin-parcelize")
-    id ("kotlin-kapt")
     id("dagger.hilt.android.plugin")
+    kotlin("kapt")
 }
 
 android {
@@ -13,10 +13,10 @@ android {
 
     defaultConfig {
         applicationId = "cat.petrushkacat.audiobookplayer"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 33
         versionCode = 1
-        versionName = "1.0"
+        versionName = "1.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -26,7 +26,8 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
@@ -43,7 +44,7 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.4.6"
+        kotlinCompilerExtensionVersion = "1.4.7"
     }
     packaging {
         resources {
@@ -66,6 +67,7 @@ dependencies {
     implementation(platform(libs.compose.bom))
     implementation(libs.compose.ui)
     implementation(libs.compose.ui.graphics)
+    implementation("androidx.compose.material:material")
     implementation(libs.compose.material3)
     implementation(libs.compose.ui.tooling.prewiew)
     implementation(libs.compose.material.icons.core)
@@ -77,15 +79,6 @@ dependencies {
     implementation(libs.decompose)
     implementation(libs.decompose.compose)
 
-    /*implementation ("com.arkivanov.mvikotlin:mvikotlin:$mvikotlinVersion")
-    implementation ("com.arkivanov.mvikotlin:mvikotlin-main:$mvikotlinVersion")
-    implementation ("com.arkivanov.mvikotlin:mvikotlin-logging:$mvikotlinVersion")
-    implementation ("com.arkivanov.mvikotlin:mvikotlin-timetravel:$mvikotlinVersion")
-    implementation ("com.arkivanov.mvikotlin:mvikotlin-extensions-coroutines:$mvikotlinVersion")*/
-
-    /*implementation(libs.koin.core)
-    implementation(libs.koin.android)*/
-
     implementation(libs.coroutines.core)
     implementation(libs.coroutines.android)
 
@@ -96,11 +89,7 @@ dependencies {
     implementation(libs.hilt.android)
     kapt(libs.hilt.compiler)
 
-    implementation(libs.room.runtime)
-    annotationProcessor(libs.room.compiler)
-    kapt(libs.room.compiler)
-    implementation(libs.room.ktx)
-    testImplementation(libs.room.testing)
+    implementation(libs.room.common)
 
     testImplementation(libs.junit.junit)
     androidTestImplementation(libs.androidx.test.ext.junit)

@@ -9,4 +9,6 @@ interface BookshelfToolbarComponent {
     fun onFolderButtonClick()
 
     fun onGridButtonClick()
+
+    fun onSearch(text: String)
 }

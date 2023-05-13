@@ -20,6 +20,9 @@ data class BookEntity(
     val playSpeed: Float = 1f,
     val notes: Notes = Notes(emptyList()),
     val lastTimeListened: Long = 0L,
+    val isFavorite: Boolean = false,
+    val isTemporarilyDeleted: Boolean = false,
+    val isWantToListen: Boolean = false,
     )
 
 data class Notes(

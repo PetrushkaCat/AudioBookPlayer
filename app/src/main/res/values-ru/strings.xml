@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="book_cover">Обложка</string>
+    <string name="previous_chapter">Прошлая глава</string>
+    <string name="expand_chapters">Нажмите для выбора главы</string>
+    <string name="next_chapter">Следующая глава</string>
+    <string name="rewind_back">Перемотка назад</string>
+    <string name="play_pause">Пауза/продолжить</string>
+    <string name="rewind_forward">Перемотка вперед</string>
+    <string name="speed_icon_description">Нажмите, чтобы изменить скорость</string>
+    <string name="bookmarks_icon_description">Нажмите, чтобы открыть экран с закладками</string>
+    <string name="ok">OK</string>
+    <string name="menu_icon_description">Нажмите, чтобы открыть меню</string>
+    <string name="grid_icon_description">Нажмите, чтобы сменить отображение книг</string>
+    <string name="search_icon_description">Нажмите для поиска</string>
+    <string name="close_search_icon">Прекратить поиск</string>
+    <string name="folders_processed">"Папок просмотрено: "</string>
+    <string name="of">из</string>
+    <string name="settings">Настройки</string>
+    <string name="designed_with_paws">Сделано лапками</string>
+    <string name="paws_icon">Лапки</string>
+    <string name="by_petrushka_cat">От Petrushka Cat</string>
+    <string name="version">Версия</string>
+    <string name="settings_icon_description">Нажмите, чтобы открыть настройки</string>
+    <string name="add_folder_icon">Добавить новую папку с книгами</string>
+    <string name="remove_folder_icon">Удалить папку</string>
+    <string name="add_note_icon">Добавить новую заметку</string>
+    <string name="delete_note_icon">Удалить</string>
+    <string name="edit_note_icon">Редактировать</string>
+    <string name="save">Сохранить</string>
+    <string name="icon_dark_mode">Сменить тему</string>
+    <string name="dark_theme">Темная тема</string>
+    <string name="rewind">Перемока</string>
+    <string name="auto_rewind_back_on_pause">Автоперемока при нажатии на паузу</string>
+    <string name="auto_sleep">Сон</string>
+    <string name="rate_this_app">Оценить приложение :)</string>
+    <string name="description">Описание</string>
+    <string name="add_folder_description">(папка с книжками. Каждая книга должна быть в своей собственной подпапке)</string>
+</resources>

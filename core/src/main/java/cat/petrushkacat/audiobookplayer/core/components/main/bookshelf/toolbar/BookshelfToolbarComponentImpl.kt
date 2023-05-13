@@ -13,7 +13,8 @@ import kotlinx.coroutines.launch
 class BookshelfToolbarComponentImpl(
     componentContext: ComponentContext,
     private val settingsRepository: SettingsRepository,
-    private val onFolderButtonClicked: () -> Unit
+    private val onFolderButtonClicked: () -> Unit,
+    private val onSearched: (String) -> Unit
 ) : BookshelfToolbarComponent, ComponentContext by componentContext {
 
     private val scope = componentCoroutineScopeDefault()
@@ -48,6 +49,10 @@ class BookshelfToolbarComponentImpl(
                 )
             )
         }
+    }
+
+    override fun onSearch(text: String) {
+        onSearched(text)
     }
 
 }

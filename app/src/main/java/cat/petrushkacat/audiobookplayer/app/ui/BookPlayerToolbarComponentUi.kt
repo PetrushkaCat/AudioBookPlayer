@@ -6,13 +6,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.BookmarkAdd
 import androidx.compose.material.icons.filled.Bookmarks
-import androidx.compose.material.icons.filled.Notes
-import androidx.compose.material.icons.filled.ShutterSpeed
+import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Speed
-import androidx.compose.material.icons.filled.VolumeUp
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -21,12 +19,12 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import cat.petrushkacat.audiobookplayer.R
 import cat.petrushkacat.audiobookplayer.core.components.main.bookplayer.book.toolbar.BookPlayerToolbarComponent
 
 @Composable
@@ -38,20 +36,22 @@ fun BookPlayerToolbarComponentUi(component: BookPlayerToolbarComponent) {
     TopAppBar(title = { Text("") }, actions = {
         Icon(
             Icons.Default.Speed,
-            contentDescription = null,
+            contentDescription = stringResource(id = R.string.speed_icon_description),
             modifier = Modifier
                 .clickable {
                     showDialog.value = true
                 }
+                .size(48.dp)
                 .padding(horizontal = 10.dp)
         )
         Icon(
             Icons.Default.Bookmarks,
-            contentDescription = null,
+            contentDescription = stringResource(id = R.string.bookmarks_icon_description),
             modifier = Modifier
                 .clickable {
                     component.onNotesButtonClick()
                 }
+                .size(48.dp)
                 .padding(horizontal = 10.dp)
         )
     })
@@ -75,11 +75,17 @@ fun PlaySpeedChangeDialog(
             showDialog.value = false
                            },
         confirmButton = {
-            Text("Ok", modifier = Modifier.clickable {
-                onPlaySpeedChange(newValue.value)
-                showDialog.value = false
-            })
-        },
+            Icon(
+                Icons.Default.Save,
+                stringResource(id = R.string.save),
+                modifier = Modifier
+                    .clickable {
+                        onPlaySpeedChange(newValue.value)
+                        showDialog.value = false
+                    }
+                    .size(48.dp)
+                    .padding(10.dp)
+            ) },
         text = {
             Column {
                 Slider(
@@ -91,7 +97,6 @@ fun PlaySpeedChangeDialog(
                     valueRange = 0.25f.rangeTo(3f),
                     steps = 10,
                     onValueChangeFinished = {
-                        //useNewValue.value = false
                     }
                 )
                 Row(modifier = Modifier.fillMaxWidth(),

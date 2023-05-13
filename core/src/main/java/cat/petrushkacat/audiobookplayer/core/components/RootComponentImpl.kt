@@ -1,6 +1,5 @@
 package cat.petrushkacat.audiobookplayer.core.components
 
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 

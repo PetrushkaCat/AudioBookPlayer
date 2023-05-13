@@ -4,9 +4,7 @@ import android.content.Context
 import android.net.Uri
 import cat.petrushkacat.audiobookplayer.audioservice.AudiobookServiceHandler
 import cat.petrushkacat.audiobookplayer.audioservice.sensors.SensorListener
-import cat.petrushkacat.audiobookplayer.core.components.main.bookplayer.book.bookplayer.BookPlayerComponent
 import cat.petrushkacat.audiobookplayer.core.components.main.bookplayer.book.bookplayer.BookPlayerComponentImpl
-import cat.petrushkacat.audiobookplayer.core.components.main.bookplayer.book.toolbar.BookPlayerToolbarComponent
 import cat.petrushkacat.audiobookplayer.core.components.main.bookplayer.book.toolbar.BookPlayerToolbarComponentImpl
 import cat.petrushkacat.audiobookplayer.core.repository.AudiobooksRepository
 import com.arkivanov.decompose.ComponentContext

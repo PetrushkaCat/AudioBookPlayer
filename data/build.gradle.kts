@@ -1,9 +1,9 @@
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
-    id("kotlin-kapt")
-    //id ("com.google.devtools.ksp")
-
+    id("dagger.hilt.android.plugin")
+    kotlin("kapt")
+    id ("com.google.devtools.ksp")
 }
 
 android {
@@ -11,17 +11,10 @@ android {
     compileSdk = 33
 
     defaultConfig {
-        minSdk = 24
+        minSdk = 26
 
         testInstrumentationRunner = "android.support.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
-        javaCompileOptions {
-            annotationProcessorOptions {
-                compilerArgumentProviders(
-                    RoomSchemaArgProvider(File(projectDir, "schemas"))
-                )
-            }
-        }
     }
 
     buildTypes {
@@ -51,7 +44,7 @@ dependencies {
 
     implementation(libs.room.runtime)
     annotationProcessor(libs.room.compiler)
-    kapt(libs.room.compiler)
+    ksp(libs.room.compiler)
     implementation(libs.room.ktx)
     testImplementation(libs.room.testing)
     implementation(libs.gson)
@@ -74,6 +67,10 @@ class RoomSchemaArgProvider(
     override fun asArguments(): Iterable<String> {
         // Note: If you're using KSP, change the line below to return
         // listOf("room.schemaLocation=${schemaDir.path}").
-        return listOf("-Aroom.schemaLocation=${schemaDir.path}")
+        return listOf("room.schemaLocation=${schemaDir.path}")
     }
+}
+
+ksp {
+    arg(RoomSchemaArgProvider(File(projectDir, "schemas")))
 }

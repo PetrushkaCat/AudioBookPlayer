@@ -55,10 +55,7 @@ class AudiobookServiceHandler @Inject constructor(
         player.prepare()
     }
 
-    fun removeItems() {
-        player.stop()
-        player.removeMediaItems(0, player.mediaItemCount)
-    }
+    fun isStopped() = player.playbackState != Player.STATE_READY
 
     fun setTimings(chapterIndex: Int, chapterTime: Long) {
         player.seekTo(chapterIndex, chapterTime)

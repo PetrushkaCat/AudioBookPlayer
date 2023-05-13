@@ -5,7 +5,6 @@ import android.content.Intent
 import android.hardware.Sensor
 import android.hardware.SensorManager
 import android.net.Uri
-import android.os.Build
 import android.util.Log
 import androidx.core.app.ComponentActivity
 import androidx.media3.common.MediaItem
@@ -42,6 +41,9 @@ class BookPlayerComponentImpl(
     private val onBack: () -> Unit
 ) : BookPlayerComponent, ComponentContext by componentContext {
 
+    private val stateSaverString = "state_saver_player"
+
+    private var alive = true
     private val scope = componentContext.componentCoroutineScopeDefault()
     private val scopeMain = componentContext.componentCoroutineScopeMain()
 
@@ -81,6 +83,7 @@ class BookPlayerComponentImpl(
     override val isPlaying = audiobookServiceHandler.isPlaying.asStateFlow()
 
     init {
+        Log.d("player-5", isInitialized.toString() + " $counter")
         backHandler.register(BackCallback {
             context.stopService(Intent(context, AudiobookMediaService::class.java))
             audiobookServiceHandler.stopProgressUpdate()
@@ -89,38 +92,46 @@ class BookPlayerComponentImpl(
         })
 
         lifecycle.doOnDestroy {
-            //onDestroy()
+            alive = false
         }
         scope.launch {
             audiobooksRepository.getBook(bookUri).collect {
                 _models.value = it
 
-                for (chapter in it.chapters.chapters) {
-                    val mediaItem = MediaItem.Builder()
-                        .setUri(chapter.uri)
-                        .setMediaMetadata(
-                            MediaMetadata.Builder()
-                                .setFolderType(MediaMetadata.FOLDER_TYPE_ALBUMS)
-                                .setArtworkData(models.value.image, MediaMetadata.PICTURE_TYPE_FRONT_COVER)
-                                .setAlbumTitle(models.value.name)
-                                .setDisplayTitle(chapter.name)
-                                .build()
-                        ).build()
-
-                    mediaItems.add(mediaItem)
-                }
-                Log.d("player-1", "items: " + mediaItems.toString())
-
-                if (!isInitialized) {
+                var isStropped: Boolean
                 withContext(Dispatchers.Main) {
-                    audiobookServiceHandler.addMediaItemList(mediaItems)
-                    audiobookServiceHandler.setTimings(
-                        it.currentChapter,
-                        it.currentChapterTime
-                    )
+                    isStropped = audiobookServiceHandler.isStopped()
                 }
+                if (!isInitialized || isStropped) {
+                    for (chapter in it.chapters.chapters) {
+                        val mediaItem = MediaItem.Builder()
+                            .setUri(chapter.uri)
+                            .setMediaMetadata(
+                                MediaMetadata.Builder()
+                                    .setFolderType(MediaMetadata.FOLDER_TYPE_ALBUMS)
+                                    .setArtworkData(
+                                        models.value.image,
+                                        MediaMetadata.PICTURE_TYPE_FRONT_COVER
+                                    )
+                                    .setAlbumTitle(models.value.name)
+                                    .setDisplayTitle(chapter.name)
+                                    .build()
+                            ).build()
+
+                        mediaItems.add(mediaItem)
+                    }
+                    Log.d("player-1", "items: " + mediaItems.toString())
+
+                    withContext(Dispatchers.Main) {
+                        isInitialized = true
+                        audiobookServiceHandler.addMediaItemList(mediaItems)
+                        audiobookServiceHandler.setTimings(
+                            it.currentChapter,
+                            it.currentChapterTime
+                        )
+                        audiobookServiceHandler.setPlaySpeed(it.playSpeed)
+                    }
                     startService()
-                    isInitialized = true
                 }
 
             }
@@ -152,13 +163,11 @@ class BookPlayerComponentImpl(
             .putExtra(DURATION_EXTRA, models.value.duration)
             .putExtra(CHAPTER_DURATIONS, chapterDurations.toLongArray())
 
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            context.startForegroundService(intent)
-        }
+        context.startForegroundService(intent)
     }
 
     companion object {
         var isInitialized = false
+        var counter = 0
     }
 }

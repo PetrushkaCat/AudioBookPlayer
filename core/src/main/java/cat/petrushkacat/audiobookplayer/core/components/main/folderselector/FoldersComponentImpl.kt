@@ -100,7 +100,7 @@ class FoldersComponentImpl(
         CoroutineScope(SupervisorJob() + Dispatchers.IO).launch {
             _foldersToProcess.value += 1
             var name: String? = null
-            var imageUri: Uri? = null
+            var image: ByteArray? = null
             var bookDuration: Long = 0
 
             val chapters: MutableList<Chapter> = mutableListOf()
@@ -119,15 +119,15 @@ class FoldersComponentImpl(
                     val chapterDuration = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)?.toLong()!!
                     bookDuration += chapterDuration
 
+                    if(image == null) {
+                        image = mmr.embeddedPicture
+                    }
+
                     chapters.add(Chapter(bookFolder.uri.toString(),
                         content.name?.substringBeforeLast('.') ?: "Chapter ${index + 1}",
                         chapterDuration,
                         0,
                         content.uri.toString()))
-                }
-
-                if (content.isImage()) {
-                    imageUri = content.uri
                 }
             }
 
@@ -155,7 +155,7 @@ class FoldersComponentImpl(
                     currentTime = 0,
                     duration = bookDuration,
                     rootFolderUri = rootFolderUri.toString(),
-                    imageUri = imageUri.toString(),
+                    image = image,
                 )
                 )
             }

@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "9798087342615f199b69706e7f3e43ae",
+    "identityHash": "404df642372a62ddc9f18e219c92690a",
     "entities": [
       {
         "tableName": "BookEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`folderUri` TEXT NOT NULL, `folderName` TEXT NOT NULL, `name` TEXT NOT NULL, `chapters` TEXT NOT NULL, `currentChapter` INTEGER NOT NULL, `currentChapterTime` INTEGER NOT NULL, `currentTime` INTEGER NOT NULL, `duration` INTEGER NOT NULL, `rootFolderUri` TEXT NOT NULL, `imageUri` TEXT, `isStarted` INTEGER NOT NULL, `isCompleted` INTEGER NOT NULL, `volumeUp` REAL NOT NULL, `playSpeed` REAL NOT NULL, `notes` TEXT NOT NULL, `lastTimeListened` INTEGER NOT NULL, `isFavorite` INTEGER NOT NULL, `isTemporarilyDeleted` INTEGER NOT NULL, `isWantToListen` INTEGER NOT NULL, PRIMARY KEY(`folderName`, `duration`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`folderUri` TEXT NOT NULL, `folderName` TEXT NOT NULL, `name` TEXT NOT NULL, `chapters` TEXT NOT NULL, `currentChapter` INTEGER NOT NULL, `currentChapterTime` INTEGER NOT NULL, `currentTime` INTEGER NOT NULL, `duration` INTEGER NOT NULL, `rootFolderUri` TEXT NOT NULL, `image` BLOB, `isStarted` INTEGER NOT NULL, `isCompleted` INTEGER NOT NULL, `volumeUp` REAL NOT NULL, `playSpeed` REAL NOT NULL, `notes` TEXT NOT NULL, `lastTimeListened` INTEGER NOT NULL, `isFavorite` INTEGER NOT NULL, `isTemporarilyDeleted` INTEGER NOT NULL, `isWantToListen` INTEGER NOT NULL, PRIMARY KEY(`folderName`, `duration`))",
         "fields": [
           {
             "fieldPath": "folderUri",
@@ -63,9 +63,9 @@
             "notNull": true
           },
           {
-            "fieldPath": "imageUri",
-            "columnName": "imageUri",
-            "affinity": "TEXT",
+            "fieldPath": "image",
+            "columnName": "image",
+            "affinity": "BLOB",
             "notNull": false
           },
           {
@@ -225,7 +225,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '9798087342615f199b69706e7f3e43ae')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '404df642372a62ddc9f18e219c92690a')"
     ]
   }
 }

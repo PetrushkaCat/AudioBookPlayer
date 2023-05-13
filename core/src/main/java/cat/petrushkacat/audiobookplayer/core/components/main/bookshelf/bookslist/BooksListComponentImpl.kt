@@ -6,7 +6,6 @@ import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
 import cat.petrushkacat.audiobookplayer.core.components.main.folderselector.extractInt
 import cat.petrushkacat.audiobookplayer.core.components.main.folderselector.isAudio
-import cat.petrushkacat.audiobookplayer.core.components.main.folderselector.isImage
 import cat.petrushkacat.audiobookplayer.core.models.BookEntity
 import cat.petrushkacat.audiobookplayer.core.models.Chapter
 import cat.petrushkacat.audiobookplayer.core.models.Chapters
@@ -132,7 +131,7 @@ class BooksListComponentImpl(
         scopeIO.launch {
             _foldersToProcess.value += 1
             var name: String? = null
-            var imageUri: Uri? = null
+            var image: ByteArray? = null
             var bookDuration: Long = 0
 
             val chapters: MutableList<Chapter> = mutableListOf()
@@ -151,6 +150,10 @@ class BooksListComponentImpl(
                     val chapterDuration = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)?.toLong()!!
                     bookDuration += chapterDuration
 
+                    if(image == null) {
+                        image = mmr.embeddedPicture
+                    }
+
                     chapters.add(
                         Chapter(bookFolder.uri.toString(),
                         content.name?.substringBeforeLast('.') ?: "Chapter ${index + 1}",
@@ -160,9 +163,6 @@ class BooksListComponentImpl(
                     )
                 }
 
-                if (content.isImage()) {
-                    imageUri = content.uri
-                }
             }
 
             name?.let {
@@ -189,7 +189,7 @@ class BooksListComponentImpl(
                         currentTime = 0,
                         duration = bookDuration,
                         rootFolderUri = rootFolderUri.toString(),
-                        imageUri = imageUri.toString(),
+                        image = image,
                     )
                 )
                 bookUris.add(bookFolder.uri)

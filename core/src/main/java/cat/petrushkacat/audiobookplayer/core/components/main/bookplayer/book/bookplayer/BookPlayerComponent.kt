@@ -29,7 +29,7 @@ interface BookPlayerComponent {
         val duration: Long,
         val isStarted: Boolean = false,
         val isCompleted: Boolean = false
-        //val imageUri: String?
+        //val image: ByteArray?
     )
 
 }

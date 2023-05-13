@@ -36,7 +36,7 @@ class AudiobookNotificationAdapter(
     ): Bitmap? {
         Glide.with(context)
             .asBitmap()
-            .load(player.mediaMetadata.artworkUri)
+            .load(player.mediaMetadata.artworkData)
             .error(R.drawable.round_play_button)
             //.diskCacheStrategy(DiskCacheStrategy.RESOURCE)
             .into(object : CustomTarget<Bitmap>() {

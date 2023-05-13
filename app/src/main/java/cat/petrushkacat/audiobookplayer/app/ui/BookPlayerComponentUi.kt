@@ -120,7 +120,7 @@ fun BookPlayerComponentUi(component: BookPlayerComponent) {
                 Modifier.height(LocalConfiguration.current.screenHeightDp.dp - 300.dp)
                    },
             model = ImageRequest.Builder(LocalContext.current)
-                .data(model.imageUri)
+                .data(model.image)
                 .error(R.drawable.round_play_button)
                 .build(),
             contentDescription = stringResource(id = R.string.book_cover),

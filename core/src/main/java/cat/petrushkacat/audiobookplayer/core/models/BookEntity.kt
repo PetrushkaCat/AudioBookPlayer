@@ -13,7 +13,7 @@ data class BookEntity(
     val currentTime: Long = 0,
     val duration: Long = 0,
     val rootFolderUri: String,
-    val imageUri: String?,
+    val image: ByteArray?,
     val isStarted: Boolean = false,
     val isCompleted: Boolean = false,
     val volumeUp: Float = 0f,

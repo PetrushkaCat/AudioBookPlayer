@@ -19,7 +19,7 @@ interface BooksListComponent {
     fun refresh()
 
     data class Model(
-        val imageUri: String? = null,
+        val image: ByteArray? = null,
         val name: String,
         val folderUri: String,
         val currentTime: Long = 0,

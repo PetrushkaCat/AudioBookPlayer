@@ -65,7 +65,7 @@ class BookPlayerComponentImpl(
                     )
                 )
             ),
-            imageUri = null,
+            image = null,
             rootFolderUri = bookUri.toString(),
             lastTimeListened = 0L
         )
@@ -101,7 +101,7 @@ class BookPlayerComponentImpl(
                         .setMediaMetadata(
                             MediaMetadata.Builder()
                                 .setFolderType(MediaMetadata.FOLDER_TYPE_ALBUMS)
-                                .setArtworkUri(Uri.parse(models.value.imageUri))
+                                .setArtworkData(models.value.image, MediaMetadata.PICTURE_TYPE_FRONT_COVER)
                                 .setAlbumTitle(models.value.name)
                                 .setDisplayTitle(chapter.name)
                                 .build()

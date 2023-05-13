@@ -142,7 +142,7 @@ fun BookListItem(model: BooksListComponent.Model, modifier: Modifier) {
                 modifier = Modifier
                     .size(100.dp),
                 model = ImageRequest.Builder(LocalContext.current)
-                    .data(model.imageUri)
+                    .data(model.image)
                     .error(R.drawable.round_play_button)
                     .build(),
                 contentDescription = stringResource(id = R.string.book_cover),
@@ -184,7 +184,7 @@ fun BookGridItem(model: BooksListComponent.Model, modifier: Modifier) {
                     .fillMaxSize()
                     .padding(horizontal = 12.dp),
                 model = ImageRequest.Builder(LocalContext.current)
-                    .data(model.imageUri)
+                    .data(model.image)
                     .error(R.drawable.round_play_button)
                     .build(),
                 contentDescription = stringResource(id = R.string.book_cover),

@@ -29,8 +29,10 @@ import com.arkivanov.decompose.defaultComponentContext
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.takeWhile
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -58,6 +60,8 @@ class MainActivity : ComponentActivity() {
 
     private val isDarkTheme = MutableStateFlow(true)
 
+    private var job = Job()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -71,16 +75,21 @@ class MainActivity : ComponentActivity() {
             sensorListener
         )
 
-        CoroutineScope(Dispatchers.Default).launch {
-            if(settingsRepository.getSettings().first() == null) { //nope it's not always false
+        CoroutineScope(job + Dispatchers.Default).launch {
+            if (settingsRepository.getSettings().first() == null) { //nope it's not always false
                 settingsRepository.saveSettings(SettingsEntity())
             }
-            launch {
-                settingsRepository.getSettings().collect {
-                    isDarkTheme.value = it.theme == Theme.DARK
-                }
-            }
+                settingsRepository.getSettings().takeWhile { job.isActive }
+                    .collect {
+                        isDarkTheme.value = it.theme == Theme.DARK
+                     /*   while (true) {
+                            Log.d("123", "${this.toString()}")
+                            delay(100)
+                        }*/
+                    }
+
         }
+
         setContent {
             AudioBookPlayerTheme(
                 darkTheme = isDarkTheme.collectAsState().value
@@ -95,6 +104,12 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        job.cancel()
+    }
+
 }
 
 @Composable

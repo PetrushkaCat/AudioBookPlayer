@@ -9,17 +9,15 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
-import cat.petrushkacat.audiobookplayer.app.ui.MainComponentUi
+import cat.petrushkacat.audiobookplayer.app.ui.RootComponentUi
 import cat.petrushkacat.audiobookplayer.app.ui.theme.AudioBookPlayerTheme
 import cat.petrushkacat.audiobookplayer.audioservice.AudiobookServiceHandler
 import cat.petrushkacat.audiobookplayer.audioservice.sensors.SensorListener
-import cat.petrushkacat.audiobookplayer.core.components.RootComponent
-import cat.petrushkacat.audiobookplayer.core.components.main.MainComponentImpl
+import cat.petrushkacat.audiobookplayer.core.components.RootComponentImpl
 import cat.petrushkacat.audiobookplayer.core.models.SettingsEntity
 import cat.petrushkacat.audiobookplayer.core.models.Theme
 import cat.petrushkacat.audiobookplayer.core.repository.AudiobooksRepository
@@ -65,7 +63,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val root = MainComponentImpl(
+        val root = RootComponentImpl(
             defaultComponentContext(),
             this,
             rootFoldersRepository,
@@ -99,7 +97,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    MainComponentUi(component = root)
+                    RootComponentUi(component = root)
                 }
             }
         }
@@ -126,11 +124,4 @@ fun GreetingPreview() {
     AudioBookPlayerTheme {
         Greeting("Android")
     }
-}
-
-@Composable
-fun A(com: RootComponent) {
-    val a by com.models.collectAsState()
-
-    Text(a.a)
 }

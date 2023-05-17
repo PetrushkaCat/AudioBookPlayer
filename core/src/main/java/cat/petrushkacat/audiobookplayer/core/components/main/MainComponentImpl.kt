@@ -2,6 +2,7 @@ package cat.petrushkacat.audiobookplayer.core.components.main
 
 import android.content.Context
 import android.net.Uri
+import android.util.Log
 import android.widget.Toast
 import androidx.documentfile.provider.DocumentFile
 import cat.petrushkacat.audiobookplayer.audioservice.AudiobookServiceHandler
@@ -48,6 +49,11 @@ class MainComponentImpl(
         handleBackButton = true,
         childFactory = ::createChild
     ).toStateFlow(lifecycle)
+
+    init {
+        Log.d("init", "main")
+    }
+
 
     private fun createChild(
         config: ChildConfig,

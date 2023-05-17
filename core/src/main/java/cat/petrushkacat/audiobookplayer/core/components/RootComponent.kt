@@ -1,15 +1,17 @@
 package cat.petrushkacat.audiobookplayer.core.components
 
-import com.arkivanov.essenty.parcelable.Parcelable
-import com.arkivanov.essenty.parcelable.Parcelize
+import cat.petrushkacat.audiobookplayer.core.components.main.MainComponent
+import cat.petrushkacat.audiobookplayer.core.components.splashscreen.SplashScreenComponent
+import com.arkivanov.decompose.router.stack.ChildStack
 import kotlinx.coroutines.flow.StateFlow
 
 interface RootComponent {
 
-    val models: StateFlow<A>
+    val childStack: StateFlow<ChildStack<*, Child>>
 
-    @Parcelize
-    data class A(
-        val a: String
-    ): Parcelable
+    sealed interface Child {
+        data class Main(val component: MainComponent): Child
+
+        data class Splash(val component: SplashScreenComponent): Child
+    }
 }

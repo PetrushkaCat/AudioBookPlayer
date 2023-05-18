@@ -1,6 +1,9 @@
 package cat.petrushkacat.audiobookplayer.app.ui
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -26,12 +29,16 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -43,8 +50,9 @@ import cat.petrushkacat.audiobookplayer.app.ui.theme.Purple40
 import cat.petrushkacat.audiobookplayer.app.util.formatDuration
 import cat.petrushkacat.audiobookplayer.core.components.main.bookshelf.bookslist.BooksListComponent
 import cat.petrushkacat.audiobookplayer.core.models.Grid
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -128,6 +136,20 @@ fun BooksListComponentUi(component: BooksListComponent) {
 
 @Composable
 fun BookListItem(model: BooksListComponent.Model, modifier: Modifier) {
+
+    val context = LocalContext.current
+    val bitmap = remember { mutableStateOf<Bitmap?>(null)}
+
+    LaunchedEffect(key1 = true) {
+        CoroutineScope(Dispatchers.IO).launch {
+            bitmap.value = if(model.image != null) {
+                BitmapFactory.decodeByteArray(model.image, 0, model.image!!.size)
+            } else {
+                BitmapFactory.decodeResource(context.resources, R.drawable.round_play_button)
+            }
+        }
+    }
+
     Column(
         modifier = modifier
             .height(150.dp)
@@ -138,15 +160,14 @@ fun BookListItem(model: BooksListComponent.Model, modifier: Modifier) {
                 .fillMaxWidth()
                 .padding(4.dp),
         ) {
-            AsyncImage(
-                modifier = Modifier
-                    .size(100.dp),
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(model.image)
-                    .error(R.drawable.round_play_button)
-                    .build(),
-                contentDescription = stringResource(id = R.string.book_cover),
-            )
+            if(bitmap.value != null) {
+                Image(
+                    modifier = Modifier
+                        .size(100.dp),
+                    bitmap = bitmap.value!!.asImageBitmap(),
+                    contentDescription = stringResource(id = R.string.book_cover),
+                )
+            }
             Text(
                 model.name,
                 style = TextStyle(fontSize = 14.sp),
@@ -172,6 +193,18 @@ fun BookListItem(model: BooksListComponent.Model, modifier: Modifier) {
 @Composable
 fun BookGridItem(model: BooksListComponent.Model, modifier: Modifier) {
 
+    val context = LocalContext.current
+    val bitmap = remember { mutableStateOf<Bitmap?>(null)}
+
+    LaunchedEffect(key1 = true) {
+        CoroutineScope(Dispatchers.IO).launch {
+            bitmap.value = if(model.image != null) {
+                BitmapFactory.decodeByteArray(model.image, 0, model.image!!.size)
+            } else {
+                BitmapFactory.decodeResource(context.resources, R.drawable.round_play_button)
+            }
+        }
+    }
     Box(modifier = modifier.padding(4.dp)) {
         Column(
             modifier = Modifier
@@ -179,16 +212,15 @@ fun BookGridItem(model: BooksListComponent.Model, modifier: Modifier) {
                 .padding(4.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            AsyncImage(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 12.dp),
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(model.image)
-                    .error(R.drawable.round_play_button)
-                    .build(),
-                contentDescription = stringResource(id = R.string.book_cover),
-            )
+            if(bitmap.value != null) {
+                Image(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(horizontal = 12.dp),
+                    bitmap = bitmap.value!!.asImageBitmap(),
+                    contentDescription = stringResource(id = R.string.book_cover),
+                )
+            }
             Column(
                 modifier = Modifier.defaultMinSize(minHeight = 72.dp),
                 verticalArrangement = Arrangement.SpaceBetween,

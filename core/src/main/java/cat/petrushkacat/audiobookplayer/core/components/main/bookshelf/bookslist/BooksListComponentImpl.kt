@@ -3,6 +3,7 @@ package cat.petrushkacat.audiobookplayer.core.components.main.bookshelf.bookslis
 import android.content.Context
 import android.media.MediaMetadataRetriever
 import android.net.Uri
+import android.util.Log
 import androidx.documentfile.provider.DocumentFile
 import cat.petrushkacat.audiobookplayer.core.components.main.folderselector.extractInt
 import cat.petrushkacat.audiobookplayer.core.components.main.folderselector.isAudio
@@ -16,10 +17,13 @@ import cat.petrushkacat.audiobookplayer.core.repository.SettingsRepository
 import cat.petrushkacat.audiobookplayer.core.util.componentCoroutineScopeDefault
 import cat.petrushkacat.audiobookplayer.core.util.componentCoroutineScopeIO
 import com.arkivanov.decompose.ComponentContext
-import com.arkivanov.essenty.lifecycle.doOnDestroy
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
 class BooksListComponentImpl(
@@ -46,16 +50,9 @@ class BooksListComponentImpl(
     override val foldersProcessed = _foldersProcessed.asStateFlow()
     override val isRefreshing: StateFlow<Boolean> = _isRefreshing.asStateFlow()
 
-    private val bookUris: MutableList<Uri> = mutableListOf()
     private var folderUris: List<Uri> = emptyList()
 
     init {
-        lifecycle.doOnDestroy {
-            isCanceled = true
-            _isRefreshing.value = false
-            _foldersProcessed.value = 0
-            _foldersToProcess.value = 0
-        }
         scope.launch {
             val started: MutableList<BooksListComponent.Model> = mutableListOf()
             val completed: MutableList<BooksListComponent.Model> = mutableListOf()
@@ -96,9 +93,13 @@ class BooksListComponentImpl(
             }
             launch {
                 _foldersProcessed.collect {
-                    if(it == _foldersToProcess.value && it > 0 && !isCanceled) {
+                    if(it == _foldersToProcess.value && it > 0) {
+                        Log.d("refreshing", bookUris.toString())
                         audiobooksRepository.deleteIfNoInList(bookUris)
                         _isRefreshing.value = false
+                        _foldersProcessed.value = 0
+                        _foldersToProcess.value = 0
+                        bookUris.clear()
                     }
                 }
             }
@@ -109,10 +110,12 @@ class BooksListComponentImpl(
     }
 
     override fun refresh() {
-        isCanceled = false
         _isRefreshing.value = true
         _foldersProcessed.value = 0
         _foldersToProcess.value = 0
+        Log.d("refreshing", _isRefreshing.value.toString())
+        Log.d("refreshing", _foldersProcessed.value.toString())
+        Log.d("refreshing", _foldersToProcess.value.toString())
         for(uri in folderUris) {
             scope.launch {
                 parseBooks(uri)
@@ -128,8 +131,8 @@ class BooksListComponentImpl(
     }
 
     private fun parseCycle(bookFolder: DocumentFile, rootFolderUri: Uri) {
-        scopeIO.launch {
-            _foldersToProcess.value += 1
+        CoroutineScope(SupervisorJob() + Dispatchers.IO).launch {
+        _foldersToProcess.value += 1
             var name: String? = null
             var image: ByteArray? = null
             var bookDuration: Long = 0
@@ -177,7 +180,7 @@ class BooksListComponentImpl(
                     timeFromBeginning += it.duration
                 }
 
-
+                if(!isActive) return@launch
                 audiobooksRepository.saveBookAfterParse(
                     BookEntity(
                         folderUri = bookFolder.uri.toString(),
@@ -193,6 +196,7 @@ class BooksListComponentImpl(
                     )
                 )
                 bookUris.add(bookFolder.uri)
+                Log.d("refreshing", "saved")
             }
             _foldersProcessed.value += 1
         }
@@ -202,6 +206,7 @@ class BooksListComponentImpl(
         private val _foldersToProcess = MutableStateFlow(0)
         private val _foldersProcessed = MutableStateFlow(0)
         private val _isRefreshing = MutableStateFlow(false)
-        private var isCanceled = false
+        private val bookUris: MutableList<Uri> = mutableListOf()
+
     }
 }

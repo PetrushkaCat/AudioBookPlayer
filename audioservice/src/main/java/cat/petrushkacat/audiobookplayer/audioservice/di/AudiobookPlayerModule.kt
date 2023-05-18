@@ -28,7 +28,7 @@ class AudiobookPlayerModule {
     @Singleton
     fun provideAudioAttributes(): AudioAttributes =
         AudioAttributes.Builder()
-            .setContentType(C.AUDIO_CONTENT_TYPE_MOVIE)
+            .setContentType(C.AUDIO_CONTENT_TYPE_SPEECH)
             .setUsage(C.USAGE_MEDIA)
             .build()
 

@@ -52,6 +52,7 @@ class AudiobookMediaService : MediaSessionService() {
         return super.onStartCommand(intent, flags, startId)
     }
 
+    @UnstableApi
     override fun onDestroy() {
         Log.d("player-stopped", "")
         mediaSession.run {
@@ -86,17 +87,16 @@ class AudiobookMediaService : MediaSessionService() {
                     )
                 )
             }
-            release()
             player.pause()
             player.stop()
             player.clearMediaItems()
-
         }
         super.onDestroy()
     }
 
     override fun onTaskRemoved(rootIntent: Intent?) {
         super.onTaskRemoved(rootIntent)
+        mediaSession.release()
         stopSelf()
     }
 

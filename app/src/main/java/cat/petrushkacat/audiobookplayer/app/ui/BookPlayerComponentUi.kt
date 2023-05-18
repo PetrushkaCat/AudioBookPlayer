@@ -1,6 +1,8 @@
 package cat.petrushkacat.audiobookplayer.app.ui
 
 import android.content.res.Configuration
+import android.graphics.BitmapFactory
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.scrollable
@@ -39,6 +41,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -53,8 +56,6 @@ import cat.petrushkacat.audiobookplayer.audioservice.CurrentTimings
 import cat.petrushkacat.audiobookplayer.audioservice.PlayerEvent
 import cat.petrushkacat.audiobookplayer.core.components.main.bookplayer.book.bookplayer.BookPlayerComponent
 import cat.petrushkacat.audiobookplayer.core.models.Chapters
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
 
 @Composable
 @UnstableApi
@@ -83,6 +84,12 @@ fun BookPlayerComponentUi(component: BookPlayerComponent) {
 
     val isPlaying by component.isPlaying.collectAsState()
 
+    val image = if(model.image == null) {
+        BitmapFactory.decodeResource(context.resources, R.drawable.round_play_button).asImageBitmap()
+    } else {
+        BitmapFactory.decodeByteArray(model.image, 0, model.image!!.size).asImageBitmap()
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -110,7 +117,7 @@ fun BookPlayerComponentUi(component: BookPlayerComponent) {
         }
         Text(model.name, style = TextStyle(fontSize = 17.sp))
 
-        AsyncImage(
+        Image(
             modifier = if(LocalConfiguration.current.orientation == Configuration.ORIENTATION_PORTRAIT ) {
                 val width = LocalConfiguration.current.screenHeightDp.dp - 400.dp
                 if(width > LocalConfiguration.current.screenWidthDp.dp) {
@@ -119,10 +126,7 @@ fun BookPlayerComponentUi(component: BookPlayerComponent) {
             } else {
                 Modifier.height(LocalConfiguration.current.screenHeightDp.dp - 300.dp)
                    },
-            model = ImageRequest.Builder(LocalContext.current)
-                .data(model.image)
-                .error(R.drawable.round_play_button)
-                .build(),
+            bitmap = image,
             contentDescription = stringResource(id = R.string.book_cover),
         )
         PlayerControllers(

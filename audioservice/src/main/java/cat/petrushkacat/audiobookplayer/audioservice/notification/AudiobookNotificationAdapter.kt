@@ -3,14 +3,11 @@ package cat.petrushkacat.audiobookplayer.audioservice.notification
 import android.app.PendingIntent
 import android.content.Context
 import android.graphics.Bitmap
-import android.graphics.drawable.Drawable
+import android.graphics.BitmapFactory
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.ui.PlayerNotificationManager
 import cat.petrushkacat.audiobookplayer.audioservice.R
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.target.CustomTarget
-import com.bumptech.glide.request.transition.Transition
 
 @UnstableApi
 class AudiobookNotificationAdapter(
@@ -34,17 +31,15 @@ class AudiobookNotificationAdapter(
         player: Player,
         callback: PlayerNotificationManager.BitmapCallback
     ): Bitmap? {
-        Glide.with(context)
-            .asBitmap()
-            .load(player.mediaMetadata.artworkData)
-            .error(R.drawable.round_play_button)
-            //.diskCacheStrategy(DiskCacheStrategy.RESOURCE)
-            .into(object : CustomTarget<Bitmap>() {
-                override fun onLoadCleared(placeholder: Drawable?) = Unit
-                override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-                    callback.onBitmap(resource)
-                }
-            })
-        return null
+        val bitmap = if(player.mediaMetadata.artworkData != null) {
+            BitmapFactory.decodeByteArray(
+                player.mediaMetadata.artworkData,
+                0,
+                player.mediaMetadata.artworkData!!.size
+            )
+        } else {
+            BitmapFactory.decodeResource(context.resources, R.drawable.round_play_button)
+        }
+        return bitmap
     }
 }

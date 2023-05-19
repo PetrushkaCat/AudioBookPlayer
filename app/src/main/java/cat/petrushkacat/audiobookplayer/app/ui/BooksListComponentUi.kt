@@ -43,6 +43,7 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cat.petrushkacat.audiobookplayer.R
@@ -127,6 +128,16 @@ fun BooksListComponentUi(component: BooksListComponent) {
                             component.onBookClick(Uri.parse(model[it].folderUri))
                         })
                     }
+                }
+            }
+
+            if(model.isEmpty()) {
+                Column(
+                    modifier = Modifier.fillMaxSize().padding(horizontal = 12.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Text(stringResource(id = R.string.no_books_text), textAlign = TextAlign.Center)
                 }
             }
         }

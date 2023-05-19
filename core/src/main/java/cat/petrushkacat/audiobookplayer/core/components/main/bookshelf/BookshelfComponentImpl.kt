@@ -24,8 +24,7 @@ class BookshelfComponentImpl(
     private val settingsRepository: SettingsRepository,
     onBookSelect: (Uri) -> Unit,
     onFolderButtonClick: () -> Unit,
-    onSettingsClicked: () ->Unit,
-
+    onSettingsClicked: () -> Unit,
     ) : BookshelfComponent, ComponentContext by componentContext {
 
     private val scope = componentContext.componentCoroutineScopeIO()

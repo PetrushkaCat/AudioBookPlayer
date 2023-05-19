@@ -18,7 +18,7 @@ class BookPlayerContainerComponentImpl(
     private val sensorListener: SensorListener,
     private val bookUri: Uri,
     private val onBack: () -> Unit,
-    private val onNotesButtonClicked: () -> Unit
+    private val onNotesButtonClicked: () -> Unit,
 ) : BookPlayerContainerComponent, ComponentContext by componentContext {
 
     override val bookPlayerToolbarComponent = BookPlayerToolbarComponentImpl(
@@ -37,7 +37,6 @@ class BookPlayerContainerComponentImpl(
         audiobookServiceHandler,
         sensorListener,
         bookUri,
-        onBack,
-
+        onBack
     )
 }

@@ -38,7 +38,7 @@ class BookPlayerComponentImpl(
     private val audiobookServiceHandler: AudiobookServiceHandler,
     sensorListener: SensorListener,
     private val bookUri: Uri,
-    private val onBack: () -> Unit
+    private val onBack: () -> Unit,
 ) : BookPlayerComponent, ComponentContext by componentContext {
 
     private val stateSaverString = "state_saver_player"
@@ -49,6 +49,8 @@ class BookPlayerComponentImpl(
 
     private val mediaItems: MutableList<MediaItem> = mutableListOf()
     private lateinit var sensorManager: SensorManager
+
+    override val isPlaying = audiobookServiceHandler.isPlaying.asStateFlow()
 
     override val currentTimings = audiobookServiceHandler.currentTimings
     private val _models = MutableStateFlow(
@@ -79,8 +81,6 @@ class BookPlayerComponentImpl(
             audiobookServiceHandler.onPlayerEvent(playerEvent)
         }
     }
-
-    override val isPlaying = audiobookServiceHandler.isPlaying.asStateFlow()
 
     init {
         Log.d("player-5", isInitialized.toString() + " $counter")

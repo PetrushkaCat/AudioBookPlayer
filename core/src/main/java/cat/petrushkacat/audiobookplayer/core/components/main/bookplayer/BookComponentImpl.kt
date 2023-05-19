@@ -27,7 +27,7 @@ class BookComponentImpl(
     private val audiobookServiceHandler: AudiobookServiceHandler,
     private val sensorListener: SensorListener,
     private val bookUri: Uri,
-    private val onBack: () -> Unit
+    private val onBack: () -> Unit,
 ) : BookComponent, ComponentContext by componentContext {
 
     private val scopeMain = componentCoroutineScopeMain()

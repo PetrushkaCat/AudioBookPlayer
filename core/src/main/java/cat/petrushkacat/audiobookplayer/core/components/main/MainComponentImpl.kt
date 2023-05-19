@@ -90,7 +90,8 @@ class MainComponentImpl(
                     audiobooksRepository, audiobookServiceHandler, sensorListener, config.bookUri, {
                         navigation.pop()
                         BookPlayerComponentImpl.isInitialized = false
-                    })
+                    }
+                )
             )
         }
 

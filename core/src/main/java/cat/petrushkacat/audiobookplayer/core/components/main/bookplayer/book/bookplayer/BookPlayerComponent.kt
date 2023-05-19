@@ -11,14 +11,9 @@ interface BookPlayerComponent {
 
     val currentTimings: StateFlow<CurrentTimings>
 
-    fun onPlayerEvent(playerEvent: PlayerEvent)
-
     val isPlaying: StateFlow<Boolean>
 
-
-    data class Model(
-        val isPaused: Boolean
-    )
+    fun onPlayerEvent(playerEvent: PlayerEvent)
 
     data class UpdateInfo(
         val folderName: String,

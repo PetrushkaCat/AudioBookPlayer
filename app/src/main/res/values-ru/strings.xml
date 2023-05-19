@@ -35,5 +35,6 @@
     <string name="auto_sleep">Сон</string>
     <string name="rate_this_app">Оценить приложение :)</string>
     <string name="description">Описание</string>
-    <string name="add_folder_description">(папка с книжками. Каждая книга должна быть в своей собственной подпапке)</string>
+    <string name="add_folder_description">(Добавить новую папку с книжками. Каждая книга должна быть в своей собственной подпапке)</string>
+    <string name="no_books_text">Нажмите на иконку папки вверху справа, чтобы добавить новую папку с книжками</string>
 </resources>

@@ -93,8 +93,7 @@ fun BookPlayerComponentUi(component: BookPlayerComponent) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .scrollable(rememberScrollState(), Orientation.Vertical)
-            .padding(4.dp),
+            .padding(horizontal = 8.dp, vertical = 4.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween
     ) {

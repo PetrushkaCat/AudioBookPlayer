@@ -37,10 +37,20 @@
     <string name="description">Description</string>
     <string name="add_folder_description">(Add a new root folder, every book must be in its own subdirectory)</string>
     <string name="no_books_text">Seems like there are no book folders..\nTap at folder icon at top right to add new</string>
-
-
-
-
+    <string name="change_name">Change name</string>
+    <string name="change_cover">Change cover</string>
+    <string name="add_to_favorites">Add to favorites</string>
+    <string name="remove_from_favorites">Remove from favorites</string>
+    <string name="add_to_listen_later">Add to listen later</string>
+    <string name="remove_from_listen_later">Remove from listen later</string>
+    <string name="mark_as_completed">Mark as completed</string>
+    <string name="mark_as_not_completed">Mark as not completed</string>
+    <string name="favorites">Favorites</string>
+    <string name="listen_later">Listen later</string>
+    <string name="back">Back</string>
+    <string name="completed_books">Completed</string>
+    <string name="empty">Empty :(</string>
+    <string name="nothing_found">Nothing found...</string>
 
 
 

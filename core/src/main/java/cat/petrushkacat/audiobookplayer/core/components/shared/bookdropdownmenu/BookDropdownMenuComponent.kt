@@ -1,14 +1,15 @@
 package cat.petrushkacat.audiobookplayer.core.components.shared.bookdropdownmenu
 
+import cat.petrushkacat.audiobookplayer.core.components.main.bookshelf.bookslist.BooksListComponent
 import kotlinx.coroutines.flow.StateFlow
 
-interface BookDropDownMenuComponent {
+interface BookDropdownMenuComponent {
 
-    val selectedBookUri: StateFlow<String>
+    val selectedBook: StateFlow<BooksListComponent.Model>
 
     fun onBookDropDownEvent(bookUri: String, event: BookDropDownEvent)
 
-    fun selectBook(bookUri: String)
+    fun selectBook(book: BooksListComponent.Model)
 
     sealed interface BookDropDownEvent {
 
@@ -22,6 +23,6 @@ interface BookDropDownMenuComponent {
 
         object MoveToOrOutListenLater: BookDropDownEvent
 
-        object MarkOrUnmarkAsRead: BookDropDownEvent
+        object MarkOrUnmarkAsCompleted: BookDropDownEvent
     }
 }

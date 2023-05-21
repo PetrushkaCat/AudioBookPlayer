@@ -59,7 +59,8 @@ fun BooksListComponentUi(component: BooksListComponent) {
     })
 
     val isDropdownMenuExpanded = rememberSaveable { mutableStateOf(false) }
-    val selectedBook = component.bookDropDownMenuComponent.selectedBookUri.collectAsState()
+    val selectedBook = component.bookDropDownMenuComponent.selectedBook.collectAsState()
+    val isSearching by component.isSearching.collectAsState()
 
     val strokeWidth = 5.dp
     val circleColor = Purple40
@@ -107,7 +108,7 @@ fun BooksListComponentUi(component: BooksListComponent) {
                     items(model.size) {
                         Box {
                             if (isDropdownMenuExpanded.value &&
-                                selectedBook.value == model[it].folderUri
+                                selectedBook.value.folderUri == model[it].folderUri
                             ) {
                                 BookDropdownMenuComponentUi(
                                     component = component.bookDropDownMenuComponent,
@@ -120,7 +121,7 @@ fun BooksListComponentUi(component: BooksListComponent) {
                                     component.onBookClick(Uri.parse(model[it].folderUri))
                                 },
                                 onLongClick = {
-                                    component.bookDropDownMenuComponent.selectBook(model[it].folderUri)
+                                    component.bookDropDownMenuComponent.selectBook(model[it])
                                     isDropdownMenuExpanded.value = true
                                 }
                             ))
@@ -135,7 +136,7 @@ fun BooksListComponentUi(component: BooksListComponent) {
                     items(model.size) {
                         Box {
                             if (isDropdownMenuExpanded.value &&
-                                selectedBook.value == model[it].folderUri
+                                selectedBook.value.folderUri == model[it].folderUri
                             ) {
                                 BookDropdownMenuComponentUi(
                                     component = component.bookDropDownMenuComponent,
@@ -148,7 +149,7 @@ fun BooksListComponentUi(component: BooksListComponent) {
                                     component.onBookClick(Uri.parse(model[it].folderUri))
                                 },
                                 onLongClick = {
-                                    component.bookDropDownMenuComponent.selectBook(model[it].folderUri)
+                                    component.bookDropDownMenuComponent.selectBook(model[it])
                                     isDropdownMenuExpanded.value = true
                                 }
                             ))
@@ -157,7 +158,7 @@ fun BooksListComponentUi(component: BooksListComponent) {
                 }
             }
 
-            if(model.isEmpty()) {
+            if(model.isEmpty() && !isSearching) {
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
@@ -167,7 +168,17 @@ fun BooksListComponentUi(component: BooksListComponent) {
                 ) {
                     Text(stringResource(id = R.string.no_books_text), textAlign = TextAlign.Center)
                 }
-            }
+            } else if(model.isEmpty() && isSearching) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(horizontal = 12.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Text(stringResource(id = R.string.nothing_found), textAlign = TextAlign.Center)
+                    }
+                }
         }
     }
 }

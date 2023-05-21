@@ -1,13 +1,13 @@
 package cat.petrushkacat.audiobookplayer.core.components.main.bookshelf.bookslist
 
 import android.net.Uri
-import cat.petrushkacat.audiobookplayer.core.components.shared.bookdropdownmenu.BookDropDownMenuComponent
+import cat.petrushkacat.audiobookplayer.core.components.shared.bookdropdownmenu.BookDropdownMenuComponent
 import cat.petrushkacat.audiobookplayer.core.models.SettingsEntity
 import kotlinx.coroutines.flow.StateFlow
 
 interface BooksListComponent {
 
-    val bookDropDownMenuComponent: BookDropDownMenuComponent
+    val bookDropDownMenuComponent: BookDropdownMenuComponent
 
     val models: StateFlow<List<Model>>
 
@@ -17,6 +17,7 @@ interface BooksListComponent {
     val foldersProcessed: StateFlow<Int>
     val isRefreshing: StateFlow<Boolean>
 
+    val isSearching: StateFlow<Boolean>
     fun onBookClick(uri: Uri)
 
     fun refresh()

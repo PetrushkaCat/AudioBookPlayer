@@ -36,6 +36,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cat.petrushkacat.audiobookplayer.R
+import cat.petrushkacat.audiobookplayer.app.ui.components.shared.CommonTopAppBar
 import cat.petrushkacat.audiobookplayer.app.util.formatDuration
 import cat.petrushkacat.audiobookplayer.core.components.main.settings.SettingsComponent
 import cat.petrushkacat.audiobookplayer.core.models.Theme
@@ -45,61 +46,68 @@ fun SettingsComponentUi(component: SettingsComponent) {
 
     val model by component.models.collectAsState()
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(14.dp)
-    ) {
-        Spacer(modifier = Modifier.height(30.dp))
-        Row(
+    Column {
+        CommonTopAppBar(title = stringResource(id = R.string.settings), onBack = {
+
+        })
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .clickable { component.changeTheme(model.theme != Theme.DARK) },
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically,
+                .fillMaxSize()
+                .padding(horizontal = 16.dp)
         ) {
-            Row {
-                Icon(
-                    Icons.Default.DarkMode,
-                    null,
-                    modifier = Modifier.align(Alignment.CenterVertically)
-                )
-                Spacer(modifier = Modifier.width(30.dp))
-                Text(
-                    stringResource(id = R.string.dark_theme),
-                    style = TextStyle(fontSize = 17.sp),
-                    modifier = Modifier.align(Alignment.CenterVertically)
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { component.changeTheme(model.theme != Theme.DARK) },
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Row {
+                    Icon(
+                        Icons.Default.DarkMode,
+                        null,
+                        modifier = Modifier.align(Alignment.CenterVertically)
+                    )
+                    Spacer(modifier = Modifier.width(30.dp))
+                    Text(
+                        stringResource(id = R.string.dark_theme),
+                        style = TextStyle(fontSize = 17.sp),
+                        modifier = Modifier.align(Alignment.CenterVertically)
+                    )
+                }
+                Switch(
+                    checked = model.theme == Theme.DARK,
+                    onCheckedChange = component::changeTheme
                 )
             }
-            Switch(checked = model.theme == Theme.DARK, onCheckedChange = component::changeTheme)
+            TimeSettingItem(
+                icon = Icons.Default.DoubleArrow,
+                name = stringResource(id = R.string.rewind),
+                time = model.rewindTime,
+                maxTime = 60000,
+                minTime = 1000,
+                steps = 60,
+                onTimeChange = component::changeRewindTime
+            )
+            TimeSettingItem(
+                icon = Icons.Default.RotateLeft,
+                name = stringResource(id = R.string.auto_rewind_back_on_pause),
+                time = model.autoRewindBackTime,
+                maxTime = 30000,
+                minTime = 1000,
+                steps = 30,
+                onTimeChange = component::changeAutoRewindTime
+            )
+            TimeSettingItem(
+                icon = Icons.Default.Bedtime,
+                name = stringResource(id = R.string.auto_sleep),
+                time = model.autoSleepTime,
+                maxTime = 60000 * 60 * 6,
+                minTime = 600000,
+                steps = 69,
+                onTimeChange = component::changeAutoSleepTime
+            )
         }
-        TimeSettingItem(
-            icon = Icons.Default.DoubleArrow,
-            name = stringResource(id = R.string.rewind),
-            time = model.rewindTime,
-            maxTime = 60000,
-            minTime = 1000,
-            steps = 60,
-            onTimeChange = component::changeRewindTime
-        )
-        TimeSettingItem(
-            icon = Icons.Default.RotateLeft,
-            name = stringResource(id = R.string.auto_rewind_back_on_pause),
-            time = model.autoRewindBackTime,
-            maxTime = 30000,
-            minTime = 1000,
-            steps = 30,
-            onTimeChange = component::changeAutoRewindTime
-        )
-        TimeSettingItem(
-            icon = Icons.Default.Bedtime,
-            name = stringResource(id = R.string.auto_sleep),
-            time = model.autoSleepTime,
-            maxTime = 60000 * 60 * 6,
-            minTime = 600000,
-            steps = 69,
-            onTimeChange = component::changeAutoSleepTime
-        )
     }
 }
 

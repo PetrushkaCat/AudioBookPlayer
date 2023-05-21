@@ -18,9 +18,12 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Pets
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.StarRate
+import androidx.compose.material.icons.filled.WatchLater
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -62,6 +65,17 @@ fun DrawerComponentUi(component: DrawerComponent) {
         }
         Column {
             Column {
+                DrawerItem(icon = Icons.Default.Favorite, text = stringResource(id = R.string.favorites), onClick = {
+                    component.onFavoritesClick()
+                })
+
+                DrawerItem(icon = Icons.Default.WatchLater, text = stringResource(id = R.string.listen_later), onClick = {
+                    component.onListenLaterClick()
+                })
+                DrawerItem(icon = Icons.Default.CheckCircle, text = stringResource(id = R.string.completed_books), onClick = {
+                    component.onCompletedBooksClick()
+                })
+
                 DrawerItem(icon = Icons.Default.StarRate, text = stringResource(id = R.string.rate_this_app), onClick = {
                     component.onRateClick()
                 })

@@ -7,8 +7,8 @@ import android.util.Log
 import androidx.documentfile.provider.DocumentFile
 import cat.petrushkacat.audiobookplayer.core.components.main.folderselector.extractInt
 import cat.petrushkacat.audiobookplayer.core.components.main.folderselector.isAudio
-import cat.petrushkacat.audiobookplayer.core.components.shared.bookdropdownmenu.BookDropDownMenuComponent
-import cat.petrushkacat.audiobookplayer.core.components.shared.bookdropdownmenu.BookDropDownMenuComponentImpl
+import cat.petrushkacat.audiobookplayer.core.components.shared.bookdropdownmenu.BookDropdownMenuComponent
+import cat.petrushkacat.audiobookplayer.core.components.shared.bookdropdownmenu.BookDropdownMenuComponentImpl
 import cat.petrushkacat.audiobookplayer.core.models.BookEntity
 import cat.petrushkacat.audiobookplayer.core.models.Chapter
 import cat.petrushkacat.audiobookplayer.core.models.Chapters
@@ -36,10 +36,11 @@ class BooksListComponentImpl(
     private val rootFoldersRepository: RootFoldersRepository,
     private val context: Context,
     val onBookSelected: (Uri) -> Unit,
-    books: StateFlow<List<BooksListComponent.Model>>
+    books: StateFlow<List<BooksListComponent.Model>>,
+    override val isSearching: StateFlow<Boolean>
 ) : BooksListComponent, ComponentContext by componentContext {
 
-    override val bookDropDownMenuComponent: BookDropDownMenuComponent = BookDropDownMenuComponentImpl(
+    override val bookDropDownMenuComponent: BookDropdownMenuComponent = BookDropdownMenuComponentImpl(
         childContext("books_list_drop_down_menu"),
         audiobooksRepository
     )

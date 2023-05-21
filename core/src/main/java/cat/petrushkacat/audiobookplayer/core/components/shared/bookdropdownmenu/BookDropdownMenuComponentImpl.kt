@@ -1,6 +1,7 @@
 package cat.petrushkacat.audiobookplayer.core.components.shared.bookdropdownmenu
 
 import android.net.Uri
+import cat.petrushkacat.audiobookplayer.core.components.main.bookshelf.bookslist.BooksListComponent
 import cat.petrushkacat.audiobookplayer.core.models.BookEntity
 import cat.petrushkacat.audiobookplayer.core.repository.AudiobooksRepository
 import cat.petrushkacat.audiobookplayer.core.util.componentCoroutineScopeIO
@@ -10,40 +11,40 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
-class BookDropDownMenuComponentImpl(
+class BookDropdownMenuComponentImpl(
     componentContext: ComponentContext,
     private val audiobooksRepository: AudiobooksRepository
-) : BookDropDownMenuComponent, ComponentContext by componentContext {
+) : BookDropdownMenuComponent, ComponentContext by componentContext {
 
     private val scopeIO = componentCoroutineScopeIO()
 
-    private val _selectedBookUri = MutableStateFlow("")
-    override val selectedBookUri = _selectedBookUri.asStateFlow()
+    private val _selectedBook = MutableStateFlow(BooksListComponent.Model(name = "", folderUri = ""))
+    override val selectedBook = _selectedBook.asStateFlow()
 
     override fun onBookDropDownEvent(
         bookUri: String,
-        event: BookDropDownMenuComponent.BookDropDownEvent
+        event: BookDropdownMenuComponent.BookDropDownEvent
     ) {
         scopeIO.launch {
             val book = audiobooksRepository.getBook(Uri.parse(bookUri))
             when(event) {
-                is BookDropDownMenuComponent.BookDropDownEvent.BookCoverChange -> {
+                is BookDropdownMenuComponent.BookDropDownEvent.BookCoverChange -> {
                     bookCoverChange(book.first(), event.image)
                 }
-                is BookDropDownMenuComponent.BookDropDownEvent.BookNameChange -> {
+                is BookDropdownMenuComponent.BookDropDownEvent.BookNameChange -> {
                     bookNameChange(book.first(), event.name)
                 }
 
-                BookDropDownMenuComponent.BookDropDownEvent.FavoriteOrNotFavorite -> {
+                BookDropdownMenuComponent.BookDropDownEvent.FavoriteOrNotFavorite -> {
                     favoriteOrNotFavorite(book.first())
                 }
-                BookDropDownMenuComponent.BookDropDownEvent.MarkOrUnmarkAsRead -> {
-                    markOrUnmarkAsRead(book.first())
+                BookDropdownMenuComponent.BookDropDownEvent.MarkOrUnmarkAsCompleted -> {
+                    markOrUnmarkAsCompleted(book.first())
                 }
-                BookDropDownMenuComponent.BookDropDownEvent.MoveToOrOutListenLater -> {
+                BookDropdownMenuComponent.BookDropDownEvent.MoveToOrOutListenLater -> {
                     moveToOrOutListenLater(book.first())
                 }
-                BookDropDownMenuComponent.BookDropDownEvent.MoveToOrOutTrashBin -> {
+                BookDropdownMenuComponent.BookDropDownEvent.MoveToOrOutTrashBin -> {
                     moveToOrOutTrashBin(book.first())
                 }
             }
@@ -51,8 +52,8 @@ class BookDropDownMenuComponentImpl(
         }
     }
 
-    override fun selectBook(bookUri: String) {
-        _selectedBookUri.value = bookUri
+    override fun selectBook(book: BooksListComponent.Model) {
+        _selectedBook.value = book
     }
 
     private suspend fun bookNameChange(book: BookEntity, newName: String) {
@@ -63,7 +64,7 @@ class BookDropDownMenuComponentImpl(
         audiobooksRepository.updateBook(book.copy(image = newCover))
     }
 
-    private suspend fun markOrUnmarkAsRead(book: BookEntity) {
+    private suspend fun markOrUnmarkAsCompleted(book: BookEntity) {
         audiobooksRepository.updateBook(book.copy(isCompleted = !book.isCompleted))
     }
 

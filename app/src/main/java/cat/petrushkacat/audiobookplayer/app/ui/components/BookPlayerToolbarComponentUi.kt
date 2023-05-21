@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Bookmarks
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Speed
@@ -33,7 +34,25 @@ fun BookPlayerToolbarComponentUi(component: BookPlayerToolbarComponent) {
 
     val showDialog = rememberSaveable { mutableStateOf(false) }
 
-    TopAppBar(title = { Text("") }, actions = {
+    TopAppBar(
+        navigationIcon = {
+            Row(
+                horizontalArrangement = Arrangement.Start
+            ) {
+                Icon(
+                    Icons.Default.ArrowBack,
+                    stringResource(id = R.string.back),
+                    modifier = Modifier
+                        .clickable {
+
+                        }
+                        .size(48.dp)
+                        .padding(horizontal = 8.dp)
+                )
+            }
+        },
+        title = { Text("") },
+        actions = {
         Icon(
             Icons.Default.Speed,
             contentDescription = stringResource(id = R.string.speed_icon_description),

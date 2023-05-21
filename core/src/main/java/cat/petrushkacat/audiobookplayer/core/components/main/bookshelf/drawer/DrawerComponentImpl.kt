@@ -10,8 +10,23 @@ import com.arkivanov.decompose.ComponentContext
 class DrawerComponentImpl(
     componentContext: ComponentContext,
     private val context: Context,
-    private val onSettingsClicked: () -> Unit
+    private val onSettingsClicked: () -> Unit,
+    private val onFavoritesClicked: () -> Unit,
+    private val onListenLaterClicked: () -> Unit,
+    private val onCompletedBooksClicked: () -> Unit
 ) : DrawerComponent, ComponentContext by componentContext {
+
+    override fun onFavoritesClick() {
+        onFavoritesClicked()
+    }
+
+    override fun onListenLaterClick() {
+        onListenLaterClicked()
+    }
+
+    override fun onCompletedBooksClick() {
+        onCompletedBooksClicked()
+    }
 
     override fun onSettingsClick() {
         onSettingsClicked()

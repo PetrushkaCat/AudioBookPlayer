@@ -13,6 +13,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.outlined.CheckCircle
+import androidx.compose.material.icons.outlined.WatchLater
+import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -21,6 +26,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -43,9 +49,9 @@ fun BookListItem(
     val context = LocalContext.current
     val bitmap = remember { mutableStateOf<Bitmap?>(null) }
 
-    LaunchedEffect(key1 = true) {
+    LaunchedEffect(key1 = model) {
         CoroutineScope(Dispatchers.IO).launch {
-            bitmap.value = if(model.image != null) {
+            bitmap.value = if (model.image != null) {
                 BitmapFactory.decodeByteArray(model.image, 0, model.image!!.size)
             } else {
                 BitmapFactory.decodeResource(context.resources, R.drawable.round_play_button)
@@ -63,13 +69,71 @@ fun BookListItem(
                 .fillMaxWidth()
                 .padding(4.dp),
         ) {
-            if(bitmap.value != null) {
-                Image(
-                    modifier = Modifier
-                        .size(100.dp),
-                    bitmap = bitmap.value!!.asImageBitmap(),
-                    contentDescription = stringResource(id = R.string.book_cover),
-                )
+            if (bitmap.value != null) {
+                Box {
+                    Image(
+                        modifier = Modifier
+                            .size(100.dp),
+                        bitmap = bitmap.value!!.asImageBitmap(),
+                        contentDescription = stringResource(id = R.string.book_cover),
+                    )
+                    Row(modifier = Modifier.align(Alignment.TopEnd)) {
+                        if (model.isWantToListen) {
+                            Box(contentAlignment = Alignment.Center) {
+                                Icon(
+                                    Icons.Outlined.WatchLater,
+                                    null,
+                                    modifier = Modifier
+                                        .size(27.dp),
+                                    tint = Color.Black
+                                )
+                                Icon(
+                                    Icons.Outlined.WatchLater,
+                                    null,
+                                    modifier = Modifier
+                                        .size(24.dp),
+                                    tint = Color.Yellow
+                                )
+                            }
+                        }
+                        if (model.isCompleted) {
+                            Box(contentAlignment = Alignment.Center) {
+                                Icon(
+                                    Icons.Outlined.CheckCircle,
+                                    null,
+                                    modifier = Modifier
+                                        .size(27.dp),
+                                    tint = Color.Black
+                                )
+                                Icon(
+                                    Icons.Outlined.CheckCircle,
+                                    null,
+                                    modifier = Modifier
+                                        .size(24.dp),
+                                    tint = Color.Green
+                                )
+                            }
+                        }
+                        if (model.isFavorite) {
+                            Box(contentAlignment = Alignment.Center) {
+                                Icon(
+                                    Icons.Filled.Favorite,
+                                    null,
+                                    modifier = Modifier
+                                        .size(27.dp),
+                                    tint = Color.Black
+                                )
+                                Icon(
+                                    Icons.Filled.Favorite,
+                                    null,
+                                    modifier = Modifier
+                                        .size(24.dp),
+                                    tint = Color.Cyan
+                                )
+                            }
+                        }
+                    }
+                }
             }
             Text(
                 model.name,
@@ -99,9 +163,9 @@ fun BookGridItem(model: BooksListComponent.Model, modifier: Modifier) {
     val context = LocalContext.current
     val bitmap = remember { mutableStateOf<Bitmap?>(null) }
 
-    LaunchedEffect(key1 = true) {
+    LaunchedEffect(key1 = model) {
         CoroutineScope(Dispatchers.IO).launch {
-            bitmap.value = if(model.image != null) {
+            bitmap.value = if (model.image != null) {
                 BitmapFactory.decodeByteArray(model.image, 0, model.image!!.size)
             } else {
                 BitmapFactory.decodeResource(context.resources, R.drawable.round_play_button)
@@ -115,14 +179,72 @@ fun BookGridItem(model: BooksListComponent.Model, modifier: Modifier) {
                 .padding(4.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            if(bitmap.value != null) {
-                Image(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(horizontal = 12.dp),
-                    bitmap = bitmap.value!!.asImageBitmap(),
-                    contentDescription = stringResource(id = R.string.book_cover),
-                )
+            if (bitmap.value != null) {
+                Box {
+                    Image(
+                        modifier = Modifier
+                            .fillMaxSize(),
+                            //.padding(horizontal = 12.dp),
+                        bitmap = bitmap.value!!.asImageBitmap(),
+                        contentDescription = stringResource(id = R.string.book_cover),
+                    )
+                    Row(modifier = Modifier.align(Alignment.TopEnd)) {
+                        if (model.isWantToListen) {
+                            Box(contentAlignment = Alignment.Center) {
+                                Icon(
+                                    Icons.Outlined.WatchLater,
+                                    null,
+                                    modifier = Modifier
+                                        .size(27.dp),
+                                    tint = Color.Black
+                                )
+                                Icon(
+                                    Icons.Outlined.WatchLater,
+                                    null,
+                                    modifier = Modifier
+                                        .size(24.dp),
+                                    tint = Color.Yellow
+                                )
+                            }
+                        }
+                        if (model.isCompleted) {
+                            Box(contentAlignment = Alignment.Center) {
+                                Icon(
+                                    Icons.Outlined.CheckCircle,
+                                    null,
+                                    modifier = Modifier
+                                        .size(27.dp),
+                                    tint = Color.Black
+                                )
+                                Icon(
+                                    Icons.Outlined.CheckCircle,
+                                    null,
+                                    modifier = Modifier
+                                        .size(24.dp),
+                                    tint = Color.Green
+                                )
+                            }
+                        }
+                        if (model.isFavorite) {
+                            Box(contentAlignment = Alignment.Center) {
+                                Icon(
+                                    Icons.Filled.Favorite,
+                                    null,
+                                    modifier = Modifier
+                                        .size(27.dp),
+                                    tint = Color.Black
+                                )
+                                Icon(
+                                    Icons.Filled.Favorite,
+                                    null,
+                                    modifier = Modifier
+                                        .size(24.dp),
+                                    tint = Color.Cyan
+                                )
+                            }
+                        }
+                    }
+                }
             }
             Column(
                 modifier = Modifier.defaultMinSize(minHeight = 72.dp),

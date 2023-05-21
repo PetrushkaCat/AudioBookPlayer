@@ -10,7 +10,10 @@ import cat.petrushkacat.audiobookplayer.audioservice.sensors.SensorListener
 import cat.petrushkacat.audiobookplayer.core.components.main.bookplayer.BookComponentImpl
 import cat.petrushkacat.audiobookplayer.core.components.main.bookplayer.book.bookplayer.BookPlayerComponentImpl
 import cat.petrushkacat.audiobookplayer.core.components.main.bookshelf.BookshelfComponentImpl
+import cat.petrushkacat.audiobookplayer.core.components.main.completedbooks.CompletedBooksComponentImpl
+import cat.petrushkacat.audiobookplayer.core.components.main.favorites.FavoritesComponentImpl
 import cat.petrushkacat.audiobookplayer.core.components.main.folderselector.FoldersComponentImpl
+import cat.petrushkacat.audiobookplayer.core.components.main.listenlater.ListenLaterComponentImpl
 import cat.petrushkacat.audiobookplayer.core.components.main.settings.SettingsComponentImpl
 import cat.petrushkacat.audiobookplayer.core.repository.AudiobooksRepository
 import cat.petrushkacat.audiobookplayer.core.repository.RootFoldersRepository
@@ -62,7 +65,7 @@ class MainComponentImpl(
         is ChildConfig.Bookshelf -> {
             MainComponent.Child.Bookshelf(
                 BookshelfComponentImpl(componentContext, context, rootFoldersRepository, audiobooksRepository, settingsRepository,
-                    {
+                   onBookSelect =  {
                         val file = DocumentFile.fromSingleUri(context, it)
                         if(file!!.exists()) {
                             navigation.push(ChildConfig.Book(it))
@@ -75,11 +78,20 @@ class MainComponentImpl(
                             }
                         }
                     },
-                    {
+                    onFolderButtonClick = {
                         navigation.push(ChildConfig.Folders)
                     },
-                    {
+                    onSettingsClicked = {
                         navigation.push(ChildConfig.Settings)
+                    },
+                    onFavoritesClicked = {
+                        navigation.push(ChildConfig.Favorites)
+                    },
+                    onListenLaterClicked = {
+                        navigation.push(ChildConfig.ListenLater)
+                    },
+                    onCompletedBooksClicked = {
+                        navigation.push(ChildConfig.CompletedBooks)
                     }
                 ))
         }
@@ -87,7 +99,8 @@ class MainComponentImpl(
         is ChildConfig.Book -> {
             MainComponent.Child.Book(
                 BookComponentImpl(componentContext, context,
-                    audiobooksRepository, audiobookServiceHandler, sensorListener, config.bookUri, {
+                    audiobooksRepository, audiobookServiceHandler, sensorListener, config.bookUri,
+                    onBack = {
                         navigation.pop()
                         BookPlayerComponentImpl.isInitialized = false
                     }
@@ -106,6 +119,53 @@ class MainComponentImpl(
                 SettingsComponentImpl(componentContext, settingsRepository)
             )
         }
+
+        ChildConfig.Favorites -> {
+            MainComponent.Child.Favorites(
+                FavoritesComponentImpl(
+                    componentContext = componentContext,
+                    audiobooksRepository = audiobooksRepository,
+                    settingsRepository = settingsRepository,
+                    onBackPressed = {
+                        navigation.pop()
+                    },
+                    onBookClicked = {
+                        navigation.push(ChildConfig.Book(Uri.parse(it)))
+                    }
+                )
+            )
+        }
+        ChildConfig.ListenLater -> {
+            MainComponent.Child.ListenLater(
+                ListenLaterComponentImpl(
+                    componentContext = componentContext,
+                    audiobooksRepository = audiobooksRepository,
+                    settingsRepository = settingsRepository,
+                    onBackPressed = {
+                        navigation.pop()
+                    },
+                    onBookClicked = {
+                        navigation.push(ChildConfig.Book(Uri.parse(it)))
+                    }
+                )
+            )
+        }
+
+        ChildConfig.CompletedBooks -> {
+            MainComponent.Child.CompletedBooks(
+                CompletedBooksComponentImpl(
+                    componentContext = componentContext,
+                    audiobooksRepository = audiobooksRepository,
+                    settingsRepository = settingsRepository,
+                    onBackPressed = {
+                        navigation.pop()
+                    },
+                    onBookClicked = {
+                        navigation.push(ChildConfig.Book(Uri.parse(it)))
+                    }
+                )
+            )
+        }
     }
 
     private sealed interface ChildConfig : Parcelable {
@@ -120,5 +180,14 @@ class MainComponentImpl(
 
         @Parcelize
         object Settings: ChildConfig
+
+        @Parcelize
+        object ListenLater: ChildConfig
+
+        @Parcelize
+        object Favorites: ChildConfig
+
+        @Parcelize
+        object CompletedBooks: ChildConfig
     }
 }

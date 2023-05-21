@@ -14,6 +14,7 @@ import cat.petrushkacat.audiobookplayer.core.util.componentCoroutineScopeIO
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.childContext
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class BookshelfComponentImpl(
@@ -25,6 +26,9 @@ class BookshelfComponentImpl(
     onBookSelect: (Uri) -> Unit,
     onFolderButtonClick: () -> Unit,
     onSettingsClicked: () -> Unit,
+    onFavoritesClicked: () -> Unit,
+    onListenLaterClicked: () -> Unit,
+    onCompletedBooksClicked: () -> Unit
     ) : BookshelfComponent, ComponentContext by componentContext {
 
     private val scope = componentContext.componentCoroutineScopeIO()
@@ -39,6 +43,7 @@ class BookshelfComponentImpl(
 
     private val searchedBooks: MutableStateFlow<List<BooksListComponent.Model>> =
         MutableStateFlow(mutableListOf())
+    private val _isSearching = MutableStateFlow(false)
 
 
     init {
@@ -59,13 +64,15 @@ class BookshelfComponentImpl(
         childContext("toolbar_component"),
         settingsRepository,
         onFolderButtonClicked = onFolderButtonClick,
-        { text ->
+        onSearched = { text ->
             if(text.isNotEmpty()) {
                 searchedBooks.value = books.value.filter { book ->
                     book.name.lowercase().contains(Regex(text.lowercase()))
                 }
+                _isSearching.value = true
             } else {
                 searchedBooks.value = books.value
+                _isSearching.value = false
                 }
         }
     )
@@ -77,11 +84,16 @@ class BookshelfComponentImpl(
         rootFoldersRepository,
         context,
         onBookSelected = onBookSelect,
-        searchedBooks
+        searchedBooks,
+        _isSearching.asStateFlow()
     )
+
     override val drawerComponent = DrawerComponentImpl(
         childContext("drawer_component"),
         context,
-        onSettingsClicked = onSettingsClicked
+        onSettingsClicked = onSettingsClicked,
+        onFavoritesClicked = onFavoritesClicked,
+        onListenLaterClicked = onListenLaterClicked,
+        onCompletedBooksClicked = onCompletedBooksClicked
     )
 }

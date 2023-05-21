@@ -2,7 +2,10 @@ package cat.petrushkacat.audiobookplayer.core.components.main
 
 import cat.petrushkacat.audiobookplayer.core.components.main.bookplayer.BookComponent
 import cat.petrushkacat.audiobookplayer.core.components.main.bookshelf.BookshelfComponent
+import cat.petrushkacat.audiobookplayer.core.components.main.completedbooks.CompletedBooksComponent
+import cat.petrushkacat.audiobookplayer.core.components.main.favorites.FavoritesComponent
 import cat.petrushkacat.audiobookplayer.core.components.main.folderselector.FoldersComponent
+import cat.petrushkacat.audiobookplayer.core.components.main.listenlater.ListenLaterComponent
 import cat.petrushkacat.audiobookplayer.core.components.main.settings.SettingsComponent
 import com.arkivanov.decompose.router.stack.ChildStack
 import kotlinx.coroutines.flow.StateFlow
@@ -15,7 +18,9 @@ interface MainComponent {
         data class Bookshelf(val component: BookshelfComponent): Child
         data class Book(val component: BookComponent): Child
         data class Folder(val component: FoldersComponent): Child
-
         data class Settings(val component: SettingsComponent): Child
+        data class ListenLater(val component: ListenLaterComponent): Child
+        data class Favorites(val component: FavoritesComponent): Child
+        data class CompletedBooks(val component: CompletedBooksComponent): Child
     }
 }

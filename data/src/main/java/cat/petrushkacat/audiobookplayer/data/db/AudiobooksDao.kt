@@ -51,4 +51,7 @@ interface AudiobooksDao {
     @Query("DELETE FROM BookEntity WHERE folderUri NOT IN (:uris)")
     fun deleteIfNoInList(uris: List<String>)
 
+    @Update(entity = BookEntity::class)
+    fun updateBook(book: BookEntity)
+
 }

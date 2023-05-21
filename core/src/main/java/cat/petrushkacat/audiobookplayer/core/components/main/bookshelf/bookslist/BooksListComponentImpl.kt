@@ -7,6 +7,8 @@ import android.util.Log
 import androidx.documentfile.provider.DocumentFile
 import cat.petrushkacat.audiobookplayer.core.components.main.folderselector.extractInt
 import cat.petrushkacat.audiobookplayer.core.components.main.folderselector.isAudio
+import cat.petrushkacat.audiobookplayer.core.components.shared.bookdropdownmenu.BookDropDownMenuComponent
+import cat.petrushkacat.audiobookplayer.core.components.shared.bookdropdownmenu.BookDropDownMenuComponentImpl
 import cat.petrushkacat.audiobookplayer.core.models.BookEntity
 import cat.petrushkacat.audiobookplayer.core.models.Chapter
 import cat.petrushkacat.audiobookplayer.core.models.Chapters
@@ -17,6 +19,7 @@ import cat.petrushkacat.audiobookplayer.core.repository.SettingsRepository
 import cat.petrushkacat.audiobookplayer.core.util.componentCoroutineScopeDefault
 import cat.petrushkacat.audiobookplayer.core.util.componentCoroutineScopeIO
 import com.arkivanov.decompose.ComponentContext
+import com.arkivanov.decompose.childContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -36,6 +39,10 @@ class BooksListComponentImpl(
     books: StateFlow<List<BooksListComponent.Model>>
 ) : BooksListComponent, ComponentContext by componentContext {
 
+    override val bookDropDownMenuComponent: BookDropDownMenuComponent = BookDropDownMenuComponentImpl(
+        childContext("books_list_drop_down_menu"),
+        audiobooksRepository
+    )
 
     private val scopeIO = componentCoroutineScopeIO()
     private val scope = componentCoroutineScopeDefault()

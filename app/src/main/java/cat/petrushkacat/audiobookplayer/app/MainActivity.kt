@@ -13,7 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
-import cat.petrushkacat.audiobookplayer.app.ui.RootComponentUi
+import cat.petrushkacat.audiobookplayer.app.ui.components.RootComponentUi
 import cat.petrushkacat.audiobookplayer.app.ui.theme.AudioBookPlayerTheme
 import cat.petrushkacat.audiobookplayer.audioservice.AudiobookServiceHandler
 import cat.petrushkacat.audiobookplayer.audioservice.sensors.SensorListener

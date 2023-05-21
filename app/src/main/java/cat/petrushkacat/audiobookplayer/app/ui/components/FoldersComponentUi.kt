@@ -1,4 +1,4 @@
-package cat.petrushkacat.audiobookplayer.app.ui
+package cat.petrushkacat.audiobookplayer.app.ui.components
 
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts

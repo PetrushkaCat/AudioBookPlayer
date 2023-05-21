@@ -1,10 +1,13 @@
 package cat.petrushkacat.audiobookplayer.core.components.main.bookshelf.bookslist
 
 import android.net.Uri
+import cat.petrushkacat.audiobookplayer.core.components.shared.bookdropdownmenu.BookDropDownMenuComponent
 import cat.petrushkacat.audiobookplayer.core.models.SettingsEntity
 import kotlinx.coroutines.flow.StateFlow
 
 interface BooksListComponent {
+
+    val bookDropDownMenuComponent: BookDropDownMenuComponent
 
     val models: StateFlow<List<Model>>
 
@@ -26,6 +29,8 @@ interface BooksListComponent {
         val duration: Long = 0,
         val isStarted: Boolean = false,
         val isCompleted: Boolean = false,
-        val lastTimeListened: Long = 0L
-    )
+        val lastTimeListened: Long = 0L,
+        val isFavorite: Boolean = false,
+        val isWantToListen: Boolean = false,
+        )
 }

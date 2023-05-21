@@ -1,4 +1,4 @@
-package cat.petrushkacat.audiobookplayer.app.ui
+package cat.petrushkacat.audiobookplayer.app.ui.components
 
 import android.content.res.Configuration
 import android.graphics.BitmapFactory

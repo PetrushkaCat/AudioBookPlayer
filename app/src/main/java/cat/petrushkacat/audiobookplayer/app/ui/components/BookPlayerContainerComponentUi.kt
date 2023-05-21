@@ -1,4 +1,4 @@
-package cat.petrushkacat.audiobookplayer.app.ui
+package cat.petrushkacat.audiobookplayer.app.ui.components
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.ExperimentalMaterial3Api

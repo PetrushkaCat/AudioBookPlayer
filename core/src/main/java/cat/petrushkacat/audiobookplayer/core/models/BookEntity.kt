@@ -5,12 +5,21 @@ import androidx.room.Entity
 @Entity(primaryKeys = ["folderName", "duration"])
 data class BookEntity(
     val folderUri: String,
+    /**
+     * Primary key. Do not touch this unless you want to save a primary new book
+     */
     val folderName: String,
+    /**
+     * name that will be displayed to users. Can be changed
+     */
     val name: String,
     val chapters: Chapters,
     val currentChapter: Int = 0,
     val currentChapterTime: Long = 0,
     val currentTime: Long = 0,
+    /**
+     * Primary key. Do not touch this unless you want to save a primary new book
+     */
     val duration: Long = 0,
     val rootFolderUri: String,
     val image: ByteArray?,

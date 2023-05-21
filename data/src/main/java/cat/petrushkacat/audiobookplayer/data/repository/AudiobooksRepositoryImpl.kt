@@ -31,6 +31,10 @@ class AudiobooksRepositoryImpl(
         audiobooksDao.updateBook(book)
     }
 
+    override suspend fun updateBook(book: BookEntity) {
+        audiobooksDao.updateBook(book)
+    }
+
     override suspend fun getBook(bookFolder: Uri) = audiobooksDao.getBook(bookFolder.toString())
     override suspend fun deleteAllInFolder(rootFolderUri: String) {
         audiobooksDao.deleteAllInFolder(rootFolderUri)

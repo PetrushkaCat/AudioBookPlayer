@@ -1,4 +1,4 @@
-package cat.petrushkacat.audiobookplayer.app.ui
+package cat.petrushkacat.audiobookplayer.app.ui.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background

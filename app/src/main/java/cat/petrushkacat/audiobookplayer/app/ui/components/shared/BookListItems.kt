@@ -183,7 +183,7 @@ fun BookGridItem(model: BooksListComponent.Model, modifier: Modifier) {
                 Box {
                     Image(
                         modifier = Modifier
-                            .fillMaxSize(),
+                            .fillMaxWidth(),
                             //.padding(horizontal = 12.dp),
                         bitmap = bitmap.value!!.asImageBitmap(),
                         contentDescription = stringResource(id = R.string.book_cover),

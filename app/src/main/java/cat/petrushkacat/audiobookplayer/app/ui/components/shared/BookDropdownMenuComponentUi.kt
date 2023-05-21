@@ -1,5 +1,10 @@
 package cat.petrushkacat.audiobookplayer.app.ui.components.shared
 
+import android.graphics.ImageDecoder
+import android.os.Build
+import android.provider.MediaStore
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -21,6 +26,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
@@ -28,6 +34,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cat.petrushkacat.audiobookplayer.R
 import cat.petrushkacat.audiobookplayer.core.components.shared.bookdropdownmenu.BookDropdownMenuComponent
+import cat.petrushkacat.audiobookplayer.core.util.arrayFromBitmap
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @Composable
 fun BookDropdownMenuComponentUi(
@@ -36,8 +46,10 @@ fun BookDropdownMenuComponentUi(
     modifier: Modifier = Modifier
 ) {
 
+    val context = LocalContext.current
     val showEditDialog = rememberSaveable { mutableStateOf(false) }
     val selectedBook by component.selectedBook.collectAsState()
+    //val isTakingPicture = remember { mutableStateOf(false) }
 
     val favoritesText = if (!selectedBook.isFavorite) stringResource(id = R.string.add_to_favorites)
     else stringResource(id = R.string.remove_from_favorites)
@@ -48,6 +60,26 @@ fun BookDropdownMenuComponentUi(
 
     val completedText = if (!selectedBook.isCompleted) stringResource(id = R.string.mark_as_completed)
     else stringResource(id = R.string.mark_as_not_completed)
+
+    val launcher = rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent(), onResult = {
+        CoroutineScope(Dispatchers.IO).launch {
+            expanded.value = false
+            it?.let {
+                val bitmap = if (Build.VERSION.SDK_INT < 28) {
+                    MediaStore.Images.Media.getBitmap(context.contentResolver, it)
+                } else {
+                    val source = ImageDecoder.createSource(context.contentResolver, it)
+                    ImageDecoder.decodeBitmap(source)
+                }
+                if (bitmap != null) {
+                    component.onBookDropDownEvent(
+                        selectedBook.folderUri,
+                        BookDropdownMenuComponent.BookDropDownEvent.BookCoverChange(arrayFromBitmap(bitmap))
+                    )
+                }
+            }
+        }
+    })
 
     DropdownMenu(
         modifier = modifier
@@ -74,7 +106,9 @@ fun BookDropdownMenuComponentUi(
             },
             selectedBook.name
         )
-        DropDownItem(stringResource(id = R.string.change_cover), {})
+        DropDownItem(stringResource(id = R.string.change_cover), {
+            launcher.launch("image/*")
+        })
         DropDownItem(favoritesText, {
             component.onBookDropDownEvent(
                 selectedBook.folderUri,
@@ -96,7 +130,6 @@ fun BookDropdownMenuComponentUi(
             )
             expanded.value = false
         })
-
     }
 }
 

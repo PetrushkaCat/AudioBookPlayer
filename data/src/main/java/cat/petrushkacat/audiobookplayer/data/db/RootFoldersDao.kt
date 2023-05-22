@@ -5,6 +5,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Update
 import cat.petrushkacat.audiobookplayer.core.models.RootFolderEntity
 import kotlinx.coroutines.flow.Flow
 
@@ -19,5 +20,8 @@ interface RootFoldersDao {
 
     @Delete
     fun deleteFolder(folder: RootFolderEntity)
+
+    @Update
+    fun updateFolder(folder: RootFolderEntity)
 
 }

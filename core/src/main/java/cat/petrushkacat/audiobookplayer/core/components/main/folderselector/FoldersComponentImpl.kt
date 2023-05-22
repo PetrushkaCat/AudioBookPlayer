@@ -75,7 +75,7 @@ class FoldersComponentImpl(
             val newFolder = RootFolderEntity(
                 uri = folderUri.toString(),
                 name = folderUri.lastPathSegment!!,
-                isCurrent = true
+                isCurrent = false
             )
             val contentResolver = context.contentResolver
 

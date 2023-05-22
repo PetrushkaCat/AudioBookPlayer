@@ -96,18 +96,27 @@ class BooksListComponentImpl(
             }
             launch {
                 rootFoldersRepository.getFolders().collect { list ->
-                    folderUris = list.map { Uri.parse(it.uri) }
+                    val selectedFolder = list.firstOrNull() {
+                        it.isCurrent
+                    }
+                    folderUris = if(selectedFolder != null) {
+                        listOf(Uri.parse(selectedFolder.uri))
+
+                    } else {
+                        list.map { Uri.parse(it.uri) }
+                    }
                 }
             }
             launch {
                 _foldersProcessed.collect {
                     if(it == _foldersToProcess.value && it > 0) {
                         Log.d("refreshing", bookUris.toString())
-                        audiobooksRepository.deleteIfNoInList(bookUris)
+                        audiobooksRepository.deleteIfNoInList(bookUris, refreshingFolderUris.map { uri -> uri.toString() })
                         _isRefreshing.value = false
                         _foldersProcessed.value = 0
                         _foldersToProcess.value = 0
                         bookUris.clear()
+                        refreshingFolderUris = emptyList()
                     }
                 }
             }
@@ -118,6 +127,7 @@ class BooksListComponentImpl(
     }
 
     override fun refresh() {
+        refreshingFolderUris = folderUris
         _isRefreshing.value = true
         _foldersProcessed.value = 0
         _foldersToProcess.value = 0
@@ -215,6 +225,8 @@ class BooksListComponentImpl(
         private val _foldersProcessed = MutableStateFlow(0)
         private val _isRefreshing = MutableStateFlow(false)
         private val bookUris: MutableList<Uri> = mutableListOf()
+        private var refreshingFolderUris: List<Uri> = emptyList()
+
 
     }
 }

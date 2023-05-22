@@ -11,4 +11,6 @@ interface RootFoldersRepository {
 
     suspend fun deleteFolder(folder: RootFolderEntity)
 
+    suspend fun updateFolder(folder: RootFolderEntity)
+
 }

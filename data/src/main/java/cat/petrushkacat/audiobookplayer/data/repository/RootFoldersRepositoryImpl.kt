@@ -19,4 +19,8 @@ class RootFoldersRepositoryImpl(
     override suspend fun deleteFolder(folder: RootFolderEntity) {
         rootFoldersDao.deleteFolder(folder)
     }
+
+    override suspend fun updateFolder(folder: RootFolderEntity) {
+        rootFoldersDao.updateFolder(folder)
+    }
 }

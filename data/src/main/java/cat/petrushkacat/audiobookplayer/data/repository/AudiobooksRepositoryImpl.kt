@@ -44,8 +44,8 @@ class AudiobooksRepositoryImpl(
         audiobooksDao.deleteBook(uri.toString())
     }
 
-    override suspend fun deleteIfNoInList(uris: List<Uri>) {
-        audiobooksDao.deleteIfNoInList(uris.map { it.toString() })
+    override suspend fun deleteIfNoInList(uris: List<Uri>, rootFolderUris: List<String>) {
+        audiobooksDao.deleteIfNoInList(uris.map { it.toString() }, rootFolderUris)
     }
 
 }

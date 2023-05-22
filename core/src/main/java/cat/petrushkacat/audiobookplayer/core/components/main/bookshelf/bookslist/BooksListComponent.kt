@@ -33,5 +33,6 @@ interface BooksListComponent {
         val lastTimeListened: Long = 0L,
         val isFavorite: Boolean = false,
         val isWantToListen: Boolean = false,
+        val rootFolderUri: String = "",
         )
 }

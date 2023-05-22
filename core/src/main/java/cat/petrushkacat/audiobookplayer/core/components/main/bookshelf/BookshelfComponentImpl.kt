@@ -13,6 +13,7 @@ import cat.petrushkacat.audiobookplayer.core.repository.SettingsRepository
 import cat.petrushkacat.audiobookplayer.core.util.componentCoroutineScopeIO
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.childContext
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -48,14 +49,15 @@ class BookshelfComponentImpl(
 
     init {
         scope.launch {
-            rootFoldersRepository.getFolders().collect() {
-                folder.value = it.toMutableList()
+            rootFoldersRepository.getFolders().collect() {folders ->
+                folder.value = folders.toMutableList()
+                filterBooks(folders)
             }
         }
         scope.launch {
             audiobooksRepository.getAllBooks().collect() {
                 books.value = it.toMutableList()
-                searchedBooks.value = it
+                filterBooks(folder.value)
             }
         }
     }
@@ -63,6 +65,7 @@ class BookshelfComponentImpl(
     override val bookshelfToolbarComponent = BookshelfToolbarComponentImpl(
         childContext("toolbar_component"),
         settingsRepository,
+        rootFoldersRepository,
         onFolderButtonClicked = onFolderButtonClick,
         onSearched = { text ->
             if(text.isNotEmpty()) {
@@ -96,4 +99,16 @@ class BookshelfComponentImpl(
         onListenLaterClicked = onListenLaterClicked,
         onCompletedBooksClicked = onCompletedBooksClicked
     )
+
+    private suspend fun filterBooks(folders: List<RootFolderEntity>) {
+        val currentFolder = folders.firstOrNull { it.isCurrent }
+        delay(500)
+        if(currentFolder != null) {
+            searchedBooks.value = books.value.filter {
+                it.rootFolderUri == currentFolder.uri
+            }
+        } else {
+            searchedBooks.value = books.value.toMutableList()
+        }
+    }
 }

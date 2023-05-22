@@ -27,7 +27,7 @@ interface AudiobooksRepository {
 
     suspend fun deleteBook(uri: Uri)
 
-    suspend fun deleteIfNoInList(uris: List<Uri>)
+    suspend fun deleteIfNoInList(uris: List<Uri>, rootFolderUris: List<String>)
 
     suspend fun updateBook(book: BookEntity)
 }

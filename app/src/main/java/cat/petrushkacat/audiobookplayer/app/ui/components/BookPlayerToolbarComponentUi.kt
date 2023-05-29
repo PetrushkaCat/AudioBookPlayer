@@ -44,7 +44,7 @@ fun BookPlayerToolbarComponentUi(component: BookPlayerToolbarComponent) {
                     stringResource(id = R.string.back),
                     modifier = Modifier
                         .clickable {
-
+                            component.onBack()
                         }
                         .size(48.dp)
                         .padding(horizontal = 8.dp)

@@ -15,8 +15,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.outlined.CheckCircle
-import androidx.compose.material.icons.outlined.WatchLater
+import androidx.compose.material.icons.twotone.CheckCircle
+import androidx.compose.material.icons.twotone.WatchLater
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
@@ -39,6 +39,11 @@ import cat.petrushkacat.audiobookplayer.core.components.main.bookshelf.bookslist
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+
+private val favoriteIconColor = Color(0xFFFF8A8A)
+private val listenLaterIconColor = Color(0xFFFFF387)
+private val completedIconColor = Color(0xFFA8FFA2)
+
 
 @Composable
 fun BookListItem(
@@ -81,36 +86,36 @@ fun BookListItem(
                         if (model.isWantToListen) {
                             Box(contentAlignment = Alignment.Center) {
                                 Icon(
-                                    Icons.Outlined.WatchLater,
+                                    Icons.TwoTone.WatchLater,
                                     null,
                                     modifier = Modifier
                                         .size(27.dp),
                                     tint = Color.Black
                                 )
                                 Icon(
-                                    Icons.Outlined.WatchLater,
+                                    Icons.TwoTone.WatchLater,
                                     null,
                                     modifier = Modifier
                                         .size(24.dp),
-                                    tint = Color.Yellow
+                                    tint = listenLaterIconColor
                                 )
                             }
                         }
                         if (model.isCompleted) {
                             Box(contentAlignment = Alignment.Center) {
                                 Icon(
-                                    Icons.Outlined.CheckCircle,
+                                    Icons.TwoTone.CheckCircle,
                                     null,
                                     modifier = Modifier
                                         .size(27.dp),
                                     tint = Color.Black
                                 )
                                 Icon(
-                                    Icons.Outlined.CheckCircle,
+                                    Icons.TwoTone.CheckCircle,
                                     null,
                                     modifier = Modifier
                                         .size(24.dp),
-                                    tint = Color.Green
+                                    tint = completedIconColor
                                 )
                             }
                         }
@@ -128,7 +133,7 @@ fun BookListItem(
                                     null,
                                     modifier = Modifier
                                         .size(24.dp),
-                                    tint = Color.Cyan
+                                    tint = favoriteIconColor
                                 )
                             }
                         }
@@ -192,36 +197,36 @@ fun BookGridItem(model: BooksListComponent.Model, modifier: Modifier) {
                         if (model.isWantToListen) {
                             Box(contentAlignment = Alignment.Center) {
                                 Icon(
-                                    Icons.Outlined.WatchLater,
+                                    Icons.TwoTone.WatchLater,
                                     null,
                                     modifier = Modifier
                                         .size(27.dp),
                                     tint = Color.Black
                                 )
                                 Icon(
-                                    Icons.Outlined.WatchLater,
+                                    Icons.TwoTone.WatchLater,
                                     null,
                                     modifier = Modifier
                                         .size(24.dp),
-                                    tint = Color.Yellow
+                                    tint = listenLaterIconColor
                                 )
                             }
                         }
                         if (model.isCompleted) {
                             Box(contentAlignment = Alignment.Center) {
                                 Icon(
-                                    Icons.Outlined.CheckCircle,
+                                    Icons.TwoTone.CheckCircle,
                                     null,
                                     modifier = Modifier
                                         .size(27.dp),
                                     tint = Color.Black
                                 )
                                 Icon(
-                                    Icons.Outlined.CheckCircle,
+                                    Icons.TwoTone.CheckCircle,
                                     null,
                                     modifier = Modifier
                                         .size(24.dp),
-                                    tint = Color.Green
+                                    tint = completedIconColor
                                 )
                             }
                         }
@@ -239,7 +244,7 @@ fun BookGridItem(model: BooksListComponent.Model, modifier: Modifier) {
                                     null,
                                     modifier = Modifier
                                         .size(24.dp),
-                                    tint = Color.Cyan
+                                    tint = favoriteIconColor
                                 )
                             }
                         }

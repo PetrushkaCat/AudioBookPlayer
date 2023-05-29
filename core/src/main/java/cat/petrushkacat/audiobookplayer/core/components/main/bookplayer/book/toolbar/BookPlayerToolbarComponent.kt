@@ -8,4 +8,6 @@ interface BookPlayerToolbarComponent {
 
     fun onNotesButtonClick()
 
+    fun onBack()
+
 }

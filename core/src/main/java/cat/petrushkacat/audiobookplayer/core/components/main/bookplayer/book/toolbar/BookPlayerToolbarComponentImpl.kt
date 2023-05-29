@@ -14,6 +14,7 @@ class BookPlayerToolbarComponentImpl(
     private val audiobooksRepository: AudiobooksRepository,
     private val bookUri: Uri,
     private val onNotesButtonClicked: () -> Unit,
+    private val onBackClicked: () -> Unit
 ) : BookPlayerToolbarComponent, ComponentContext by componentContext {
 
     override fun getPlaySpeed() = audiobookServiceHandler.getPlaySpeed()
@@ -29,5 +30,9 @@ class BookPlayerToolbarComponentImpl(
 
     override fun onNotesButtonClick() {
         onNotesButtonClicked()
+    }
+
+    override fun onBack() {
+        onBackClicked()
     }
 }

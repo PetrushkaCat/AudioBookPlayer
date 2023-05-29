@@ -15,4 +15,6 @@ interface SettingsComponent {
     fun changeAutoRewindTime(time: Long)
 
     fun changeAutoSleepTime(time: Long)
+
+    fun onBack()
 }

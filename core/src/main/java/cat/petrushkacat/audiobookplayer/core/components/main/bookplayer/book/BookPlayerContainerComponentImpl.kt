@@ -1,7 +1,11 @@
 package cat.petrushkacat.audiobookplayer.core.components.main.bookplayer.book
 
 import android.content.Context
+import android.content.Intent
+import android.hardware.SensorManager
 import android.net.Uri
+import androidx.core.app.ComponentActivity
+import cat.petrushkacat.audiobookplayer.audioservice.AudiobookMediaService
 import cat.petrushkacat.audiobookplayer.audioservice.AudiobookServiceHandler
 import cat.petrushkacat.audiobookplayer.audioservice.sensors.SensorListener
 import cat.petrushkacat.audiobookplayer.core.components.main.bookplayer.book.bookplayer.BookPlayerComponentImpl
@@ -12,9 +16,9 @@ import com.arkivanov.decompose.childContext
 
 class BookPlayerContainerComponentImpl(
     componentContext: ComponentContext,
-    context: Context,
-    audiobooksRepository: AudiobooksRepository,
-    audiobookServiceHandler: AudiobookServiceHandler,
+    private val context: Context,
+    private val audiobooksRepository: AudiobooksRepository,
+    private val audiobookServiceHandler: AudiobookServiceHandler,
     private val sensorListener: SensorListener,
     private val bookUri: Uri,
     private val onBack: () -> Unit,
@@ -26,7 +30,11 @@ class BookPlayerContainerComponentImpl(
         audiobookServiceHandler,
         audiobooksRepository,
         bookUri,
-        onNotesButtonClicked = onNotesButtonClicked
+        onNotesButtonClicked = onNotesButtonClicked,
+        onBackClicked = {
+            doOnBack()
+            onBack()
+        }
     )
 
 
@@ -37,6 +45,17 @@ class BookPlayerContainerComponentImpl(
         audiobookServiceHandler,
         sensorListener,
         bookUri,
-        onBack
+        onBack = {
+            doOnBack()
+            onBack()
+        }
     )
+
+    private fun doOnBack() {
+        val sensorManager = context.getSystemService(ComponentActivity.SENSOR_SERVICE) as SensorManager
+
+        context.stopService(Intent(context, AudiobookMediaService::class.java))
+        audiobookServiceHandler.stopProgressUpdate()
+        sensorManager.unregisterListener(sensorListener)
+    }
 }

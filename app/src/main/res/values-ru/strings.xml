@@ -37,4 +37,19 @@
     <string name="description">Описание</string>
     <string name="add_folder_description">(Добавить новую папку с книжками. Каждая книга должна быть в своей собственной подпапке)</string>
     <string name="no_books_text">Нажмите на иконку папки вверху справа, чтобы добавить новую папку с книжками</string>
+    <string name="change_name">Изменить название</string>
+    <string name="change_cover">Изменить обложку</string>
+    <string name="add_to_favorites">Добавить в избранное</string>
+    <string name="remove_from_favorites">Удалить из избранного</string>
+    <string name="add_to_listen_later">Слушать позже</string>
+    <string name="remove_from_listen_later">Удалить из \"слушать позже\"</string>
+    <string name="mark_as_completed">Пометить как прослушанное</string>
+    <string name="mark_as_not_completed">Удалить из прослушанного</string>
+    <string name="favorites">Избранное</string>
+    <string name="listen_later">Слушать позже</string>
+    <string name="back">Назад</string>
+    <string name="completed_books">Прослушанное</string>
+    <string name="empty">Пусто :(</string>
+    <string name="nothing_found">Ничего не найдено...</string>
+    <string name="all">Все</string>
 </resources>

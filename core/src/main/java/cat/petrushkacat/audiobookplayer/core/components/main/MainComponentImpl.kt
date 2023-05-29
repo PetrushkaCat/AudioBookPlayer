@@ -116,7 +116,13 @@ class MainComponentImpl(
 
         is ChildConfig.Settings -> {
             MainComponent.Child.Settings(
-                SettingsComponentImpl(componentContext, settingsRepository)
+                SettingsComponentImpl(
+                    componentContext,
+                    settingsRepository,
+                    onBackClicked = {
+                        navigation.pop()
+                    }
+                )
             )
         }
 

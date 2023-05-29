@@ -12,7 +12,8 @@ import kotlinx.coroutines.launch
 
 class SettingsComponentImpl(
     componentContext: ComponentContext,
-    private val settingsRepository: SettingsRepository
+    private val settingsRepository: SettingsRepository,
+    private val onBackClicked: () -> Unit
 ) : SettingsComponent, ComponentContext by componentContext {
 
     private val scope = componentCoroutineScopeDefault()
@@ -94,5 +95,9 @@ class SettingsComponentImpl(
                 )
             )
         }
+    }
+
+    override fun onBack() {
+        onBackClicked()
     }
 }

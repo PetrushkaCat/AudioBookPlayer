@@ -48,7 +48,7 @@ fun SettingsComponentUi(component: SettingsComponent) {
 
     Column {
         CommonTopAppBar(title = stringResource(id = R.string.settings), onBack = {
-
+            component.onBack()
         })
         Column(
             modifier = Modifier

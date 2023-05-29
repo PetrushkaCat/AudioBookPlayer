@@ -85,9 +85,6 @@ class BookPlayerComponentImpl(
     init {
         Log.d("player-5", isInitialized.toString() + " $counter")
         backHandler.register(BackCallback {
-            context.stopService(Intent(context, AudiobookMediaService::class.java))
-            audiobookServiceHandler.stopProgressUpdate()
-            sensorManager.unregisterListener(sensorListener)
             onBack()
         })
 
@@ -126,8 +123,12 @@ class BookPlayerComponentImpl(
                         isInitialized = true
                         audiobookServiceHandler.addMediaItemList(mediaItems)
                         audiobookServiceHandler.setTimings(
-                            it.currentChapter,
-                            it.currentChapterTime
+                            chapterIndex = it.currentChapter,
+                            chapterTime = if(it.currentChapterTime > 2000) {
+                                it.currentChapterTime - 2000
+                            } else {
+                                it.currentChapterTime
+                            }
                         )
                         audiobookServiceHandler.setPlaySpeed(it.playSpeed)
                     }

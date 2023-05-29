@@ -30,8 +30,7 @@ class FoldersComponentImpl(
     private val context: Context,
     private val audiobooksRepository: AudiobooksRepository,
     private val rootFoldersRepository: RootFoldersRepository,
-    val onFolderSelect: () -> Unit,
-    val onFolderRemoveClicked: () -> Unit
+    val onBackClicked: () -> Unit
 ) : FoldersComponent, ComponentContext by componentContext {
 
     private val scopeDefault = componentCoroutineScopeDefault()
@@ -55,7 +54,6 @@ class FoldersComponentImpl(
         uri?.let {
             Log.d("folder_uri", uri.path!!)
             addFolder(uri)
-            onFolderSelect()
         }
     }
 
@@ -64,8 +62,12 @@ class FoldersComponentImpl(
             rootFoldersRepository.deleteFolder(rootFolderEntity)
             audiobooksRepository.deleteAllInFolder(rootFolderEntity.uri)
         }
-        onFolderRemoveClicked()
     }
+
+    override fun onBack() {
+        onBackClicked()
+    }
+
     private fun addFolder(folderUri: Uri) {
         scopeIO.launch {
             _foldersToProcess.value = 0

@@ -110,7 +110,11 @@ class MainComponentImpl(
 
         is ChildConfig.Folders -> {
             MainComponent.Child.Folder(
-                FoldersComponentImpl(componentContext, context, audiobooksRepository, rootFoldersRepository, {  }, {  })
+                FoldersComponentImpl(componentContext, context, audiobooksRepository, rootFoldersRepository,
+                    onBackClicked = {
+                        navigation.pop()
+                    }
+                )
             )
         }
 

@@ -32,6 +32,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cat.petrushkacat.audiobookplayer.R
+import cat.petrushkacat.audiobookplayer.app.ui.components.shared.CommonTopAppBar
 import cat.petrushkacat.audiobookplayer.app.ui.theme.Purple40
 import cat.petrushkacat.audiobookplayer.core.components.main.folderselector.FoldersComponent
 import cat.petrushkacat.audiobookplayer.core.models.RootFolderEntity
@@ -49,63 +50,73 @@ fun FoldersComponentUi(component: FoldersComponent) {
     val strokeWidth = 5.dp
     val circleColor = Purple40
 
-
-    Column(modifier = Modifier
-        .fillMaxSize()
-        .padding(4.dp)) {
-        if(foldersToProcess != 0 && foldersProcessed < foldersToProcess) {
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                CircularProgressIndicator(
-                    modifier = Modifier.drawBehind {
-                        drawCircle(
-                            circleColor,
-                            radius = size.width / 2 - strokeWidth.toPx() / 2,
-                            style = Stroke(strokeWidth.toPx())
-                        )
-                    },
-                    color = Color.LightGray,
-                    strokeWidth = strokeWidth
-                )
-                Row {
-                    Text(stringResource(id = R.string.folders_processed) + " " + foldersProcessed.toString() + " ")
-                    Text(stringResource(id = R.string.of) + " " + foldersToProcess.toString())
-                }
-            }
-        }
-        LazyColumn(
-            modifier = Modifier.weight(7f),
-            state = rememberLazyListState()
+    Column {
+        CommonTopAppBar(
+            title = stringResource(id = R.string.folders),
+            onBack = {
+            component.onBack()
+        })
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(4.dp)
         ) {
-            items(model.value.size) { index ->
-                FolderItem(folder = model.value[index]) {
-                    component.onFolderRemoveButtonClick(it)
-                }
-            }
-        }
-        Row(modifier = Modifier
-            .fillMaxWidth()
-            .weight(0.7f)
-            .padding(horizontal = 20.dp)
-        ) {
-
-            Text(stringResource(id = R.string.add_folder_description),
-                modifier = Modifier.weight(5f),
-                style = TextStyle(color = Color.Gray)
-            )
-
-            Icon(imageVector = Icons.Default.AddCircle,
-                stringResource(id = R.string.add_folder_icon),
-                modifier = Modifier
-                    .clickable {
-                        launcher.launch(null)
+            if (foldersToProcess != 0 && foldersProcessed < foldersToProcess) {
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.drawBehind {
+                            drawCircle(
+                                circleColor,
+                                radius = size.width / 2 - strokeWidth.toPx() / 2,
+                                style = Stroke(strokeWidth.toPx())
+                            )
+                        },
+                        color = Color.LightGray,
+                        strokeWidth = strokeWidth
+                    )
+                    Row {
+                        Text(stringResource(id = R.string.folders_processed) + " " + foldersProcessed.toString() + " ")
+                        Text(stringResource(id = R.string.of) + " " + foldersToProcess.toString())
                     }
-                    .weight(1f)
-                    .size(48.dp)
-                    .padding(5.dp)
-            )
+                }
+            }
+            LazyColumn(
+                modifier = Modifier.weight(7f),
+                state = rememberLazyListState()
+            ) {
+                items(model.value.size) { index ->
+                    FolderItem(folder = model.value[index]) {
+                        component.onFolderRemoveButtonClick(it)
+                    }
+                }
+            }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(0.7f)
+                    .padding(horizontal = 20.dp)
+            ) {
+
+                Text(
+                    stringResource(id = R.string.add_folder_description),
+                    modifier = Modifier.weight(5f),
+                    style = TextStyle(color = Color.Gray)
+                )
+
+                Icon(imageVector = Icons.Default.AddCircle,
+                    stringResource(id = R.string.add_folder_icon),
+                    modifier = Modifier
+                        .clickable {
+                            launcher.launch(null)
+                        }
+                        .weight(1f)
+                        .size(48.dp)
+                        .padding(5.dp)
+                )
+            }
         }
     }
 }

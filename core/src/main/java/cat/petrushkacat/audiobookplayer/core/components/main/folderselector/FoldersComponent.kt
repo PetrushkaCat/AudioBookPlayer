@@ -11,6 +11,7 @@ interface FoldersComponent {
     val foldersToProcess: StateFlow<Int>
     val foldersProcessed: StateFlow<Int>
     fun onFolderSelected(uri: Uri?)
-
     fun onFolderRemoveButtonClick(rootFolderEntity: RootFolderEntity)
+
+    fun onBack()
 }

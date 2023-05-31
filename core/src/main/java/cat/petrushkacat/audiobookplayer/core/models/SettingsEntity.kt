@@ -12,6 +12,8 @@ data class SettingsEntity(
     val autoRewindBackTime: Long = 2000,
     val theme: Theme = Theme.DARK,
     val grid: Grid = Grid.LIST,
+    /*@ColumnInfo(defaultValue = "60000") val greatRewindTime: Long = 60000,
+    @ColumnInfo(defaultValue = "3600000") val lastManualSleepDuration: Long = 60000 * 60*/
 )
 
 enum class Theme {

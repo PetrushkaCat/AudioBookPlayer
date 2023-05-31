@@ -55,7 +55,7 @@ class BookComponentImpl(
                     sensorListener = sensorListener,
                     bookUri = bookUri,
                     onBack = onBack,
-                    {
+                    onNotesButtonClicked = {
                         scopeMain.launch {
                             audiobookServiceHandler.pause()
                         }
@@ -71,7 +71,7 @@ class BookComponentImpl(
                     audiobooksRepository,
                     audiobookServiceHandler,
                     bookUri,
-                    { id, time ->
+                    onNoteClicked = { id, time ->
                         navigation.pop()
                         audiobookServiceHandler.setTimings(id, time)
                     }

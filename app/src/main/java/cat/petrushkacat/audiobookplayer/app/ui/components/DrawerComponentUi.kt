@@ -47,7 +47,7 @@ import cat.petrushkacat.audiobookplayer.core.components.main.bookshelf.drawer.Dr
 fun DrawerComponentUi(component: DrawerComponent) {
 
     val context = LocalContext.current
-    val version = context.packageManager.getPackageInfo("cat.petrushkacat.audiobookplayer", 1).versionName
+    val version = context.packageManager.getPackageInfo(context.packageName, 1).versionName
     Column(modifier = Modifier
         .fillMaxHeight()
         .width(260.dp)

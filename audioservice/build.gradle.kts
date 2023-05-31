@@ -44,6 +44,12 @@ dependencies {
     implementation(libs.media3.session)
     implementation(libs.media3.ui)
 
+    val media3_version = "1.0.1"
+    // Utilities for testing media components (including ExoPlayer components)
+    implementation("androidx.media3:media3-test-utils:$media3_version")
+    // Utilities for testing media components (including ExoPlayer components) via Robolectric
+    implementation("androidx.media3:media3-test-utils-robolectric:$media3_version")
+
     implementation(libs.hilt.android)
     kapt(libs.hilt.compiler)
 

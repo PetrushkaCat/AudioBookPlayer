@@ -104,10 +104,9 @@ class MainActivity : ComponentActivity() {
     }
 
     override fun onDestroy() {
-        super.onDestroy()
         job.cancel()
+        super.onDestroy()
     }
-
 }
 
 @Composable

@@ -58,8 +58,9 @@ class RootComponentImpl(
         }
         is ChildConfig.Splash -> {
             RootComponent.Child.Splash(
-                SplashScreenComponentImpl({
-                    navigation.pop()
+                SplashScreenComponentImpl(
+                    onAnimationEnd = {
+                        navigation.pop()
                 })
             )
         }

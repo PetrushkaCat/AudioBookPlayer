@@ -53,6 +53,13 @@
     <string name="nothing_found">Nothing found...</string>
     <string name="all">All</string>
     <string name="folders">Folders</string>
+    <string name="long_rewind">Long rewind</string>
+    <string name="long_rewind_back">Long rewind back</string>
+    <string name="long_rewind_forward">Long rewind forward</string>
+    <string name="the_end_of_the_chapter">The end of the chapter</string>
+    <string name="current">Current:</string>
+    <string name="your_value_minuter">Your value. Minutes</string>
+
 
 
 

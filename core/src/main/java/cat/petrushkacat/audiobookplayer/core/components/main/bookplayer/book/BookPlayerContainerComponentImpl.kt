@@ -11,6 +11,7 @@ import cat.petrushkacat.audiobookplayer.audioservice.sensors.SensorListener
 import cat.petrushkacat.audiobookplayer.core.components.main.bookplayer.book.bookplayer.BookPlayerComponentImpl
 import cat.petrushkacat.audiobookplayer.core.components.main.bookplayer.book.toolbar.BookPlayerToolbarComponentImpl
 import cat.petrushkacat.audiobookplayer.core.repository.AudiobooksRepository
+import cat.petrushkacat.audiobookplayer.core.repository.SettingsRepository
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.childContext
 
@@ -18,6 +19,7 @@ class BookPlayerContainerComponentImpl(
     componentContext: ComponentContext,
     private val context: Context,
     private val audiobooksRepository: AudiobooksRepository,
+    private val settingsRepository: SettingsRepository,
     private val audiobookServiceHandler: AudiobookServiceHandler,
     private val sensorListener: SensorListener,
     private val bookUri: Uri,
@@ -29,6 +31,7 @@ class BookPlayerContainerComponentImpl(
         childContext("book_player_toolbar"),
         audiobookServiceHandler,
         audiobooksRepository,
+        settingsRepository,
         bookUri,
         onNotesButtonClicked = onNotesButtonClicked,
         onBackClicked = {

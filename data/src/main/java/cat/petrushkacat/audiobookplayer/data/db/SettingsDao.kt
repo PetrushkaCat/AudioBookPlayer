@@ -4,19 +4,18 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import cat.petrushkacat.audiobookplayer.audioservice.model.AudioServiceSettings
-import cat.petrushkacat.audiobookplayer.core.models.SettingsEntity
+import cat.petrushkacat.audiobookplayer.data.dto.SettingsEntityDTO
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface SettingsDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun saveSettings(settingsEntity: SettingsEntity)
+    fun saveSettings(settingsEntity: SettingsEntityDTO)
 
     @Query("SELECT * FROM SettingsEntity")
-    fun getSettings(): Flow<SettingsEntity>
+    fun getSettings(): Flow<SettingsEntityDTO>
 
     @Query("SELECT * FROM SettingsEntity")
-    fun getAudioServiceSettings(): Flow<AudioServiceSettings>
+    fun getAudioServiceSettings(): Flow<SettingsEntityDTO>
 }

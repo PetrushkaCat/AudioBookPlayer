@@ -18,8 +18,6 @@ import cat.petrushkacat.audiobookplayer.app.ui.theme.AudioBookPlayerTheme
 import cat.petrushkacat.audiobookplayer.audioservice.AudiobookServiceHandler
 import cat.petrushkacat.audiobookplayer.audioservice.sensors.SensorListener
 import cat.petrushkacat.audiobookplayer.core.components.RootComponentImpl
-import cat.petrushkacat.audiobookplayer.core.models.SettingsEntity
-import cat.petrushkacat.audiobookplayer.core.models.Theme
 import cat.petrushkacat.audiobookplayer.core.repository.AudiobooksRepository
 import cat.petrushkacat.audiobookplayer.core.repository.RootFoldersRepository
 import cat.petrushkacat.audiobookplayer.core.repository.SettingsRepository
@@ -75,11 +73,11 @@ class MainActivity : ComponentActivity() {
 
         CoroutineScope(job + Dispatchers.Default).launch {
             if (settingsRepository.getSettings().first() == null) { //nope it's not always false
-                settingsRepository.saveSettings(SettingsEntity())
+                settingsRepository.saveSettings(cat.petrushkacat.audiobookplayer.domain.models.SettingsEntity())
             }
                 settingsRepository.getSettings().takeWhile { job.isActive }
                     .collect {
-                        isDarkTheme.value = it.theme == Theme.DARK
+                        isDarkTheme.value = it.theme == cat.petrushkacat.audiobookplayer.domain.models.Theme.DARK
                      /*   while (true) {
                             Log.d("123", "${this.toString()}")
                             delay(100)

@@ -6,4 +6,5 @@ data class AudioServiceSettings(
     val autoSleepTime: Long = 600000 * 60 * 2,
     val rewindTime: Long = 15000,
     val autoRewindBackTime: Long = 2000,
+    val greatRewindTime: Long = 60000
 )

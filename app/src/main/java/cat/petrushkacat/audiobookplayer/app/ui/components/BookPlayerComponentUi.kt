@@ -4,8 +4,6 @@ import android.content.res.Configuration
 import android.graphics.BitmapFactory
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -19,11 +17,12 @@ import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIos
 import androidx.compose.material.icons.filled.ArrowForwardIos
 import androidx.compose.material.icons.filled.ExpandMore
+import androidx.compose.material.icons.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.KeyboardDoubleArrowLeft
 import androidx.compose.material.icons.filled.KeyboardDoubleArrowRight
 import androidx.compose.material.icons.filled.Pause
@@ -70,7 +69,7 @@ fun BookPlayerComponentUi(component: BookPlayerComponent) {
         } else {
             0f
         }
-    } catch (e: IndexOutOfBoundsException) {
+    } catch (e: Exception) {
         0f
     }
 
@@ -155,9 +154,12 @@ fun PlayerControllers(
 
     val iconsSize = 40.dp
     val iconsSize2 = 25.dp
+    var listSize = 0
     val currentChapterName = try {
+        listSize = chapters.chapters.size
         chapters.chapters[currentTimings.currentChapterIndex].name
-    } catch (e: IndexOutOfBoundsException) {
+    } catch (e: Exception) {
+        listSize = 0
         ""
     }
     val showDialog = rememberSaveable { mutableStateOf(false) }
@@ -172,7 +174,7 @@ fun PlayerControllers(
         modifier = modifier.padding(horizontal = 10.dp),
         verticalArrangement = Arrangement.SpaceAround
     ) {
-        if (chapters.chapters.size > 1) {
+        if (listSize > 1) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -222,7 +224,7 @@ fun PlayerControllers(
             progressString = formatDuration(currentTimings.currentTimeInChapter),
             duration = try {
                 chapters.chapters[currentTimings.currentChapterIndex].duration
-            } catch (e: IndexOutOfBoundsException) { 0 },
+            } catch (e: Exception) { 0 },
             onPlayerEvent = onPlayerEvent
         )
 
@@ -232,6 +234,15 @@ fun PlayerControllers(
         ) {
             Icon(
                 Icons.Default.KeyboardDoubleArrowLeft,
+                contentDescription = stringResource(id = R.string.long_rewind_back),
+                modifier = Modifier
+                    .size(iconsSize)
+                    .weight(1f)
+                    .clickable {
+                        onPlayerEvent(PlayerEvent.GreatBackward)
+                    })
+            Icon(
+                Icons.Default.KeyboardArrowLeft,
                 contentDescription = stringResource(id = R.string.rewind_back),
                 modifier = Modifier
                     .size(iconsSize)
@@ -243,20 +254,28 @@ fun PlayerControllers(
                 contentDescription = stringResource(id = R.string.play_pause),
                 modifier = Modifier
                     .size(iconsSize)
-                    .weight(4f)
+                    .weight(2f)
                     .clickable {
                         onPlayerEvent(PlayerEvent.PlayPause)
                     })
             Icon(
-                Icons.Default.KeyboardDoubleArrowRight,
+                Icons.Default.KeyboardArrowRight,
                 contentDescription = stringResource(id = R.string.rewind_forward),
                 modifier = Modifier
                     .size(iconsSize)
                     .weight(1f)
                     .clickable {
                         onPlayerEvent(PlayerEvent.Forward)
-                    }
-            )
+                    })
+            Icon(
+                Icons.Default.KeyboardDoubleArrowRight,
+                contentDescription = stringResource(id = R.string.long_rewind_forward),
+                modifier = Modifier
+                    .size(iconsSize)
+                    .weight(1f)
+                    .clickable {
+                        onPlayerEvent(PlayerEvent.GreatForward)
+                    })
         }
     }
 

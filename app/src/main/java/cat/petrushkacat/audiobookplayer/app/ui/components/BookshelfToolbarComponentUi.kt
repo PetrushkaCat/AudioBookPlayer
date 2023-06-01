@@ -46,7 +46,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import cat.petrushkacat.audiobookplayer.R
 import cat.petrushkacat.audiobookplayer.core.components.main.bookshelf.toolbar.BookshelfToolbarComponent
-import cat.petrushkacat.audiobookplayer.core.models.Grid
+import cat.petrushkacat.audiobookplayer.domain.models.Grid
 import cat.petrushkacat.audiobookplayer.core.models.RootFolderEntity
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -60,9 +60,9 @@ fun BookshelfToolbarComponentUi(
     val folders by component.folders.collectAsState()
 
     val icon = when (settings.value.grid) {
-        Grid.LIST -> Icons.Default.GridView
-        Grid.BIG_CELLS -> Icons.Default.GridOn
-        Grid.SMALL_CELLS -> Icons.Default.ListAlt
+        cat.petrushkacat.audiobookplayer.domain.models.Grid.LIST -> Icons.Default.GridView
+        cat.petrushkacat.audiobookplayer.domain.models.Grid.BIG_CELLS -> Icons.Default.GridOn
+        cat.petrushkacat.audiobookplayer.domain.models.Grid.SMALL_CELLS -> Icons.Default.ListAlt
     }
     TopAppBar(
         navigationIcon = {

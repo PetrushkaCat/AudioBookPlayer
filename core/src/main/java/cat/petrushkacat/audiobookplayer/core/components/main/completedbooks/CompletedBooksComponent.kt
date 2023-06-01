@@ -2,7 +2,7 @@ package cat.petrushkacat.audiobookplayer.core.components.main.completedbooks
 
 import cat.petrushkacat.audiobookplayer.core.components.main.bookshelf.bookslist.BooksListComponent
 import cat.petrushkacat.audiobookplayer.core.components.shared.bookdropdownmenu.BookDropdownMenuComponent
-import cat.petrushkacat.audiobookplayer.core.models.SettingsEntity
+import cat.petrushkacat.audiobookplayer.domain.models.SettingsEntity
 import kotlinx.coroutines.flow.StateFlow
 
 interface CompletedBooksComponent {
@@ -11,7 +11,7 @@ interface CompletedBooksComponent {
 
     val models: StateFlow<List<BooksListComponent.Model>>
 
-    val settings: StateFlow<SettingsEntity>
+    val settings: StateFlow<cat.petrushkacat.audiobookplayer.domain.models.SettingsEntity>
 
 
     fun onBack()

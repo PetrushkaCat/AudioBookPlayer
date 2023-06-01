@@ -1,20 +1,23 @@
-package cat.petrushkacat.audiobookplayer.core.models
+package cat.petrushkacat.audiobookplayer.domain.models
 
-import androidx.room.Entity
-import androidx.room.PrimaryKey
-
-@Entity
 data class SettingsEntity(
-    @PrimaryKey val id: Int = 1,
+    val id: Int = 1,
     val versionCode: Int = 1,
     val autoSleepTime: Long = 60000 * 60 * 2,
     val rewindTime: Long = 15000,
     val autoRewindBackTime: Long = 2000,
     val theme: Theme = Theme.DARK,
     val grid: Grid = Grid.LIST,
-    /*@ColumnInfo(defaultValue = "60000") val greatRewindTime: Long = 60000,
-    @ColumnInfo(defaultValue = "3600000") val lastManualSleepDuration: Long = 60000 * 60*/
-)
+    val greatRewindTime: Long = 60000,
+    val sleepTimerType: SleepTimerType = SleepTimerType.EndOfTheChapter
+) {
+    sealed class SleepTimerType() {
+
+        object EndOfTheChapter: SleepTimerType()
+
+        class Common(val time: Long): SleepTimerType()
+    }
+}
 
 enum class Theme {
     //SYSTEM_DEFAULT,

@@ -1,9 +1,8 @@
 package cat.petrushkacat.audiobookplayer.core.components.main.settings
 
-import cat.petrushkacat.audiobookplayer.core.models.SettingsEntity
-import cat.petrushkacat.audiobookplayer.core.models.Theme
 import cat.petrushkacat.audiobookplayer.core.repository.SettingsRepository
 import cat.petrushkacat.audiobookplayer.core.util.componentCoroutineScopeDefault
+import cat.petrushkacat.audiobookplayer.core.util.componentCoroutineScopeIO
 import com.arkivanov.decompose.ComponentContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -17,9 +16,10 @@ class SettingsComponentImpl(
 ) : SettingsComponent, ComponentContext by componentContext {
 
     private val scope = componentCoroutineScopeDefault()
+    private val scopeIO = componentCoroutineScopeIO()
 
-    private val _models = MutableStateFlow(SettingsEntity())
-    override val models: StateFlow<SettingsEntity> = _models.asStateFlow()
+    private val _models = MutableStateFlow(cat.petrushkacat.audiobookplayer.domain.models.SettingsEntity())
+    override val models: StateFlow<cat.petrushkacat.audiobookplayer.domain.models.SettingsEntity> = _models.asStateFlow()
 
 
     init {
@@ -29,20 +29,22 @@ class SettingsComponentImpl(
             }
         }
     }
-    override fun saveSettings(settings: SettingsEntity) {
-        settingsRepository.saveSettings(settings)
+    override fun saveSettings(settings: cat.petrushkacat.audiobookplayer.domain.models.SettingsEntity) {
+        scopeIO.launch {
+            settingsRepository.saveSettings(settings)
+        }
     }
 
     override fun changeTheme(isDark: Boolean) {
         scope.launch {
             settingsRepository.saveSettings(
-                SettingsEntity(
+                cat.petrushkacat.audiobookplayer.domain.models.SettingsEntity(
                     id = models.value.id,
                     versionCode = models.value.versionCode,
                     autoSleepTime = models.value.autoSleepTime,
                     rewindTime = models.value.rewindTime,
                     autoRewindBackTime = models.value.autoRewindBackTime,
-                    theme = if (isDark) Theme.DARK else Theme.LIGHT,
+                    theme = if (isDark) cat.petrushkacat.audiobookplayer.domain.models.Theme.DARK else cat.petrushkacat.audiobookplayer.domain.models.Theme.LIGHT,
                     grid = models.value.grid
                 )
             )
@@ -52,7 +54,7 @@ class SettingsComponentImpl(
     override fun changeRewindTime(time: Long) {
         scope.launch {
             settingsRepository.saveSettings(
-                SettingsEntity(
+                cat.petrushkacat.audiobookplayer.domain.models.SettingsEntity(
                     id = models.value.id,
                     versionCode = models.value.versionCode,
                     autoSleepTime = models.value.autoSleepTime,
@@ -65,10 +67,18 @@ class SettingsComponentImpl(
         }
     }
 
+    override fun changeGreatRewindTime(time: Long) {
+        saveSettings(
+            models.value.copy(
+                greatRewindTime = time
+            )
+        )
+    }
+
     override fun changeAutoRewindTime(time: Long) {
         scope.launch {
             settingsRepository.saveSettings(
-                SettingsEntity(
+                cat.petrushkacat.audiobookplayer.domain.models.SettingsEntity(
                     id = models.value.id,
                     versionCode = models.value.versionCode,
                     autoSleepTime = models.value.autoSleepTime,
@@ -84,7 +94,7 @@ class SettingsComponentImpl(
     override fun changeAutoSleepTime(time: Long) {
         scope.launch {
             settingsRepository.saveSettings(
-                SettingsEntity(
+                cat.petrushkacat.audiobookplayer.domain.models.SettingsEntity(
                     id = models.value.id,
                     versionCode = models.value.versionCode,
                     autoSleepTime = time,

@@ -5,5 +5,5 @@ import kotlinx.coroutines.flow.Flow
 
 interface AudioServiceSettingsRepository {
 
-    fun getAudioServiceSettings(): Flow<AudioServiceSettings>
+    suspend fun getAudioServiceSettings(): Flow<AudioServiceSettings>
 }

@@ -7,6 +7,7 @@ import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
 import cat.petrushkacat.audiobookplayer.audioservice.repository.AudioServiceSettingsRepository
 import cat.petrushkacat.audiobookplayer.audioservice.sensors.SensorListener
+import cat.petrushkacat.audiobookplayer.domain.models.SettingsEntity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -30,12 +31,16 @@ class AudiobookServiceHandler @Inject constructor(
 
     val isPlaying = MutableStateFlow(player.isPlaying)
 
+    private val _manualSleepTimerState = MutableStateFlow(ManualSleepTimerState(0, false))
+    val manualSleepTimerState = _manualSleepTimerState.asStateFlow()
+
     private var job: Job
 
     private var isProgressBeingWatched = false
 
     private var autoSeekBack: Long = 0
     private var seek: Long = 0
+    private var greatSeek: Long = 0
 
     init {
         CoroutineScope(SupervisorJob() + Dispatchers.Default).launch {
@@ -43,6 +48,7 @@ class AudiobookServiceHandler @Inject constructor(
                 //it can be null, do not touch
                     autoSeekBack = it?.autoRewindBackTime ?: 0
                     seek = it?.rewindTime ?: 0
+                    greatSeek = it?.greatRewindTime ?: 0
                 Log.d("Audiobook service handler init settings", it?.toString() ?: "null")
             }
         }
@@ -57,9 +63,20 @@ class AudiobookServiceHandler @Inject constructor(
 
     fun isStopped() = player.playbackState != Player.STATE_READY
 
-    fun setTimings(chapterIndex: Int, chapterTime: Long) {
-        player.seekTo(chapterIndex, chapterTime)
-        _currentTimings.value = CurrentTimings(chapterTime, chapterIndex)
+    fun setTimings(chapterIndex: Int, chapterTime: Long, isInitialization: Boolean = false) {
+        if(!isInitialization) {
+            player.seekTo(chapterIndex, chapterTime)
+            _currentTimings.value = CurrentTimings(chapterTime, chapterIndex)
+        } else {
+            setTimings(
+                chapterIndex = chapterIndex,
+                chapterTime = if(chapterTime > autoSeekBack) {
+                    chapterTime - autoSeekBack
+                } else {
+                    0
+                }
+            )
+        }
     }
 
     fun setPlaySpeed(speed: Float) {
@@ -69,8 +86,37 @@ class AudiobookServiceHandler @Inject constructor(
     fun pause() {
         player.pause()
     }
+
     fun getPlaySpeed() = player.playbackParameters.speed
 
+    fun startStopManualSleepTimer(sleepTimerType: SettingsEntity.SleepTimerType, haveToStopIfPlaying: Boolean) {
+        val sleepAfter = when(sleepTimerType) {
+            is SettingsEntity.SleepTimerType.Common -> {
+                sleepTimerType.time / player.playbackParameters.speed
+            }
+
+            SettingsEntity.SleepTimerType.EndOfTheChapter -> {
+                (player.duration - player.currentPosition) / player.playbackParameters.speed
+            }
+        }.toLong()
+
+        if(!haveToStopIfPlaying) {
+            _manualSleepTimerState.value = ManualSleepTimerState(
+                sleepAfter,
+                true
+            )
+        } else if(_manualSleepTimerState.value.isActive) {
+            _manualSleepTimerState.value = ManualSleepTimerState(
+                sleepAfter,
+                false
+            )
+        } else {
+            _manualSleepTimerState.value = ManualSleepTimerState(
+                sleepAfter,
+                true
+            )
+        }
+    }
 
     suspend fun onPlayerEvent(playerEvent: PlayerEvent) {
         when (playerEvent) {
@@ -118,6 +164,19 @@ class AudiobookServiceHandler @Inject constructor(
                 player.seekTo(playerEvent.chapterId, 0)
                 _currentTimings.value = CurrentTimings(player.currentPosition, player.currentMediaItemIndex)
             }
+
+            PlayerEvent.GreatBackward -> {
+                player.seekTo(
+                    if(currentTimings.value.currentTimeInChapter > greatSeek)
+                        currentTimings.value.currentTimeInChapter - greatSeek
+                    else 0
+                )
+                _currentTimings.value = CurrentTimings(player.currentPosition, player.currentMediaItemIndex)
+            }
+            PlayerEvent.GreatForward -> {
+                player.seekTo(currentTimings.value.currentTimeInChapter + greatSeek)
+                _currentTimings.value = CurrentTimings(player.currentPosition, player.currentMediaItemIndex)
+            }
         }
     }
 
@@ -155,6 +214,13 @@ class AudiobookServiceHandler @Inject constructor(
                             player.pause()
                             stopProgressUpdate()
                         }
+                        val sleepAfter = manualSleepTimerState.value.sleepAfter - 500
+                        _manualSleepTimerState.value = _manualSleepTimerState.value.copy(sleepAfter = sleepAfter)
+                        if(sleepAfter <= 0 && _manualSleepTimerState.value.isActive) {
+                            _manualSleepTimerState.value = _manualSleepTimerState.value.copy(sleepAfter = 0, isActive = false)
+                            player.pause()
+                        }
+
                     }
                 }
             }
@@ -173,6 +239,11 @@ data class CurrentTimings(
     val currentChapterIndex: Int,
 )
 
+data class ManualSleepTimerState(
+    val sleepAfter: Long,
+    val isActive: Boolean
+)
+
 sealed class PlayerEvent {
     object PlayPause : PlayerEvent()
     object Backward : PlayerEvent()
@@ -182,4 +253,8 @@ sealed class PlayerEvent {
     data class UpdateProgress(val newProgress: Float) : PlayerEvent()
 
     data class ChooseChapter(val chapterId: Int): PlayerEvent()
+
+    object GreatBackward: PlayerEvent()
+
+    object GreatForward: PlayerEvent()
 }

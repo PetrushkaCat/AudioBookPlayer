@@ -7,6 +7,7 @@ import cat.petrushkacat.audiobookplayer.audioservice.sensors.SensorListener
 import cat.petrushkacat.audiobookplayer.core.components.main.bookplayer.book.BookPlayerContainerComponentImpl
 import cat.petrushkacat.audiobookplayer.core.components.main.bookplayer.notes.NotesComponentImpl
 import cat.petrushkacat.audiobookplayer.core.repository.AudiobooksRepository
+import cat.petrushkacat.audiobookplayer.core.repository.SettingsRepository
 import cat.petrushkacat.audiobookplayer.core.util.componentCoroutineScopeMain
 import cat.petrushkacat.audiobookplayer.core.util.toStateFlow
 import com.arkivanov.decompose.ComponentContext
@@ -24,6 +25,7 @@ class BookComponentImpl(
     componentContext: ComponentContext,
     private val context: Context,
     private val audiobooksRepository: AudiobooksRepository,
+    private val settingsRepository: SettingsRepository,
     private val audiobookServiceHandler: AudiobookServiceHandler,
     private val sensorListener: SensorListener,
     private val bookUri: Uri,
@@ -51,6 +53,7 @@ class BookComponentImpl(
                     componentContext= componentContext,
                     context = context,
                     audiobooksRepository = audiobooksRepository,
+                    settingsRepository = settingsRepository,
                     audiobookServiceHandler = audiobookServiceHandler,
                     sensorListener = sensorListener,
                     bookUri = bookUri,

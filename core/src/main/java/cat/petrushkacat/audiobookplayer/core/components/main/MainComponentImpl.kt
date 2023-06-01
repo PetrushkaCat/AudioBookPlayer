@@ -99,7 +99,8 @@ class MainComponentImpl(
         is ChildConfig.Book -> {
             MainComponent.Child.Book(
                 BookComponentImpl(componentContext, context,
-                    audiobooksRepository, audiobookServiceHandler, sensorListener, config.bookUri,
+                    audiobooksRepository, settingsRepository,
+                    audiobookServiceHandler, sensorListener, config.bookUri,
                     onBack = {
                         navigation.pop()
                         BookPlayerComponentImpl.isInitialized = false

@@ -83,85 +83,89 @@ class BookPlayerComponentImpl(
     }
 
     init {
-        Log.d("player-5", isInitialized.toString() + " $counter")
-        backHandler.register(BackCallback {
-            onBack()
-        })
-
-        lifecycle.doOnDestroy {
-            alive = false
-        }
         scope.launch {
-            audiobooksRepository.getBook(bookUri).collect {
-                _models.value = it
+            launch {
+                Log.d("player-5", isInitialized.toString() + " $counter")
+                backHandler.register(BackCallback {
+                    onBack()
+                })
 
-                var isStropped: Boolean
-                withContext(Dispatchers.Main) {
-                    isStropped = audiobookServiceHandler.isStopped()
+                lifecycle.doOnDestroy {
+                    alive = false
                 }
-                if (!isInitialized || isStropped) {
-                    for (chapter in it.chapters.chapters) {
-                        val mediaItem = MediaItem.Builder()
-                            .setUri(chapter.uri)
-                            .setMediaMetadata(
-                                MediaMetadata.Builder()
-                                    .setFolderType(MediaMetadata.FOLDER_TYPE_ALBUMS)
-                                    .setArtworkData(
-                                        models.value.image,
-                                        MediaMetadata.PICTURE_TYPE_FRONT_COVER
-                                    )
-                                    .setAlbumTitle(models.value.name)
-                                    .setDisplayTitle(chapter.name)
-                                    .build()
-                            ).build()
-
-                        mediaItems.add(mediaItem)
-                    }
-                    Log.d("player-1", "items: " + mediaItems.toString())
-
-                    withContext(Dispatchers.Main) {
-                        isInitialized = true
-                        audiobookServiceHandler.addMediaItemList(mediaItems)
-                        audiobookServiceHandler.setTimings(
-                            chapterIndex = it.currentChapter,
-                            chapterTime = if(it.currentChapterTime > 2000) {
-                                it.currentChapterTime - 2000
-                            } else {
-                                it.currentChapterTime
-                            }
-                        )
-                        audiobookServiceHandler.setPlaySpeed(it.playSpeed)
-                    }
-                    startService()
-                }
-
             }
-        }
+            launch {
+                audiobooksRepository.getBook(bookUri).collect {
+                    _models.value = it
+                    var isStropped: Boolean
+                    withContext(Dispatchers.Main) {
+                        isStropped = audiobookServiceHandler.isStopped()
+                    }
+                    Log.d("list null" , it?.toString() ?: "null")
+                    Log.d("list null" , it.chapters.chapters?.toString() ?: "null")
+                    if (!isInitialized || isStropped) {
+                        for (chapter in it.chapters.chapters) {
+                            Log.d("list null" , "2")
+                            val mediaItem = MediaItem.Builder()
+                                .setUri(chapter.uri)
+                                .setMediaMetadata(
+                                    MediaMetadata.Builder()
+                                        .setFolderType(MediaMetadata.FOLDER_TYPE_ALBUMS)
+                                        .setArtworkData(
+                                            it.image,
+                                            MediaMetadata.PICTURE_TYPE_FRONT_COVER
+                                        )
+                                        .setAlbumTitle(it.name)
+                                        .setDisplayTitle(chapter.name)
+                                        .build()
+                                ).build()
 
-        sensorManager = context.getSystemService(ComponentActivity.SENSOR_SERVICE) as SensorManager
-        val sensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
+                            mediaItems.add(mediaItem)
+                        }
+                        Log.d("player-1", "items: " + mediaItems.toString())
 
-        try {
-            sensorManager.registerListener(
-                sensorListener,
-                sensor!!,
-                SensorManager.SENSOR_DELAY_NORMAL
-            )
-        } catch (e: Exception) {
-            e.printStackTrace()
-            Log.d("sensor", "no sensor Registered")
+                        withContext(Dispatchers.Main) {
+                            isInitialized = true
+                            audiobookServiceHandler.addMediaItemList(mediaItems)
+                            audiobookServiceHandler.setTimings(
+                                chapterIndex = it.currentChapter,
+                                chapterTime = it.currentChapterTime,
+                                isInitialization = true
+                            )
+                            audiobookServiceHandler.setPlaySpeed(it.playSpeed)
+                        }
+                        startService(it.chapters, it.folderName, it.duration)
+                    }
+
+                }
+            }
+            Log.d("list null" , "3")
+
+            sensorManager = context.getSystemService(ComponentActivity.SENSOR_SERVICE) as SensorManager
+            val sensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
+
+            try {
+                sensorManager.registerListener(
+                    sensorListener,
+                    sensor!!,
+                    SensorManager.SENSOR_DELAY_NORMAL
+                )
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Log.d("sensor", "no sensor Registered")
+            }
         }
     }
 
-    private fun startService() {
+    private fun startService(chapters: Chapters, folderName: String, duration: Long) {
 
         val chapterDurations: MutableList<Long> = mutableListOf()
-        for (chapter in models.value.chapters.chapters) {
+        for (chapter in chapters.chapters) {
             chapterDurations.add(chapter.duration)
         }
         val intent = Intent(context, AudiobookMediaService::class.java)
-            .putExtra(FOLDER_NAME_EXTRA, models.value.folderName)
-            .putExtra(DURATION_EXTRA, models.value.duration)
+            .putExtra(FOLDER_NAME_EXTRA, folderName)
+            .putExtra(DURATION_EXTRA, duration)
             .putExtra(CHAPTER_DURATIONS, chapterDurations.toLongArray())
 
         context.startForegroundService(intent)

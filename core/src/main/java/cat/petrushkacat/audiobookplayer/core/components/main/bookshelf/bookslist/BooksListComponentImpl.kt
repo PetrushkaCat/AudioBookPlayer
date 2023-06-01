@@ -12,7 +12,6 @@ import cat.petrushkacat.audiobookplayer.core.components.shared.bookdropdownmenu.
 import cat.petrushkacat.audiobookplayer.core.models.BookEntity
 import cat.petrushkacat.audiobookplayer.core.models.Chapter
 import cat.petrushkacat.audiobookplayer.core.models.Chapters
-import cat.petrushkacat.audiobookplayer.core.models.SettingsEntity
 import cat.petrushkacat.audiobookplayer.core.repository.AudiobooksRepository
 import cat.petrushkacat.audiobookplayer.core.repository.RootFoldersRepository
 import cat.petrushkacat.audiobookplayer.core.repository.SettingsRepository
@@ -51,8 +50,8 @@ class BooksListComponentImpl(
     private val _models = MutableStateFlow<List<BooksListComponent.Model>>(emptyList())
     override val models: StateFlow<List<BooksListComponent.Model>> = _models
 
-    private val _settings = MutableStateFlow(SettingsEntity())
-    override val settings: StateFlow<SettingsEntity> = _settings.asStateFlow()
+    private val _settings = MutableStateFlow(cat.petrushkacat.audiobookplayer.domain.models.SettingsEntity())
+    override val settings: StateFlow<cat.petrushkacat.audiobookplayer.domain.models.SettingsEntity> = _settings.asStateFlow()
 
     override val foldersToProcess = _foldersToProcess.asStateFlow()
     override val foldersProcessed = _foldersProcessed.asStateFlow()

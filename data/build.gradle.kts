@@ -4,6 +4,8 @@ plugins {
     id("dagger.hilt.android.plugin")
     kotlin("kapt")
     id ("com.google.devtools.ksp")
+    kotlin("plugin.serialization") version "1.8.21"
+
 }
 
 android {
@@ -33,10 +35,14 @@ android {
     kotlinOptions {
         jvmTarget = "17"
     }
+    /*kotlin {
+        jvmToolchain(11)
+    }*/
 }
 
 dependencies {
 
+    implementation(project(":domain"))
     implementation(project(":core"))
     implementation(project(":audioservice"))
 
@@ -47,6 +53,7 @@ dependencies {
     ksp(libs.room.compiler)
     implementation(libs.room.ktx)
     implementation(libs.gson)
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
 
     implementation(libs.hilt.android)
     kapt(libs.hilt.compiler)

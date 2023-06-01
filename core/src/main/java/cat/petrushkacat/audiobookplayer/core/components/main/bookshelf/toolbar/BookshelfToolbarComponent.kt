@@ -1,12 +1,11 @@
 package cat.petrushkacat.audiobookplayer.core.components.main.bookshelf.toolbar
 
 import cat.petrushkacat.audiobookplayer.core.models.RootFolderEntity
-import cat.petrushkacat.audiobookplayer.core.models.SettingsEntity
 import kotlinx.coroutines.flow.StateFlow
 
 interface BookshelfToolbarComponent {
 
-    val settings: StateFlow<SettingsEntity>
+    val settings: StateFlow<cat.petrushkacat.audiobookplayer.domain.models.SettingsEntity>
 
     val folders: StateFlow<List<RootFolderEntity>>
 

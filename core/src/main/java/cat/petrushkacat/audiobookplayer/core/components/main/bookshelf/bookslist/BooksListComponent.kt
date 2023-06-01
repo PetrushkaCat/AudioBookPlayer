@@ -2,7 +2,6 @@ package cat.petrushkacat.audiobookplayer.core.components.main.bookshelf.bookslis
 
 import android.net.Uri
 import cat.petrushkacat.audiobookplayer.core.components.shared.bookdropdownmenu.BookDropdownMenuComponent
-import cat.petrushkacat.audiobookplayer.core.models.SettingsEntity
 import kotlinx.coroutines.flow.StateFlow
 
 interface BooksListComponent {
@@ -11,7 +10,7 @@ interface BooksListComponent {
 
     val models: StateFlow<List<Model>>
 
-    val settings: StateFlow<SettingsEntity>
+    val settings: StateFlow<cat.petrushkacat.audiobookplayer.domain.models.SettingsEntity>
 
     val foldersToProcess: StateFlow<Int>
     val foldersProcessed: StateFlow<Int>

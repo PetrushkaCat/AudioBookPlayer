@@ -13,7 +13,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bedtime
 import androidx.compose.material.icons.filled.DarkMode
-import androidx.compose.material.icons.filled.DoubleArrow
+import androidx.compose.material.icons.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.filled.KeyboardDoubleArrowLeft
 import androidx.compose.material.icons.filled.RotateLeft
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material3.AlertDialog
@@ -39,7 +40,7 @@ import cat.petrushkacat.audiobookplayer.R
 import cat.petrushkacat.audiobookplayer.app.ui.components.shared.CommonTopAppBar
 import cat.petrushkacat.audiobookplayer.app.util.formatDuration
 import cat.petrushkacat.audiobookplayer.core.components.main.settings.SettingsComponent
-import cat.petrushkacat.audiobookplayer.core.models.Theme
+import cat.petrushkacat.audiobookplayer.domain.models.Theme
 
 @Composable
 fun SettingsComponentUi(component: SettingsComponent) {
@@ -58,7 +59,7 @@ fun SettingsComponentUi(component: SettingsComponent) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable { component.changeTheme(model.theme != Theme.DARK) },
+                    .clickable { component.changeTheme(model.theme != cat.petrushkacat.audiobookplayer.domain.models.Theme.DARK) },
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
@@ -76,18 +77,27 @@ fun SettingsComponentUi(component: SettingsComponent) {
                     )
                 }
                 Switch(
-                    checked = model.theme == Theme.DARK,
+                    checked = model.theme == cat.petrushkacat.audiobookplayer.domain.models.Theme.DARK,
                     onCheckedChange = component::changeTheme
                 )
             }
             TimeSettingItem(
-                icon = Icons.Default.DoubleArrow,
+                icon = Icons.Default.KeyboardArrowLeft,
                 name = stringResource(id = R.string.rewind),
                 time = model.rewindTime,
                 maxTime = 60000,
                 minTime = 1000,
                 steps = 60,
                 onTimeChange = component::changeRewindTime
+            )
+            TimeSettingItem(
+                icon = Icons.Default.KeyboardDoubleArrowLeft,
+                name = stringResource(id = R.string.long_rewind),
+                time = model.greatRewindTime,
+                maxTime = 60000 * 5,
+                minTime = 60000,
+                steps = 60,
+                onTimeChange = component::changeGreatRewindTime
             )
             TimeSettingItem(
                 icon = Icons.Default.RotateLeft,

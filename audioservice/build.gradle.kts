@@ -32,9 +32,14 @@ android {
     kotlinOptions {
         jvmTarget = "17"
     }
+/*    kotlin {
+        jvmToolchain(17)
+    }*/
 }
 
 dependencies {
+
+    implementation(project(":domain"))
 
     implementation (libs.androidx.core.ktx)
     implementation("androidx.appcompat:appcompat:1.6.1")
@@ -44,20 +49,20 @@ dependencies {
     implementation(libs.media3.session)
     implementation(libs.media3.ui)
 
-    val media3_version = "1.0.1"
-    // Utilities for testing media components (including ExoPlayer components)
-    implementation("androidx.media3:media3-test-utils:$media3_version")
-    // Utilities for testing media components (including ExoPlayer components) via Robolectric
-    implementation("androidx.media3:media3-test-utils-robolectric:$media3_version")
-
     implementation(libs.hilt.android)
     kapt(libs.hilt.compiler)
 
-    implementation(libs.room.common)
+    //implementation(libs.room.common)
 
     implementation("com.github.bumptech.glide:glide:4.15.1")
 
     testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test.ext:junit:1.1.5")
+    val media3_version = "1.0.1"
+    // Utilities for testing media components (including ExoPlayer components)
+    testImplementation("androidx.media3:media3-test-utils:$media3_version")
+    // Utilities for testing media components (including ExoPlayer components) via Robolectric
+    testImplementation("androidx.media3:media3-test-utils-robolectric:$media3_version")
+
+    androidTestImplementation(libs.androidx.test.ext.junit)
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 }

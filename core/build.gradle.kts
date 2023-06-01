@@ -33,10 +33,14 @@ android {
     kotlinOptions {
         jvmTarget = "17"
     }
+    /*kotlin {
+        jvmToolchain(11)
+    }*/
 }
 
 dependencies {
 
+    implementation(project(":domain"))
     implementation(project(":audioservice"))
     
     implementation (libs.androidx.core.ktx)

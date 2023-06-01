@@ -53,4 +53,10 @@
     <string name="nothing_found">Ничего не найдено...</string>
     <string name="all">Все</string>
     <string name="folders">Папки</string>
+    <string name="long_rewind">Длинная перемотка</string>
+    <string name="long_rewind_back">Длинная перемотка назад</string>
+    <string name="long_rewind_forward">Длинная перемотка вперед</string>
+    <string name="the_end_of_the_chapter">Конец главы</string>
+    <string name="current">Текущий:</string>
+    <string name="your_value_minuter">Собственное значение. Минуты</string>
 </resources>

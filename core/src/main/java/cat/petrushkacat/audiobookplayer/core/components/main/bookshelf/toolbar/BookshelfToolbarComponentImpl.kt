@@ -1,8 +1,6 @@
 package cat.petrushkacat.audiobookplayer.core.components.main.bookshelf.toolbar
 
-import cat.petrushkacat.audiobookplayer.core.models.Grid
 import cat.petrushkacat.audiobookplayer.core.models.RootFolderEntity
-import cat.petrushkacat.audiobookplayer.core.models.SettingsEntity
 import cat.petrushkacat.audiobookplayer.core.repository.RootFoldersRepository
 import cat.petrushkacat.audiobookplayer.core.repository.SettingsRepository
 import cat.petrushkacat.audiobookplayer.core.util.componentCoroutineScopeDefault
@@ -24,8 +22,8 @@ class BookshelfToolbarComponentImpl(
     private val scope = componentCoroutineScopeDefault()
     private val scopeIO = componentCoroutineScopeIO()
 
-    private val _settings = MutableStateFlow(SettingsEntity())
-    override val settings: StateFlow<SettingsEntity>  = _settings.asStateFlow()
+    private val _settings = MutableStateFlow(cat.petrushkacat.audiobookplayer.domain.models.SettingsEntity())
+    override val settings: StateFlow<cat.petrushkacat.audiobookplayer.domain.models.SettingsEntity>  = _settings.asStateFlow()
 
     private val _folders = MutableStateFlow<List<RootFolderEntity>>(listOf(RootFolderEntity("", "", false)))
     override val folders = _folders.asStateFlow()
@@ -72,16 +70,16 @@ class BookshelfToolbarComponentImpl(
     override fun onGridButtonClick() {
         scope.launch {
             var index = settings.value.grid.ordinal
-            index = if (index + 1 == Grid.values().size) 0 else ++index
+            index = if (index + 1 == cat.petrushkacat.audiobookplayer.domain.models.Grid.values().size) 0 else ++index
             settingsRepository.saveSettings(
-                SettingsEntity(
+                cat.petrushkacat.audiobookplayer.domain.models.SettingsEntity(
                     id = settings.value.id,
                     versionCode = settings.value.versionCode,
                     autoSleepTime = settings.value.autoSleepTime,
                     rewindTime = settings.value.rewindTime,
                     autoRewindBackTime = settings.value.autoRewindBackTime,
                     theme = settings.value.theme,
-                    grid = Grid.values()[index]
+                    grid = cat.petrushkacat.audiobookplayer.domain.models.Grid.values()[index]
                 )
             )
         }

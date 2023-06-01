@@ -31,7 +31,7 @@ import cat.petrushkacat.audiobookplayer.app.ui.components.shared.BookGridItem
 import cat.petrushkacat.audiobookplayer.app.ui.components.shared.BookListItem
 import cat.petrushkacat.audiobookplayer.app.ui.components.shared.CommonTopAppBar
 import cat.petrushkacat.audiobookplayer.core.components.main.favorites.FavoritesComponent
-import cat.petrushkacat.audiobookplayer.core.models.Grid
+import cat.petrushkacat.audiobookplayer.domain.models.Grid
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -50,8 +50,8 @@ fun FavoritesComponentUi(component: FavoritesComponent) {
                 component.onBack()
             }
         )
-        if (settings.grid == Grid.SMALL_CELLS || settings.grid == Grid.BIG_CELLS) {
-            val size = if (settings.grid == Grid.BIG_CELLS) 150.dp else 100.dp
+        if (settings.grid == cat.petrushkacat.audiobookplayer.domain.models.Grid.SMALL_CELLS || settings.grid == cat.petrushkacat.audiobookplayer.domain.models.Grid.BIG_CELLS) {
+            val size = if (settings.grid == cat.petrushkacat.audiobookplayer.domain.models.Grid.BIG_CELLS) 150.dp else 100.dp
             LazyVerticalGrid(
                 columns = GridCells.Adaptive(size),
                 contentPadding = PaddingValues(4.dp),

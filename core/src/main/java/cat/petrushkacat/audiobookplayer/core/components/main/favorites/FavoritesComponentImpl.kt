@@ -3,7 +3,6 @@ package cat.petrushkacat.audiobookplayer.core.components.main.favorites
 import cat.petrushkacat.audiobookplayer.core.components.main.bookshelf.bookslist.BooksListComponent
 import cat.petrushkacat.audiobookplayer.core.components.shared.bookdropdownmenu.BookDropdownMenuComponent
 import cat.petrushkacat.audiobookplayer.core.components.shared.bookdropdownmenu.BookDropdownMenuComponentImpl
-import cat.petrushkacat.audiobookplayer.core.models.SettingsEntity
 import cat.petrushkacat.audiobookplayer.core.repository.AudiobooksRepository
 import cat.petrushkacat.audiobookplayer.core.repository.SettingsRepository
 import cat.petrushkacat.audiobookplayer.core.util.componentCoroutineScopeDefault
@@ -32,8 +31,8 @@ class FavoritesComponentImpl(
     private val _models = MutableStateFlow<List<BooksListComponent.Model>>(emptyList())
     override val models = _models.asStateFlow()
 
-    private val _settings = MutableStateFlow(SettingsEntity())
-    override val settings: StateFlow<SettingsEntity> = _settings.asStateFlow()
+    private val _settings = MutableStateFlow(cat.petrushkacat.audiobookplayer.domain.models.SettingsEntity())
+    override val settings: StateFlow<cat.petrushkacat.audiobookplayer.domain.models.SettingsEntity> = _settings.asStateFlow()
 
 
     init {

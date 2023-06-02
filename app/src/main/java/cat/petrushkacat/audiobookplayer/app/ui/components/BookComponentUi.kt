@@ -5,7 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.media3.common.util.UnstableApi
-import cat.petrushkacat.audiobookplayer.core.components.main.bookplayer.BookComponent
+import cat.petrushkacat.audiobookplayer.components.components.main.bookplayer.BookComponent
 import com.arkivanov.decompose.extensions.compose.jetpack.stack.Children
 
 @OptIn(ExperimentalMaterial3Api::class)

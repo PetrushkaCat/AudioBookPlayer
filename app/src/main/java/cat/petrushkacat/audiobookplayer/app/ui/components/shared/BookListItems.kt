@@ -35,7 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cat.petrushkacat.audiobookplayer.R
 import cat.petrushkacat.audiobookplayer.app.util.formatDuration
-import cat.petrushkacat.audiobookplayer.core.components.main.bookshelf.bookslist.BooksListComponent
+import cat.petrushkacat.audiobookplayer.domain.models.BookListEntity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -47,7 +47,7 @@ private val completedIconColor = Color(0xFFA8FFA2)
 
 @Composable
 fun BookListItem(
-    model: BooksListComponent.Model,
+    model: BookListEntity,
     modifier: Modifier
 ) {
 
@@ -163,7 +163,7 @@ fun BookListItem(
 }
 
 @Composable
-fun BookGridItem(model: BooksListComponent.Model, modifier: Modifier) {
+fun BookGridItem(model: BookListEntity, modifier: Modifier) {
 
     val context = LocalContext.current
     val bitmap = remember { mutableStateOf<Bitmap?>(null) }

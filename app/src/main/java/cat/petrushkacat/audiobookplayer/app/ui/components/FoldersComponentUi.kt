@@ -34,8 +34,8 @@ import androidx.compose.ui.unit.sp
 import cat.petrushkacat.audiobookplayer.R
 import cat.petrushkacat.audiobookplayer.app.ui.components.shared.CommonTopAppBar
 import cat.petrushkacat.audiobookplayer.app.ui.theme.Purple40
-import cat.petrushkacat.audiobookplayer.core.components.main.folderselector.FoldersComponent
-import cat.petrushkacat.audiobookplayer.core.models.RootFolderEntity
+import cat.petrushkacat.audiobookplayer.components.components.main.folderselector.FoldersComponent
+import cat.petrushkacat.audiobookplayer.domain.models.RootFolderEntity
 
 @Composable
 fun FoldersComponentUi(component: FoldersComponent) {

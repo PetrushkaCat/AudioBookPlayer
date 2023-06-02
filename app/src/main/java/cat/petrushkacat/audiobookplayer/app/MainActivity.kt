@@ -1,26 +1,25 @@
 package cat.petrushkacat.audiobookplayer.app
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import cat.petrushkacat.audiobookplayer.app.ui.components.RootComponentUi
 import cat.petrushkacat.audiobookplayer.app.ui.theme.AudioBookPlayerTheme
 import cat.petrushkacat.audiobookplayer.audioservice.AudiobookServiceHandler
 import cat.petrushkacat.audiobookplayer.audioservice.sensors.SensorListener
-import cat.petrushkacat.audiobookplayer.core.components.RootComponentImpl
-import cat.petrushkacat.audiobookplayer.core.repository.AudiobooksRepository
-import cat.petrushkacat.audiobookplayer.core.repository.RootFoldersRepository
-import cat.petrushkacat.audiobookplayer.core.repository.SettingsRepository
+import cat.petrushkacat.audiobookplayer.components.components.RootComponentImpl
+import cat.petrushkacat.audiobookplayer.domain.repository.AudiobooksRepository
+import cat.petrushkacat.audiobookplayer.domain.repository.RootFoldersRepository
+import cat.petrushkacat.audiobookplayer.domain.repository.SettingsRepository
+import cat.petrushkacat.audiobookplayer.domain.usecases.UseCasesProvider
 import com.arkivanov.decompose.defaultComponentContext
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -54,6 +53,9 @@ class MainActivity : ComponentActivity() {
     @Inject
     lateinit var sensorListener: SensorListener
 
+    @Inject
+    lateinit var useCasesProvider: UseCasesProvider
+
     private val isDarkTheme = MutableStateFlow(true)
 
     private var job = Job()
@@ -64,12 +66,12 @@ class MainActivity : ComponentActivity() {
         val root = RootComponentImpl(
             defaultComponentContext(),
             this,
-            rootFoldersRepository,
-            audiobooksRepository,
+            useCasesProvider,
             audiobookServiceHandler,
-            settingsRepository,
             sensorListener
         )
+
+        Log.d("useCases", useCasesProvider.toString())
 
         CoroutineScope(job + Dispatchers.Default).launch {
             if (settingsRepository.getSettings().first() == null) { //nope it's not always false
@@ -104,21 +106,5 @@ class MainActivity : ComponentActivity() {
     override fun onDestroy() {
         job.cancel()
         super.onDestroy()
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    AudioBookPlayerTheme {
-        Greeting("Android")
     }
 }

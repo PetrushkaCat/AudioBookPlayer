@@ -3,11 +3,11 @@ package cat.petrushkacat.audiobookplayer.data.db
 import androidx.room.Dao
 import androidx.room.Update
 import cat.petrushkacat.audiobookplayer.audioservice.UpdateTime
-import cat.petrushkacat.audiobookplayer.core.models.BookEntity
+import cat.petrushkacat.audiobookplayer.data.dto.BookEntityDB
 
 @Dao
 interface TimeUpdateDao {
 
-    @Update(entity = BookEntity::class)
+    @Update(entity = BookEntityDB::class)
     fun updateTime(updateTime: UpdateTime)
 }

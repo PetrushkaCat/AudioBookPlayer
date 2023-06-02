@@ -30,8 +30,7 @@ import cat.petrushkacat.audiobookplayer.app.ui.components.shared.BookDropdownMen
 import cat.petrushkacat.audiobookplayer.app.ui.components.shared.BookGridItem
 import cat.petrushkacat.audiobookplayer.app.ui.components.shared.BookListItem
 import cat.petrushkacat.audiobookplayer.app.ui.components.shared.CommonTopAppBar
-import cat.petrushkacat.audiobookplayer.core.components.main.favorites.FavoritesComponent
-import cat.petrushkacat.audiobookplayer.domain.models.Grid
+import cat.petrushkacat.audiobookplayer.components.components.main.favorites.FavoritesComponent
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable

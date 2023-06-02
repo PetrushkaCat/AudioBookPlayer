@@ -41,7 +41,7 @@ import cat.petrushkacat.audiobookplayer.app.ui.components.shared.BookDropdownMen
 import cat.petrushkacat.audiobookplayer.app.ui.components.shared.BookGridItem
 import cat.petrushkacat.audiobookplayer.app.ui.components.shared.BookListItem
 import cat.petrushkacat.audiobookplayer.app.ui.theme.Purple40
-import cat.petrushkacat.audiobookplayer.core.components.main.bookshelf.bookslist.BooksListComponent
+import cat.petrushkacat.audiobookplayer.components.components.main.bookshelf.bookslist.BooksListComponent
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
 @Composable

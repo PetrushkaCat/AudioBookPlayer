@@ -48,7 +48,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cat.petrushkacat.audiobookplayer.R
 import cat.petrushkacat.audiobookplayer.app.util.formatDuration
-import cat.petrushkacat.audiobookplayer.core.components.main.bookplayer.book.toolbar.BookPlayerToolbarComponent
+import cat.petrushkacat.audiobookplayer.components.components.main.bookplayer.book.toolbar.BookPlayerToolbarComponent
 import cat.petrushkacat.audiobookplayer.domain.models.SettingsEntity
 
 @OptIn(ExperimentalFoundationApi::class)

@@ -53,8 +53,8 @@ import cat.petrushkacat.audiobookplayer.R
 import cat.petrushkacat.audiobookplayer.app.util.formatDuration
 import cat.petrushkacat.audiobookplayer.audioservice.CurrentTimings
 import cat.petrushkacat.audiobookplayer.audioservice.PlayerEvent
-import cat.petrushkacat.audiobookplayer.core.components.main.bookplayer.book.bookplayer.BookPlayerComponent
-import cat.petrushkacat.audiobookplayer.core.models.Chapters
+import cat.petrushkacat.audiobookplayer.components.components.main.bookplayer.book.bookplayer.BookPlayerComponent
+import cat.petrushkacat.audiobookplayer.domain.models.Chapters
 
 @Composable
 @UnstableApi

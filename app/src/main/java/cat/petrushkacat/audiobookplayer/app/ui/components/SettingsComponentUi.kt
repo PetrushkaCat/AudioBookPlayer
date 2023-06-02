@@ -39,8 +39,7 @@ import androidx.compose.ui.unit.sp
 import cat.petrushkacat.audiobookplayer.R
 import cat.petrushkacat.audiobookplayer.app.ui.components.shared.CommonTopAppBar
 import cat.petrushkacat.audiobookplayer.app.util.formatDuration
-import cat.petrushkacat.audiobookplayer.core.components.main.settings.SettingsComponent
-import cat.petrushkacat.audiobookplayer.domain.models.Theme
+import cat.petrushkacat.audiobookplayer.components.components.main.settings.SettingsComponent
 
 @Composable
 fun SettingsComponentUi(component: SettingsComponent) {

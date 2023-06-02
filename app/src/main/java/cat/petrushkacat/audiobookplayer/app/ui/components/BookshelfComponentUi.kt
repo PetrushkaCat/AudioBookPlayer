@@ -7,7 +7,7 @@ import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
-import cat.petrushkacat.audiobookplayer.core.components.main.bookshelf.BookshelfComponent
+import cat.petrushkacat.audiobookplayer.components.components.main.bookshelf.BookshelfComponent
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)

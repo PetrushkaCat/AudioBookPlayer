@@ -31,8 +31,8 @@ import androidx.compose.ui.unit.sp
 import cat.petrushkacat.audiobookplayer.R
 import cat.petrushkacat.audiobookplayer.app.ui.components.shared.EditDialog
 import cat.petrushkacat.audiobookplayer.app.util.formatDuration
-import cat.petrushkacat.audiobookplayer.core.components.main.bookplayer.notes.NotesComponent
-import cat.petrushkacat.audiobookplayer.core.models.Note
+import cat.petrushkacat.audiobookplayer.components.components.main.bookplayer.notes.NotesComponent
+import cat.petrushkacat.audiobookplayer.domain.models.Note
 
 @Composable
 fun NotesComponentUi(component: NotesComponent) {

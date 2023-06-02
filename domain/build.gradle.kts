@@ -1,6 +1,7 @@
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
+    //kotlin("kapt")
     //kotlin("plugin.serialization") version "1.8.21"
 }
 
@@ -42,6 +43,8 @@ dependencies {
     implementation("androidx.appcompat:appcompat:1.6.1")
 
     //implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
+    /*implementation(libs.hilt.android)
+    kapt(libs.hilt.compiler)*/
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")

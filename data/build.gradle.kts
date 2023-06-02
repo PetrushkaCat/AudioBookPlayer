@@ -43,7 +43,7 @@ android {
 dependencies {
 
     implementation(project(":domain"))
-    implementation(project(":core"))
+    implementation(project(":components"))
     implementation(project(":audioservice"))
 
     implementation (libs.androidx.core.ktx)

@@ -1,0 +1,245 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 3,
+    "identityHash": "b9775fbbfbebdeb1dddeae0aa5a3729e",
+    "entities": [
+      {
+        "tableName": "BookEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`folderUri` TEXT NOT NULL, `folderName` TEXT NOT NULL, `name` TEXT NOT NULL, `chapters` TEXT NOT NULL, `currentChapter` INTEGER NOT NULL, `currentChapterTime` INTEGER NOT NULL, `currentTime` INTEGER NOT NULL, `duration` INTEGER NOT NULL, `rootFolderUri` TEXT NOT NULL, `image` BLOB, `isStarted` INTEGER NOT NULL, `isCompleted` INTEGER NOT NULL, `volumeUp` REAL NOT NULL, `playSpeed` REAL NOT NULL, `notes` TEXT NOT NULL, `lastTimeListened` INTEGER NOT NULL, `isFavorite` INTEGER NOT NULL, `isTemporarilyDeleted` INTEGER NOT NULL, `isWantToListen` INTEGER NOT NULL, PRIMARY KEY(`folderName`, `duration`))",
+        "fields": [
+          {
+            "fieldPath": "folderUri",
+            "columnName": "folderUri",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "folderName",
+            "columnName": "folderName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "chapters",
+            "columnName": "chapters",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "currentChapter",
+            "columnName": "currentChapter",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "currentChapterTime",
+            "columnName": "currentChapterTime",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "currentTime",
+            "columnName": "currentTime",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "duration",
+            "columnName": "duration",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "rootFolderUri",
+            "columnName": "rootFolderUri",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "image",
+            "columnName": "image",
+            "affinity": "BLOB",
+            "notNull": false
+          },
+          {
+            "fieldPath": "isStarted",
+            "columnName": "isStarted",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isCompleted",
+            "columnName": "isCompleted",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "volumeUp",
+            "columnName": "volumeUp",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "playSpeed",
+            "columnName": "playSpeed",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "notes",
+            "columnName": "notes",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lastTimeListened",
+            "columnName": "lastTimeListened",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isFavorite",
+            "columnName": "isFavorite",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isTemporarilyDeleted",
+            "columnName": "isTemporarilyDeleted",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isWantToListen",
+            "columnName": "isWantToListen",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "folderName",
+            "duration"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "RootFolderEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uri` TEXT NOT NULL, `name` TEXT NOT NULL, `isCurrent` INTEGER NOT NULL, PRIMARY KEY(`uri`))",
+        "fields": [
+          {
+            "fieldPath": "uri",
+            "columnName": "uri",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isCurrent",
+            "columnName": "isCurrent",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "uri"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "SettingsEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `versionCode` INTEGER NOT NULL, `autoSleepTime` INTEGER NOT NULL, `rewindTime` INTEGER NOT NULL, `autoRewindBackTime` INTEGER NOT NULL, `theme` TEXT NOT NULL, `grid` TEXT NOT NULL, `greatRewindTime` INTEGER NOT NULL DEFAULT 60000, `sleepTimerType` TEXT NOT NULL DEFAULT '{\"type\":\"cat.petrushkacat.audiobookplayer.data.dto.SettingsEntityDTO.SleepTimerType.EndOfTheChapter\"}', PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "versionCode",
+            "columnName": "versionCode",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "autoSleepTime",
+            "columnName": "autoSleepTime",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "rewindTime",
+            "columnName": "rewindTime",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "autoRewindBackTime",
+            "columnName": "autoRewindBackTime",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "theme",
+            "columnName": "theme",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "grid",
+            "columnName": "grid",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "greatRewindTime",
+            "columnName": "greatRewindTime",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "60000"
+          },
+          {
+            "fieldPath": "sleepTimerType",
+            "columnName": "sleepTimerType",
+            "affinity": "TEXT",
+            "notNull": true,
+            "defaultValue": "'{\"type\":\"cat.petrushkacat.audiobookplayer.data.dto.SettingsEntityDTO.SleepTimerType.EndOfTheChapter\"}'"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
+      }
+    ],
+    "views": [],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'b9775fbbfbebdeb1dddeae0aa5a3729e')"
+    ]
+  }
+}

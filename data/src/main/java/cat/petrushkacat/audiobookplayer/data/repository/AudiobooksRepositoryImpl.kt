@@ -1,51 +1,50 @@
 package cat.petrushkacat.audiobookplayer.data.repository
 
-import android.net.Uri
-import cat.petrushkacat.audiobookplayer.core.components.main.bookplayer.book.bookplayer.BookPlayerComponent
-import cat.petrushkacat.audiobookplayer.core.components.main.bookplayer.notes.NotesComponent
-import cat.petrushkacat.audiobookplayer.core.models.BookEntity
-import cat.petrushkacat.audiobookplayer.core.repository.AudiobooksRepository
 import cat.petrushkacat.audiobookplayer.data.db.AudiobooksDao
+import cat.petrushkacat.audiobookplayer.data.mappers.toBookEntityDB
+import cat.petrushkacat.audiobookplayer.domain.models.BookEntity
+import cat.petrushkacat.audiobookplayer.domain.models.BookNotesEntity
+import cat.petrushkacat.audiobookplayer.domain.repository.AudiobooksRepository
 
 
 class AudiobooksRepositoryImpl(
     private val audiobooksDao: AudiobooksDao
 ): AudiobooksRepository {
     override suspend fun saveAfterParse(books: List<BookEntity>) {
-        audiobooksDao.saveAfterParse(books)
+        audiobooksDao.saveAfterParse(books.map { it.toBookEntityDB() })
     }
 
     override suspend fun saveBookAfterParse(book: BookEntity) {
-        audiobooksDao.saveBookAfterParse(book)
+        audiobooksDao.saveBookAfterParse(book.toBookEntityDB())
     }
 
-    override suspend fun getAllBooks() = audiobooksDao.getAll()
+    override suspend fun getAllBookListEntities() = audiobooksDao.getAllBookListEntities()
 
-    override suspend fun getBooksInFolder(rootFolder: Uri) = audiobooksDao.getBooksInFolder(rootFolder.toString())
+    override suspend fun getAllBookListEntitiesInFolder(rootFolder: String) = audiobooksDao.getAllBookListEntitiesInFolder(rootFolder)
 
-    override suspend fun updateBook(book: BookPlayerComponent.UpdateInfo) {
+/*    override suspend fun updateBook(book: BookPlayerComponent.UpdateInfo) {
         audiobooksDao.updateBook(book)
-    }
+    }*/
 
-    override suspend fun updateBook(book: NotesComponent.Model) {
+    override suspend fun updateBook(book: BookNotesEntity) {
         audiobooksDao.updateBook(book)
     }
 
     override suspend fun updateBook(book: BookEntity) {
-        audiobooksDao.updateBook(book)
+        audiobooksDao.updateBook(book.toBookEntityDB())
     }
 
-    override suspend fun getBook(bookFolder: Uri) = audiobooksDao.getBook(bookFolder.toString())
+    override suspend fun getBook(bookFolder: String) = audiobooksDao.getBook(bookFolder)
     override suspend fun deleteAllInFolder(rootFolderUri: String) {
         audiobooksDao.deleteAllInFolder(rootFolderUri)
     }
 
-    override suspend fun deleteBook(uri: Uri) {
-        audiobooksDao.deleteBook(uri.toString())
+    override suspend fun deleteBook(uri: String) {
+        audiobooksDao.deleteBook(uri)
     }
 
-    override suspend fun deleteIfNoInList(uris: List<Uri>, rootFolderUris: List<String>) {
-        audiobooksDao.deleteIfNoInList(uris.map { it.toString() }, rootFolderUris)
+    override suspend fun deleteIfNoInList(uris: List<String>, rootFolderUris: List<String>) {
+        audiobooksDao.deleteIfNoInList(uris, rootFolderUris)
     }
 
 }

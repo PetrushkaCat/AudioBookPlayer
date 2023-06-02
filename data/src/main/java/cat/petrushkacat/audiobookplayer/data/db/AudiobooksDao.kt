@@ -5,33 +5,35 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
-import cat.petrushkacat.audiobookplayer.core.components.main.bookplayer.book.bookplayer.BookPlayerComponent
-import cat.petrushkacat.audiobookplayer.core.components.main.bookplayer.notes.NotesComponent
-import cat.petrushkacat.audiobookplayer.core.components.main.bookshelf.bookslist.BooksListComponent
-import cat.petrushkacat.audiobookplayer.core.models.BookEntity
-import cat.petrushkacat.audiobookplayer.core.models.BookUri
+import cat.petrushkacat.audiobookplayer.data.dto.BookEntityDB
+import cat.petrushkacat.audiobookplayer.domain.models.BookEntity
+import cat.petrushkacat.audiobookplayer.domain.models.BookListEntity
+import cat.petrushkacat.audiobookplayer.domain.models.BookNotesEntity
+import cat.petrushkacat.audiobookplayer.domain.models.BookUri
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface AudiobooksDao {
 
     @Query("SELECT * FROM BookEntity")
-    fun getAll(): Flow<List<BooksListComponent.Model>>
+    fun getAllBookListEntities(): Flow<List<BookListEntity>>
 
     @Query("SELECT * FROM BookEntity WHERE rootFolderUri = :folderUri")
-    fun getBooksInFolder(folderUri: String): Flow<List<BooksListComponent.Model>>
+    fun getAllBookListEntitiesInFolder(folderUri: String): Flow<List<BookListEntity>>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    fun saveAfterParse(books: List<BookEntity>)
+    fun saveAfterParse(books: List<BookEntityDB>)
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    fun saveBookAfterParse(book: BookEntity)
+    fun saveBookAfterParse(book: BookEntityDB)
 
+/*
     @Update(entity = BookEntity::class)
     fun updateBook(book: BookPlayerComponent.UpdateInfo)
+*/
 
-    @Update(entity = BookEntity::class)
-    fun updateBook(book: NotesComponent.Model)
+    @Update(entity = BookEntityDB::class)
+    fun updateBook(book: BookNotesEntity)
 
     @Query("SELECT * FROM BookEntity WHERE folderUri = :bookFolderUri")
     fun getBook(bookFolderUri: String): Flow<BookEntity>
@@ -51,7 +53,7 @@ interface AudiobooksDao {
     @Query("DELETE FROM BookEntity WHERE folderUri NOT IN (:uris) AND rootFolderUri IN (:rootFolderUris)")
     fun deleteIfNoInList(uris: List<String>, rootFolderUris: List<String>)
 
-    @Update(entity = BookEntity::class)
-    fun updateBook(book: BookEntity)
+    @Update(entity = BookEntityDB::class)
+    fun updateBook(book: BookEntityDB)
 
 }

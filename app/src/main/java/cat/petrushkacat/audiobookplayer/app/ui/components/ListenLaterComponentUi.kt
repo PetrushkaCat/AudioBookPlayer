@@ -29,8 +29,7 @@ import cat.petrushkacat.audiobookplayer.app.ui.components.shared.BookDropdownMen
 import cat.petrushkacat.audiobookplayer.app.ui.components.shared.BookGridItem
 import cat.petrushkacat.audiobookplayer.app.ui.components.shared.BookListItem
 import cat.petrushkacat.audiobookplayer.app.ui.components.shared.CommonTopAppBar
-import cat.petrushkacat.audiobookplayer.core.components.main.listenlater.ListenLaterComponent
-import cat.petrushkacat.audiobookplayer.domain.models.Grid
+import cat.petrushkacat.audiobookplayer.components.components.main.listenlater.ListenLaterComponent
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable

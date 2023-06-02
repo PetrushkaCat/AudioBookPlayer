@@ -41,7 +41,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cat.petrushkacat.audiobookplayer.R
-import cat.petrushkacat.audiobookplayer.core.components.main.bookshelf.drawer.DrawerComponent
+import cat.petrushkacat.audiobookplayer.components.components.main.bookshelf.drawer.DrawerComponent
 
 @Composable
 fun DrawerComponentUi(component: DrawerComponent) {

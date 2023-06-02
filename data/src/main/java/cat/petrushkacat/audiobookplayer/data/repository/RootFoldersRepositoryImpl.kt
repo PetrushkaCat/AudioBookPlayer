@@ -1,26 +1,33 @@
 package cat.petrushkacat.audiobookplayer.data.repository
 
 import android.util.Log
-import cat.petrushkacat.audiobookplayer.core.models.RootFolderEntity
-import cat.petrushkacat.audiobookplayer.core.repository.RootFoldersRepository
 import cat.petrushkacat.audiobookplayer.data.db.RootFoldersDao
+import cat.petrushkacat.audiobookplayer.data.mappers.toRootFolderEntity
+import cat.petrushkacat.audiobookplayer.data.mappers.toRootFolderEntityDB
+import cat.petrushkacat.audiobookplayer.domain.models.RootFolderEntity
+import cat.petrushkacat.audiobookplayer.domain.repository.RootFoldersRepository
+import kotlinx.coroutines.flow.map
 
 class RootFoldersRepositoryImpl(
     private val rootFoldersDao: RootFoldersDao
 ): RootFoldersRepository {
 
-    override suspend fun getFolders() = rootFoldersDao.getFolders()
+    override suspend fun getFolders() = rootFoldersDao.getFolders().map {
+        it.map { rootFolderEntityDB ->
+            rootFolderEntityDB.toRootFolderEntity()
+        }
+    }
 
     override suspend fun addFolder(folder: RootFolderEntity) {
         Log.d("folderAdd", folder.toString())
-        rootFoldersDao.addFolder(folder)
+        rootFoldersDao.addFolder(folder.toRootFolderEntityDB())
     }
 
     override suspend fun deleteFolder(folder: RootFolderEntity) {
-        rootFoldersDao.deleteFolder(folder)
+        rootFoldersDao.deleteFolder(folder.toRootFolderEntityDB())
     }
 
     override suspend fun updateFolder(folder: RootFolderEntity) {
-        rootFoldersDao.updateFolder(folder)
+        rootFoldersDao.updateFolder(folder.toRootFolderEntityDB())
     }
 }

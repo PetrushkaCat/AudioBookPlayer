@@ -15,8 +15,8 @@ android {
         applicationId = "cat.petrushkacat.audiobookplayer"
         minSdk = 26
         targetSdk = 33
-        versionCode = 9
-        versionName = "1.0.2"
+        versionCode = 10
+        versionName = "1.0.3"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -60,7 +60,7 @@ android {
 dependencies {
 
     implementation(project(":domain"))
-    implementation(project(":core"))
+    implementation(project(":components"))
     implementation(project(":data"))
     implementation(project(":audioservice"))
 

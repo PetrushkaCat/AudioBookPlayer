@@ -6,22 +6,22 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
-import cat.petrushkacat.audiobookplayer.core.models.RootFolderEntity
+import cat.petrushkacat.audiobookplayer.data.dto.RootFolderEntityDB
 import kotlinx.coroutines.flow.Flow
 
 
 @Dao
 interface RootFoldersDao {
     @Query("SELECT * FROM RootFolderEntity")
-    fun getFolders(): Flow<List<RootFolderEntity>>
+    fun getFolders(): Flow<List<RootFolderEntityDB>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun addFolder(folder: RootFolderEntity)
+    fun addFolder(folder: RootFolderEntityDB)
 
     @Delete
-    fun deleteFolder(folder: RootFolderEntity)
+    fun deleteFolder(folder: RootFolderEntityDB)
 
     @Update
-    fun updateFolder(folder: RootFolderEntity)
+    fun updateFolder(folder: RootFolderEntityDB)
 
 }

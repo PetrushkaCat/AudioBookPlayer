@@ -4,9 +4,6 @@ import android.content.Context
 import androidx.room.Room
 import cat.petrushkacat.audiobookplayer.audioservice.repository.AudioServiceSettingsRepository
 import cat.petrushkacat.audiobookplayer.audioservice.repository.TimeUpdateRepository
-import cat.petrushkacat.audiobookplayer.core.repository.AudiobooksRepository
-import cat.petrushkacat.audiobookplayer.core.repository.RootFoldersRepository
-import cat.petrushkacat.audiobookplayer.core.repository.SettingsRepository
 import cat.petrushkacat.audiobookplayer.data.db.AudiobooksDao
 import cat.petrushkacat.audiobookplayer.data.db.AudiobooksDatabase
 import cat.petrushkacat.audiobookplayer.data.db.RootFoldersDao
@@ -16,6 +13,9 @@ import cat.petrushkacat.audiobookplayer.data.repository.AudiobooksRepositoryImpl
 import cat.petrushkacat.audiobookplayer.data.repository.RootFoldersRepositoryImpl
 import cat.petrushkacat.audiobookplayer.data.repository.SettingsRepositoryImpl
 import cat.petrushkacat.audiobookplayer.data.repository.TimeUpdateRepositoryImpl
+import cat.petrushkacat.audiobookplayer.domain.repository.AudiobooksRepository
+import cat.petrushkacat.audiobookplayer.domain.repository.RootFoldersRepository
+import cat.petrushkacat.audiobookplayer.domain.repository.SettingsRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

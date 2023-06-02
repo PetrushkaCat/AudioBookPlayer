@@ -45,9 +45,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import cat.petrushkacat.audiobookplayer.R
-import cat.petrushkacat.audiobookplayer.core.components.main.bookshelf.toolbar.BookshelfToolbarComponent
-import cat.petrushkacat.audiobookplayer.domain.models.Grid
-import cat.petrushkacat.audiobookplayer.core.models.RootFolderEntity
+import cat.petrushkacat.audiobookplayer.components.components.main.bookshelf.toolbar.BookshelfToolbarComponent
+import cat.petrushkacat.audiobookplayer.domain.models.RootFolderEntity
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

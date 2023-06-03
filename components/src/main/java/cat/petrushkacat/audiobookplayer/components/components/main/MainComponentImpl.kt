@@ -15,6 +15,7 @@ import cat.petrushkacat.audiobookplayer.components.components.main.favorites.Fav
 import cat.petrushkacat.audiobookplayer.components.components.main.folderselector.FoldersComponentImpl
 import cat.petrushkacat.audiobookplayer.components.components.main.listenlater.ListenLaterComponentImpl
 import cat.petrushkacat.audiobookplayer.components.components.main.settings.SettingsComponentImpl
+import cat.petrushkacat.audiobookplayer.components.components.main.statistics.StatisticsComponentImpl
 import cat.petrushkacat.audiobookplayer.components.util.componentCoroutineScopeIO
 import cat.petrushkacat.audiobookplayer.components.util.toStateFlow
 import cat.petrushkacat.audiobookplayer.domain.usecases.UseCasesProvider
@@ -37,7 +38,6 @@ class MainComponentImpl(
     private val sensorListener: SensorListener
 ) : MainComponent, ComponentContext by componentContext {
 
-
     private val scopeIO = componentCoroutineScopeIO()
 
     private val navigation = StackNavigation<ChildConfig>()
@@ -52,7 +52,6 @@ class MainComponentImpl(
     init {
         Log.d("init", "main")
     }
-
 
     private fun createChild(
         config: ChildConfig,
@@ -88,6 +87,9 @@ class MainComponentImpl(
                     },
                     onCompletedBooksClicked = {
                         navigation.push(ChildConfig.CompletedBooks)
+                    },
+                    onStatisticsClicked = {
+                        navigation.push(ChildConfig.Statistics)
                     }
                 ))
         }
@@ -185,6 +187,18 @@ class MainComponentImpl(
                 )
             )
         }
+
+        ChildConfig.Statistics -> {
+            MainComponent.Child.Statistics(
+                StatisticsComponentImpl(
+                    componentContext = componentContext,
+                    useCasesProvider = useCasesProvider,
+                    onBackClicked = {
+                        navigation.pop()
+                    }
+                )
+            )
+        }
     }
 
     private sealed interface ChildConfig : Parcelable {
@@ -208,5 +222,8 @@ class MainComponentImpl(
 
         @Parcelize
         object CompletedBooks: ChildConfig
+
+        @Parcelize
+        object Statistics: ChildConfig
     }
 }

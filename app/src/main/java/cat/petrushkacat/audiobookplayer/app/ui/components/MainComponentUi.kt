@@ -21,6 +21,7 @@ fun MainComponentUi(component: MainComponent) {
             is MainComponent.Child.Favorites -> FavoritesComponentUi(component = instance.component)
             is MainComponent.Child.ListenLater -> ListenLaterComponentUi(component = instance.component)
             is MainComponent.Child.CompletedBooks -> CompletedBooksComponentUi(component = instance.component)
+            is MainComponent.Child.Statistics -> StatisticsComponentUi(component = instance.component)
         }
     }
 }

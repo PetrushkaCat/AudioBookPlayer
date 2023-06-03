@@ -7,7 +7,9 @@ import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
 import cat.petrushkacat.audiobookplayer.audioservice.repository.AudioServiceSettingsRepository
 import cat.petrushkacat.audiobookplayer.audioservice.sensors.SensorListener
+import cat.petrushkacat.audiobookplayer.domain.models.ListenedInterval
 import cat.petrushkacat.audiobookplayer.domain.models.SettingsEntity
+import cat.petrushkacat.audiobookplayer.domain.usecases.statistics.SaveStatisticsUseCase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -17,13 +19,16 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.time.LocalDate
+import java.time.LocalTime
 import java.util.GregorianCalendar
 import javax.inject.Inject
 
 class AudiobookServiceHandler @Inject constructor(
     private val player: ExoPlayer,
     private val sensorListener: SensorListener,
-    private val settingsRepository: AudioServiceSettingsRepository
+    private val settingsRepository: AudioServiceSettingsRepository,
+    private val saveStatisticsUseCase: SaveStatisticsUseCase
 ) : Player.Listener {
 
     private val _currentTimings = MutableStateFlow(CurrentTimings(player.currentPosition, player.currentMediaItemIndex))
@@ -42,6 +47,9 @@ class AudiobookServiceHandler @Inject constructor(
     private var seek: Long = 0
     private var greatSeek: Long = 0
 
+    private var startedTime = 0L
+    private var bookName = ""
+
     init {
         CoroutineScope(SupervisorJob() + Dispatchers.Default).launch {
             settingsRepository.getAudioServiceSettings().collect {
@@ -59,6 +67,10 @@ class AudiobookServiceHandler @Inject constructor(
     fun addMediaItemList(mediaItemList: List<MediaItem>) {
         player.setMediaItems(mediaItemList)
         player.prepare()
+    }
+
+    fun setBookName(name: String) {
+        bookName = name
     }
 
     fun isStopped() = player.playbackState != Player.STATE_READY
@@ -206,6 +218,7 @@ class AudiobookServiceHandler @Inject constructor(
                 Log.d("player-2", "progress is now updating")
                 if(!isProgressBeingWatched) {
                     isProgressBeingWatched = true
+                    startedTime = LocalTime.now().toNanoOfDay() / 1000000
                     while (job.isActive) {
                         //Log.d("player-2.1", "progress..")
                         delay(500)
@@ -221,6 +234,23 @@ class AudiobookServiceHandler @Inject constructor(
                             player.pause()
                         }
 
+                    }
+                    withContext(Dispatchers.IO) {
+                        val date = LocalDate.now()
+                        val prevDay = date.minusDays(1)
+                        saveStatisticsUseCase(
+                            ListenedInterval(
+                            startedTime,
+                            LocalTime.now().toNanoOfDay() / 1000000,
+                            bookName
+                            ),
+                            date.year,
+                            date.monthValue,
+                            date.dayOfMonth,
+                            prevDay.year,
+                            prevDay.monthValue,
+                            prevDay.dayOfMonth
+                        )
                     }
                 }
             }

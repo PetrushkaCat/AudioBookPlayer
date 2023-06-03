@@ -11,6 +11,7 @@ import cat.petrushkacat.audiobookplayer.audioservice.AudiobookServiceHandler
 import cat.petrushkacat.audiobookplayer.audioservice.notification.AudiobookNotificationManager
 import cat.petrushkacat.audiobookplayer.audioservice.repository.AudioServiceSettingsRepository
 import cat.petrushkacat.audiobookplayer.audioservice.sensors.SensorListener
+import cat.petrushkacat.audiobookplayer.domain.usecases.statistics.SaveStatisticsUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -75,11 +76,13 @@ class AudiobookPlayerModule {
     fun provideServiceHandler(
         player: ExoPlayer,
         sensorListener: SensorListener,
-        settingsRepository: AudioServiceSettingsRepository
+        settingsRepository: AudioServiceSettingsRepository,
+        saveStatisticsUseCase: SaveStatisticsUseCase
     ): AudiobookServiceHandler =
         AudiobookServiceHandler(
             player = player,
             sensorListener = sensorListener,
-            settingsRepository = settingsRepository
+            settingsRepository = settingsRepository,
+            saveStatisticsUseCase = saveStatisticsUseCase
         )
 }

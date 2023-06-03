@@ -9,30 +9,34 @@ class GetBooksUseCase(
     private val audiobooksRepository: AudiobooksRepository
 ) {
     suspend operator fun invoke(booksType: BooksType): Flow<List<BookListEntity>> {
-        return when(booksType) {
+        return when (booksType) {
             BooksType.All -> {
                 audiobooksRepository.getAllBookListEntities()
             }
+
+            is BooksType.Folder -> {
+                audiobooksRepository.getAllBookListEntitiesInFolder(booksType.folderUri)
+            }
+
             BooksType.Completed -> {
                 audiobooksRepository.getAllBookListEntities().onEach {
-                    it.filter {book ->
+                    it.filter { book ->
                         book.isCompleted
                     }
                 }
             }
+
             BooksType.Favorites -> {
                 audiobooksRepository.getAllBookListEntities().onEach {
-                    it.filter {book ->
+                    it.filter { book ->
                         book.isFavorite
                     }
                 }
             }
-            is BooksType.Folder -> {
-                audiobooksRepository.getAllBookListEntitiesInFolder(booksType.folderUri)
-            }
+
             BooksType.ListenLater -> {
                 audiobooksRepository.getAllBookListEntities().onEach {
-                    it.filter {book ->
+                    it.filter { book ->
                         book.isWantToListen
                     }
                 }
@@ -42,15 +46,15 @@ class GetBooksUseCase(
 
     sealed interface BooksType {
 
-        object All: BooksType
+        object All : BooksType
 
-        data class Folder(val folderUri: String): BooksType
+        data class Folder(val folderUri: String) : BooksType
 
-        object Favorites: BooksType
+        object Favorites : BooksType
 
-        object ListenLater: BooksType
+        object ListenLater : BooksType
 
-        object Completed: BooksType
+        object Completed : BooksType
     }
 }
 

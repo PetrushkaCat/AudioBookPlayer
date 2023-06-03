@@ -16,6 +16,10 @@ import cat.petrushkacat.audiobookplayer.app.ui.theme.AudioBookPlayerTheme
 import cat.petrushkacat.audiobookplayer.audioservice.AudiobookServiceHandler
 import cat.petrushkacat.audiobookplayer.audioservice.sensors.SensorListener
 import cat.petrushkacat.audiobookplayer.components.components.RootComponentImpl
+import cat.petrushkacat.audiobookplayer.data.db.type_converters.StatisticsTypeConverters
+import cat.petrushkacat.audiobookplayer.domain.models.ListenedInterval
+import cat.petrushkacat.audiobookplayer.domain.models.ListenedIntervals
+import cat.petrushkacat.audiobookplayer.domain.models.StatisticsEntity
 import cat.petrushkacat.audiobookplayer.domain.repository.AudiobooksRepository
 import cat.petrushkacat.audiobookplayer.domain.repository.RootFoldersRepository
 import cat.petrushkacat.audiobookplayer.domain.repository.SettingsRepository
@@ -71,20 +75,15 @@ class MainActivity : ComponentActivity() {
             sensorListener
         )
 
-        Log.d("useCases", useCasesProvider.toString())
-
         CoroutineScope(job + Dispatchers.Default).launch {
             if (settingsRepository.getSettings().first() == null) { //nope it's not always false
                 settingsRepository.saveSettings(cat.petrushkacat.audiobookplayer.domain.models.SettingsEntity())
             }
-                settingsRepository.getSettings().takeWhile { job.isActive }
-                    .collect {
-                        isDarkTheme.value = it.theme == cat.petrushkacat.audiobookplayer.domain.models.Theme.DARK
-                     /*   while (true) {
-                            Log.d("123", "${this.toString()}")
-                            delay(100)
-                        }*/
-                    }
+            settingsRepository.getSettings().takeWhile { job.isActive }
+                .collect {
+                    isDarkTheme.value =
+                        it.theme == cat.petrushkacat.audiobookplayer.domain.models.Theme.DARK
+                }
 
         }
 

@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 3,
-    "identityHash": "b9775fbbfbebdeb1dddeae0aa5a3729e",
+    "identityHash": "46d726a9aa1de07fa6f2d93591898a53",
     "entities": [
       {
         "tableName": "BookEntity",
@@ -234,12 +234,58 @@
         },
         "indices": [],
         "foreignKeys": []
+      },
+      {
+        "tableName": "StatisticsEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`year` INTEGER NOT NULL, `month` INTEGER NOT NULL, `day` INTEGER NOT NULL, `listenedTime` INTEGER NOT NULL, `listenedIntervals` TEXT NOT NULL, PRIMARY KEY(`year`, `month`, `day`))",
+        "fields": [
+          {
+            "fieldPath": "year",
+            "columnName": "year",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "month",
+            "columnName": "month",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "day",
+            "columnName": "day",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "listenedTime",
+            "columnName": "listenedTime",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "listenedIntervals",
+            "columnName": "listenedIntervals",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "year",
+            "month",
+            "day"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'b9775fbbfbebdeb1dddeae0aa5a3729e')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '46d726a9aa1de07fa6f2d93591898a53')"
     ]
   }
 }

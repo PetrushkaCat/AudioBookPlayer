@@ -33,7 +33,7 @@ fun CommonTopAppBar(
                     onBack()
                 }
                 .size(48.dp)
-                .padding(horizontal = 8.dp)
+                .padding(horizontal = 10.dp)
         )
         },
         title = {

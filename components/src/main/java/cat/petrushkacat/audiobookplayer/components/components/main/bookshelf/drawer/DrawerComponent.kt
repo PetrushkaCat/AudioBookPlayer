@@ -4,9 +4,9 @@ interface DrawerComponent {
 
     fun onFavoritesClick()
     fun onListenLaterClick()
-
     fun onCompletedBooksClick()
     fun onSettingsClick()
     fun onRateClick()
+    fun onStatisticsClick()
 
 }

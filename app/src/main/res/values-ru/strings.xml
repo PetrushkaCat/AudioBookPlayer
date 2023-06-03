@@ -59,4 +59,9 @@
     <string name="the_end_of_the_chapter">Конец главы</string>
     <string name="current">Текущий:</string>
     <string name="your_value_minuter">Собственное значение. Минуты</string>
+    <string name="statistics">Статистика</string>
+    <string name="total">Всего:</string>
+    <string name="h">ч</string>
+    <string name="m">м</string>
+    <string name="s">с</string>
 </resources>

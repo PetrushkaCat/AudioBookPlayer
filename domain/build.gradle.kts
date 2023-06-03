@@ -2,7 +2,7 @@ plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
     //kotlin("kapt")
-    //kotlin("plugin.serialization") version "1.8.21"
+    kotlin("plugin.serialization") version "1.8.21"
 }
 
 android {
@@ -42,7 +42,7 @@ dependencies {
     implementation (libs.androidx.core.ktx)
     implementation("androidx.appcompat:appcompat:1.6.1")
 
-    //implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
     /*implementation(libs.hilt.android)
     kapt(libs.hilt.compiler)*/
 

@@ -4,18 +4,21 @@ import android.content.Context
 import androidx.room.Room
 import cat.petrushkacat.audiobookplayer.audioservice.repository.AudioServiceSettingsRepository
 import cat.petrushkacat.audiobookplayer.audioservice.repository.TimeUpdateRepository
-import cat.petrushkacat.audiobookplayer.data.db.AudiobooksDao
 import cat.petrushkacat.audiobookplayer.data.db.AudiobooksDatabase
-import cat.petrushkacat.audiobookplayer.data.db.RootFoldersDao
-import cat.petrushkacat.audiobookplayer.data.db.SettingsDao
-import cat.petrushkacat.audiobookplayer.data.db.TimeUpdateDao
+import cat.petrushkacat.audiobookplayer.data.db.dao.AudiobooksDao
+import cat.petrushkacat.audiobookplayer.data.db.dao.RootFoldersDao
+import cat.petrushkacat.audiobookplayer.data.db.dao.SettingsDao
+import cat.petrushkacat.audiobookplayer.data.db.dao.StatisticsDao
+import cat.petrushkacat.audiobookplayer.data.db.dao.TimeUpdateDao
 import cat.petrushkacat.audiobookplayer.data.repository.AudiobooksRepositoryImpl
 import cat.petrushkacat.audiobookplayer.data.repository.RootFoldersRepositoryImpl
 import cat.petrushkacat.audiobookplayer.data.repository.SettingsRepositoryImpl
+import cat.petrushkacat.audiobookplayer.data.repository.StatisticsRepositoryImpl
 import cat.petrushkacat.audiobookplayer.data.repository.TimeUpdateRepositoryImpl
 import cat.petrushkacat.audiobookplayer.domain.repository.AudiobooksRepository
 import cat.petrushkacat.audiobookplayer.domain.repository.RootFoldersRepository
 import cat.petrushkacat.audiobookplayer.domain.repository.SettingsRepository
+import cat.petrushkacat.audiobookplayer.domain.repository.StatisticsRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -74,4 +77,12 @@ class DataModule {
     @Provides
     @Singleton
     fun provideAudioServiceSettingsRepository(settingsDao: SettingsDao): AudioServiceSettingsRepository = SettingsRepositoryImpl(settingsDao)
+
+    @Provides
+    @Singleton
+    fun provideStatisticsDao(db: AudiobooksDatabase) = db.statisticsDao()
+
+    @Provides
+    @Singleton
+    fun provideStatisticsRepository(statisticsDao: StatisticsDao): StatisticsRepository = StatisticsRepositoryImpl(statisticsDao)
 }

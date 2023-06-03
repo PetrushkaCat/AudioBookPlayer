@@ -59,7 +59,11 @@
     <string name="the_end_of_the_chapter">The end of the chapter</string>
     <string name="current">Current:</string>
     <string name="your_value_minuter">Your value. Minutes</string>
-
+    <string name="statistics">Statistics</string>
+    <string name="total">Total:</string>
+    <string name="h">h</string>
+    <string name="m">m</string>
+    <string name="s">s</string>
 
 
 

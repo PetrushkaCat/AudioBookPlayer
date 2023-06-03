@@ -11,9 +11,10 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import cat.petrushkacat.audiobookplayer.audioservice.AudiobookMediaService
 import cat.petrushkacat.audiobookplayer.audioservice.AudiobookServiceHandler
-import cat.petrushkacat.audiobookplayer.audioservice.CHAPTER_DURATIONS
+import cat.petrushkacat.audiobookplayer.audioservice.CHAPTER_DURATIONS_EXTRA
 import cat.petrushkacat.audiobookplayer.audioservice.DURATION_EXTRA
 import cat.petrushkacat.audiobookplayer.audioservice.FOLDER_NAME_EXTRA
+import cat.petrushkacat.audiobookplayer.audioservice.IS_COMPLETED_EXTRA
 import cat.petrushkacat.audiobookplayer.audioservice.PlayerEvent
 import cat.petrushkacat.audiobookplayer.audioservice.sensors.SensorListener
 import cat.petrushkacat.audiobookplayer.components.util.componentCoroutineScopeDefault
@@ -133,8 +134,9 @@ class BookPlayerComponentImpl(
                                 isInitialization = true
                             )
                             audiobookServiceHandler.setPlaySpeed(it.playSpeed)
+                            audiobookServiceHandler.setBookName(it.name)
                         }
-                        startService(it.chapters, it.folderName, it.duration)
+                        startService(it.chapters, it.folderName, it.duration, it.isCompleted)
                     }
 
                 }
@@ -157,7 +159,7 @@ class BookPlayerComponentImpl(
         }
     }
 
-    private fun startService(chapters: Chapters, folderName: String, duration: Long) {
+    private fun startService(chapters: Chapters, folderName: String, duration: Long, isCompleted: Boolean) {
 
         val chapterDurations: MutableList<Long> = mutableListOf()
         for (chapter in chapters.chapters) {
@@ -166,7 +168,8 @@ class BookPlayerComponentImpl(
         val intent = Intent(context, AudiobookMediaService::class.java)
             .putExtra(FOLDER_NAME_EXTRA, folderName)
             .putExtra(DURATION_EXTRA, duration)
-            .putExtra(CHAPTER_DURATIONS, chapterDurations.toLongArray())
+            .putExtra(CHAPTER_DURATIONS_EXTRA, chapterDurations.toLongArray())
+            .putExtra(IS_COMPLETED_EXTRA, isCompleted)
 
         context.startForegroundService(intent)
     }

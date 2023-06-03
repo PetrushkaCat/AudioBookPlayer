@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Pets
@@ -78,6 +79,10 @@ fun DrawerComponentUi(component: DrawerComponent) {
 
                 DrawerItem(icon = Icons.Default.StarRate, text = stringResource(id = R.string.rate_this_app), onClick = {
                     component.onRateClick()
+                })
+
+                DrawerItem(icon = Icons.Default.BarChart, text = stringResource(id = R.string.statistics), onClick = {
+                    component.onStatisticsClick()
                 })
 
                 DrawerItem(icon = Icons.Default.Settings, text = stringResource(id = R.string.settings), onClick = {

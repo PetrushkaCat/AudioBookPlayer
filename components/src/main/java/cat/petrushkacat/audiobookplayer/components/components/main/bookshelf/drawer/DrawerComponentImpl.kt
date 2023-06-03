@@ -13,7 +13,8 @@ class DrawerComponentImpl(
     private val onSettingsClicked: () -> Unit,
     private val onFavoritesClicked: () -> Unit,
     private val onListenLaterClicked: () -> Unit,
-    private val onCompletedBooksClicked: () -> Unit
+    private val onCompletedBooksClicked: () -> Unit,
+    private val onStatisticsClicked: () -> Unit
 ) : DrawerComponent, ComponentContext by componentContext {
 
     override fun onFavoritesClick() {
@@ -50,5 +51,9 @@ class DrawerComponentImpl(
                 startActivity(context, intent, null)
             }
 
+    }
+
+    override fun onStatisticsClick() {
+        onStatisticsClicked()
     }
 }

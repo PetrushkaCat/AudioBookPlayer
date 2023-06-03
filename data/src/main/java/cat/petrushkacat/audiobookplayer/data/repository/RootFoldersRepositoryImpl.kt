@@ -1,7 +1,7 @@
 package cat.petrushkacat.audiobookplayer.data.repository
 
 import android.util.Log
-import cat.petrushkacat.audiobookplayer.data.db.RootFoldersDao
+import cat.petrushkacat.audiobookplayer.data.db.dao.RootFoldersDao
 import cat.petrushkacat.audiobookplayer.data.mappers.toRootFolderEntity
 import cat.petrushkacat.audiobookplayer.data.mappers.toRootFolderEntityDB
 import cat.petrushkacat.audiobookplayer.domain.models.RootFolderEntity

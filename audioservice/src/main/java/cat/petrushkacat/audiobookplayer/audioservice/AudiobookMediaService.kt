@@ -16,7 +16,8 @@ import javax.inject.Inject
 
 const val FOLDER_NAME_EXTRA = "folder_name_extra"
 const val DURATION_EXTRA = "duration_extra"
-const val CHAPTER_DURATIONS = "chapter_durations"
+const val CHAPTER_DURATIONS_EXTRA = "chapter_durations"
+const val IS_COMPLETED_EXTRA = "is_completed"
 const val SERVICE_CALL_CODE_STOP = 1
 const val SERVICE_CALL_CODE_START = 0
 
@@ -38,11 +39,14 @@ class AudiobookMediaService : MediaSessionService() {
 
     private var chapterDurations: List<Long> = emptyList()
 
+    private var wasCompleted: Boolean = false
+
     @UnstableApi
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         folderName = intent?.getStringExtra(FOLDER_NAME_EXTRA) ?: ""
         duration = intent?.getLongExtra(DURATION_EXTRA, 0) ?: 0
-        chapterDurations = intent?.getLongArrayExtra(CHAPTER_DURATIONS)?.asList() ?: emptyList()
+        chapterDurations = intent?.getLongArrayExtra(CHAPTER_DURATIONS_EXTRA)?.asList() ?: emptyList()
+        wasCompleted = intent?.getBooleanExtra(IS_COMPLETED_EXTRA, false) ?: false
 
         notificationManager.startNotificationService(
             mediaSessionService = this,
@@ -80,7 +84,7 @@ class AudiobookMediaService : MediaSessionService() {
                         currentTime = currentTime,
                         duration = duration,
                         isStarted = isStarted,
-                        isCompleted = isCompleted,
+                        isCompleted = if(wasCompleted) true else isCompleted,
                         playSpeed = playSpeed,
                         volumeUp = volume,
                         lastTimeListened = GregorianCalendar().timeInMillis

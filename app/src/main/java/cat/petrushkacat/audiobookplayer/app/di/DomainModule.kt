@@ -3,9 +3,11 @@ package cat.petrushkacat.audiobookplayer.app.di
 import cat.petrushkacat.audiobookplayer.domain.repository.AudiobooksRepository
 import cat.petrushkacat.audiobookplayer.domain.repository.RootFoldersRepository
 import cat.petrushkacat.audiobookplayer.domain.repository.SettingsRepository
+import cat.petrushkacat.audiobookplayer.domain.repository.StatisticsRepository
 import cat.petrushkacat.audiobookplayer.domain.usecases.BooksUseCases
 import cat.petrushkacat.audiobookplayer.domain.usecases.FoldersUseCases
 import cat.petrushkacat.audiobookplayer.domain.usecases.SettingsUseCases
+import cat.petrushkacat.audiobookplayer.domain.usecases.StatisticsUseCases
 import cat.petrushkacat.audiobookplayer.domain.usecases.UseCasesProvider
 import cat.petrushkacat.audiobookplayer.domain.usecases.books.DeleteAllBooksInFolderUseCase
 import cat.petrushkacat.audiobookplayer.domain.usecases.books.DeleteBookUseCase
@@ -22,6 +24,9 @@ import cat.petrushkacat.audiobookplayer.domain.usecases.folders.GetFoldersUseCas
 import cat.petrushkacat.audiobookplayer.domain.usecases.folders.UpdateFolderUseCase
 import cat.petrushkacat.audiobookplayer.domain.usecases.settings.GetSettingsUseCase
 import cat.petrushkacat.audiobookplayer.domain.usecases.settings.SaveSettingsUseCase
+import cat.petrushkacat.audiobookplayer.domain.usecases.statistics.GetAllStatisticsUseCase
+import cat.petrushkacat.audiobookplayer.domain.usecases.statistics.GetStatisticsDetailsUseCase
+import cat.petrushkacat.audiobookplayer.domain.usecases.statistics.SaveStatisticsUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -37,7 +42,9 @@ class DomainModule {
     fun provideUseCasesProvider(
         audiobooksRepository: AudiobooksRepository,
         rootFoldersRepository: RootFoldersRepository,
-        settingsRepository: SettingsRepository
+        settingsRepository: SettingsRepository,
+        statisticsRepository: StatisticsRepository,
+        saveStatisticsUseCase: SaveStatisticsUseCase
     ): UseCasesProvider {
         val getBooksUseCase = GetBooksUseCase(audiobooksRepository)
         return UseCasesProvider(
@@ -61,7 +68,20 @@ class DomainModule {
             settingsUseCases = SettingsUseCases(
                 getSettingsUseCase = GetSettingsUseCase(settingsRepository),
                 saveSettingsUseCase = SaveSettingsUseCase(settingsRepository)
+            ),
+            statisticsUseCases = StatisticsUseCases(
+                getAllStatisticsUseCase = GetAllStatisticsUseCase(statisticsRepository),
+                getStatisticsDetailsUseCase = GetStatisticsDetailsUseCase(statisticsRepository),
+                saveStatisticsUseCase = saveStatisticsUseCase
             )
         )
+    }
+
+    @Provides
+    @Singleton
+    fun provideSaveStatisticsUseCase(
+        statisticsRepository: StatisticsRepository
+    ): SaveStatisticsUseCase {
+        return SaveStatisticsUseCase(statisticsRepository)
     }
 }

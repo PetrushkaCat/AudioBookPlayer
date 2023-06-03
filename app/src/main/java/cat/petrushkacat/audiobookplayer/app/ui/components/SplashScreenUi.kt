@@ -22,7 +22,7 @@ import com.airbnb.lottie.compose.rememberLottieComposition
 @Composable
 fun SplashScreenUi(component: SplashScreenComponent) {
 
-    val composition by rememberLottieComposition(spec = LottieCompositionSpec.RawRes(R.raw.lottie_cute_mashroom))
+    val composition by rememberLottieComposition(spec = LottieCompositionSpec.RawRes(R.raw.cute_bunnies_love_animation))
 
     val process by animateLottieCompositionAsState(composition = composition)
 

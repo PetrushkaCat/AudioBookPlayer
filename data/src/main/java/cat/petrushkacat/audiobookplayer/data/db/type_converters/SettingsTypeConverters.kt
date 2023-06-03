@@ -1,4 +1,4 @@
-package cat.petrushkacat.audiobookplayer.data.db
+package cat.petrushkacat.audiobookplayer.data.db.type_converters
 
 import android.util.Log
 import androidx.room.TypeConverter

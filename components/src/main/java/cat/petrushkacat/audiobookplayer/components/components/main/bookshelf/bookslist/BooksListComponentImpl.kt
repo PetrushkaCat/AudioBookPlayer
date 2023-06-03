@@ -15,8 +15,11 @@ import cat.petrushkacat.audiobookplayer.domain.models.BookEntity
 import cat.petrushkacat.audiobookplayer.domain.models.BookListEntity
 import cat.petrushkacat.audiobookplayer.domain.models.Chapter
 import cat.petrushkacat.audiobookplayer.domain.models.Chapters
+import cat.petrushkacat.audiobookplayer.domain.models.RootFolderEntity
 import cat.petrushkacat.audiobookplayer.domain.usecases.books.DeleteIfNoInListUseCase
 import cat.petrushkacat.audiobookplayer.domain.usecases.books.GetBookUseCase
+import cat.petrushkacat.audiobookplayer.domain.usecases.books.GetBooksUseCase
+import cat.petrushkacat.audiobookplayer.domain.usecases.books.GetSearchedBooksUseCase
 import cat.petrushkacat.audiobookplayer.domain.usecases.books.SaveBookUseCase
 import cat.petrushkacat.audiobookplayer.domain.usecases.books.UpdateBookUseCase
 import cat.petrushkacat.audiobookplayer.domain.usecases.folders.GetFoldersUseCase
@@ -26,9 +29,11 @@ import com.arkivanov.decompose.childContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
@@ -39,11 +44,12 @@ class BooksListComponentImpl(
     private val updateBookUseCase: UpdateBookUseCase,
     private val deleteIfNoInListUseCase: DeleteIfNoInListUseCase,
     private val saveBookUseCase: SaveBookUseCase,
+    private val getBooksUseCase: GetBooksUseCase,
+    private val getSearchedBooksUseCase: GetSearchedBooksUseCase,
     private val getSettingsUseCase: GetSettingsUseCase,
     private val getFoldersUseCase: GetFoldersUseCase,
+    private val searchText: StateFlow<String>,
     val onBookSelected: (Uri) -> Unit,
-    books: StateFlow<List<BookListEntity>>,
-    override val isSearching: StateFlow<Boolean>
 ) : BooksListComponent, ComponentContext by componentContext {
 
     override val bookDropDownMenuComponent: BookDropdownMenuComponent = BookDropdownMenuComponentImpl(
@@ -65,40 +71,29 @@ class BooksListComponentImpl(
     override val foldersProcessed = _foldersProcessed.asStateFlow()
     override val isRefreshing: StateFlow<Boolean> = _isRefreshing.asStateFlow()
 
+    private val _isSearching = MutableStateFlow(false)
+    override val isSearching: StateFlow<Boolean> = _isSearching.asStateFlow()
+
     private var folderUris: List<Uri> = emptyList()
 
     init {
         scope.launch {
-            val started: MutableList<BookListEntity> = mutableListOf()
-            val completed: MutableList<BookListEntity> = mutableListOf()
-            val notStarted: MutableList<BookListEntity> = mutableListOf()
-
             launch {
                 getSettingsUseCase().collect {
                     _settings.value = it
                 }
             }
             launch {
-                books.collect { list ->
-                    list.forEach {
-                        if (it.isStarted && !it.isCompleted) {
-                            started.add(it)
-                        } else if (it.isCompleted) {
-                            completed.add(it)
-                        } else {
-                            notStarted.add(it)
-                        }
+                getBooksUseCase(GetBooksUseCase.BooksType.All).collect {
+                    Log.d("books", "getBooks")
+                    val temp = if(searchText.value.isNotEmpty()) {
+                        getSearchedBooksUseCase(searchText.value, null).first()
+                    } else if(folderUris.size == 1) {
+                        getBooksUseCase(GetBooksUseCase.BooksType.Folder(folderUris[0].toString())).first()
+                    } else {
+                        getBooksUseCase(GetBooksUseCase.BooksType.All).first()
                     }
-                    started.sortByDescending {
-                        it.lastTimeListened
-                    }
-
-                    started += notStarted + completed
-                    _models.value = started.toMutableList()
-
-                    started.clear()
-                    completed.clear()
-                    notStarted.clear()
+                    _models.value = sortBooks(temp.toMutableList())
                 }
             }
             launch {
@@ -106,12 +101,25 @@ class BooksListComponentImpl(
                     val selectedFolder = list.firstOrNull() {
                         it.isCurrent
                     }
+                    delay(200)
                     folderUris = if(selectedFolder != null) {
+                        _models.value = sortBooks(getBooksUseCase(GetBooksUseCase.BooksType.Folder(selectedFolder.uri)).first())
                         listOf(Uri.parse(selectedFolder.uri))
-
                     } else {
+                        _models.value = sortBooks(getBooksUseCase(GetBooksUseCase.BooksType.All).first())
                         list.map { Uri.parse(it.uri) }
                     }
+                }
+            }
+            launch {
+                searchText.collect {
+                    Log.d("search", "1")
+                    val books = getSearchedBooksUseCase(
+                        it,
+                        if(folderUris.size == 1) folderUris[0].toString() else null
+                    ).first()
+
+                    _models.value = sortBooks(books)
                 }
             }
             launch {
@@ -227,13 +235,43 @@ class BooksListComponentImpl(
         }
     }
 
+    private fun filterBooks(folders: List<RootFolderEntity>, books: List<BookListEntity>): List<BookListEntity> {
+        val currentFolder = folders.firstOrNull { it.isCurrent }
+        return if(currentFolder != null) {
+            books.filter {
+                it.rootFolderUri == currentFolder.uri
+            }
+        } else {
+            books.toMutableList()
+        }
+    }
+
+     private fun sortBooks(books: List<BookListEntity>): List<BookListEntity> {
+        val started: MutableList<BookListEntity> = mutableListOf()
+        val completed: MutableList<BookListEntity> = mutableListOf()
+        val notStarted: MutableList<BookListEntity> = mutableListOf()
+        books.forEach { book ->
+                if (book.isStarted && !book.isCompleted) {
+                    started.add(book)
+                } else if (book.isCompleted) {
+                    completed.add(book)
+                } else {
+                    notStarted.add(book)
+                }
+            }
+            started.sortByDescending { startedBook ->
+                startedBook.lastTimeListened
+            }
+
+            started += notStarted + completed
+            return started.toMutableList()
+    }
+
     companion object {
         private val _foldersToProcess = MutableStateFlow(0)
         private val _foldersProcessed = MutableStateFlow(0)
         private val _isRefreshing = MutableStateFlow(false)
         private val bookUris: MutableList<String> = mutableListOf()
         private var refreshingFolderUris: List<Uri> = emptyList()
-
-
     }
 }

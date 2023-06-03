@@ -1,6 +1,6 @@
 package cat.petrushkacat.audiobookplayer.data.repository
 
-import cat.petrushkacat.audiobookplayer.data.db.AudiobooksDao
+import cat.petrushkacat.audiobookplayer.data.db.dao.AudiobooksDao
 import cat.petrushkacat.audiobookplayer.data.mappers.toBookEntityDB
 import cat.petrushkacat.audiobookplayer.domain.models.BookEntity
 import cat.petrushkacat.audiobookplayer.domain.models.BookNotesEntity
@@ -21,10 +21,6 @@ class AudiobooksRepositoryImpl(
     override suspend fun getAllBookListEntities() = audiobooksDao.getAllBookListEntities()
 
     override suspend fun getAllBookListEntitiesInFolder(rootFolder: String) = audiobooksDao.getAllBookListEntitiesInFolder(rootFolder)
-
-/*    override suspend fun updateBook(book: BookPlayerComponent.UpdateInfo) {
-        audiobooksDao.updateBook(book)
-    }*/
 
     override suspend fun updateBook(book: BookNotesEntity) {
         audiobooksDao.updateBook(book)

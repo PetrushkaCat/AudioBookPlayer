@@ -113,7 +113,7 @@ class BooksListComponentImpl(
             }
             launch {
                 searchText.collect {
-                    Log.d("search", "1")
+                    Log.d("search collect", it)
                     val books = getSearchedBooksUseCase(
                         it,
                         if(folderUris.size == 1) folderUris[0].toString() else null

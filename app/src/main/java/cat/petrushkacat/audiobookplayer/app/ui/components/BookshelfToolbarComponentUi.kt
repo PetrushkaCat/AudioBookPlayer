@@ -1,5 +1,6 @@
 package cat.petrushkacat.audiobookplayer.app.ui.components
 
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -32,21 +33,27 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import cat.petrushkacat.audiobookplayer.R
 import cat.petrushkacat.audiobookplayer.components.components.main.bookshelf.toolbar.BookshelfToolbarComponent
 import cat.petrushkacat.audiobookplayer.domain.models.RootFolderEntity
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -108,10 +115,15 @@ fun BookshelfToolbarComponentUi(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchView(onSearch: (String) -> Unit) {
-    val isExpanded = remember { mutableStateOf(false) }
-    val searchText = remember { mutableStateOf("") }
+    val isExpanded = rememberSaveable { mutableStateOf(false) }
+    val searchText = rememberSaveable(stateSaver = TextFieldValue.Saver) {
+        mutableStateOf(TextFieldValue(""))
+    }
 
+    val isFocused = rememberSaveable { mutableStateOf(false) }
     val focusRequester = remember { FocusRequester() }
+
+    val scope = rememberCoroutineScope()
 
     if (!isExpanded.value) {
         Icon(
@@ -126,12 +138,15 @@ fun SearchView(onSearch: (String) -> Unit) {
         )
     } else {
         SideEffect {
-            focusRequester.requestFocus()
+            if(!isFocused.value) {
+                focusRequester.requestFocus()
+                isFocused.value = true
+            }
         }
         TextField(value = searchText.value,
             onValueChange = {
                 searchText.value = it
-                onSearch(searchText.value)
+                onSearch(it.text)
             },
             colors = TextFieldDefaults.colors(
                 focusedContainerColor = MaterialTheme.colorScheme.background,
@@ -150,13 +165,25 @@ fun SearchView(onSearch: (String) -> Unit) {
                         .size(48.dp)
                         .padding(7.dp)
                         .clickable {
-                            searchText.value = ""
-                            isExpanded.value = false
-                            onSearch(searchText.value)
+                            scope.launch {
+                                searchText.value = TextFieldValue("")
+                                Log.d("search close", searchText.value.text)
+                                delay(100)
+                                onSearch("")
+                                isFocused.value = false
+                                isExpanded.value = false
+                            }
                         })
             }
         )
     }
+
+    LaunchedEffect(key1 = isExpanded.value) {
+        if(isExpanded.value) {
+            onSearch(searchText.value.text)
+        }
+    }
+
 }
 
 @Composable

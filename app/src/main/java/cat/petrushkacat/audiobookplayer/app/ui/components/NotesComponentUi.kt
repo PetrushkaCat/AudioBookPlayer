@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -51,7 +52,10 @@ fun NotesComponentUi(component: NotesComponent) {
                 )
             }
         }
-        Row(modifier = Modifier.fillMaxWidth().weight(0.7f).padding(horizontal = 10.dp),
+        Row(modifier = Modifier
+            .fillMaxWidth()
+            .height(50.dp)
+            .padding(horizontal = 10.dp),
             horizontalArrangement = Arrangement.End
         ) {
             Icon(Icons.Default.AddCircle,

@@ -2,6 +2,7 @@ package cat.petrushkacat.audiobookplayer.data.db
 
 import androidx.room.AutoMigration
 import androidx.room.Database
+import androidx.room.RewriteQueriesToDropUnusedColumns
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import cat.petrushkacat.audiobookplayer.data.db.dao.AudiobooksDao
@@ -17,6 +18,7 @@ import cat.petrushkacat.audiobookplayer.data.dto.RootFolderEntityDB
 import cat.petrushkacat.audiobookplayer.data.dto.SettingsEntityDTO
 import cat.petrushkacat.audiobookplayer.data.dto.StatisticsEntityDB
 
+@RewriteQueriesToDropUnusedColumns
 @TypeConverters(value = [
     AudiobookTypeConverters::class,
     SettingsTypeConverters::class,

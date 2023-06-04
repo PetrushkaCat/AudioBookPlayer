@@ -44,9 +44,7 @@ class CompletedBooksComponentImpl (
             scope.launch {
                 launch {
                    getBooksUseCase(GetBooksUseCase.BooksType.Completed).collect { books ->
-                        _models.value = books.filter { book ->
-                            book.isCompleted
-                        }
+                        _models.value = books
                     }
                 }
                 launch {

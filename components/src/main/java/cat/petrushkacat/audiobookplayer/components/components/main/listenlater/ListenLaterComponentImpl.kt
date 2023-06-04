@@ -43,9 +43,7 @@ class ListenLaterComponentImpl(
         scope.launch {
             launch {
                 getBooksUseCase(GetBooksUseCase.BooksType.ListenLater).collect { books ->
-                    _models.value = books.filter { book ->
-                        book.isWantToListen
-                    }
+                    _models.value = books
                 }
             }
             launch {

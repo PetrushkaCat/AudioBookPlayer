@@ -44,9 +44,7 @@ class FavoritesComponentImpl(
         scope.launch {
             launch {
                 getBooksUseCase(GetBooksUseCase.BooksType.Favorites).collect { books ->
-                    _models.value = books.filter { book ->
-                        book.isFavorite
-                    }
+                    _models.value = books
                 }
             }
             launch {

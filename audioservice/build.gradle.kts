@@ -32,18 +32,15 @@ android {
     kotlinOptions {
         jvmTarget = "17"
     }
-/*    kotlin {
-        jvmToolchain(17)
-    }*/
 }
 
 dependencies {
 
     implementation(project(":domain"))
 
-    implementation (libs.androidx.core.ktx)
-    implementation("androidx.appcompat:appcompat:1.6.1")
-    implementation("androidx.legacy:legacy-support-v4:1.0.0") // Needed MediaSessionCompat.Token
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.legacy.support) // Needed MediaSessionCompat.Token
 
     implementation(libs.media3.exoplayer)
     implementation(libs.media3.session)
@@ -52,17 +49,13 @@ dependencies {
     implementation(libs.hilt.android)
     kapt(libs.hilt.compiler)
 
-    //implementation(libs.room.common)
+    implementation(libs.glide)
 
-    implementation("com.github.bumptech.glide:glide:4.15.1")
+    testImplementation(libs.junit.junit)
 
-    testImplementation("junit:junit:4.13.2")
-    val media3_version = "1.0.1"
-    // Utilities for testing media components (including ExoPlayer components)
-    testImplementation("androidx.media3:media3-test-utils:$media3_version")
-    // Utilities for testing media components (including ExoPlayer components) via Robolectric
-    testImplementation("androidx.media3:media3-test-utils-robolectric:$media3_version")
+    testImplementation(libs.media3.test.utils)
+    testImplementation(libs.media3.test.utils.robolectric)
 
     androidTestImplementation(libs.androidx.test.ext.junit)
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+    androidTestImplementation(libs.androidx.test.espresso.core)
 }

@@ -75,21 +75,25 @@ class FoldersComponentImpl(
     }
 
     private fun addFolder(folderUri: Uri) {
-        scopeIO.launch {
+        CoroutineScope(SupervisorJob() + Dispatchers.IO).launch {
             _foldersToProcess.value = 0
             _foldersProcessed.value = 0
 
-            val file = DocumentFile.fromTreeUri(context, folderUri)!!
             val newFolder = RootFolderEntity(
                 uri = folderUri.toString(),
                 name = folderUri.lastPathSegment!!,
                 isCurrent = false
             )
-            val contentResolver = context.contentResolver
+            try {
+                val contentResolver = context.contentResolver
 
-            val takeFlags: Int = Intent.FLAG_GRANT_READ_URI_PERMISSION or
-                    Intent.FLAG_GRANT_WRITE_URI_PERMISSION
-            contentResolver.takePersistableUriPermission(folderUri, takeFlags)
+                val takeFlags: Int = Intent.FLAG_GRANT_READ_URI_PERMISSION or
+                        Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                contentResolver.takePersistableUriPermission(folderUri, takeFlags)
+            } catch(e: Exception) {
+                e.printStackTrace()
+                Log.d("folders", "uri permission not granted")
+            }
 
             addFolderUseCase(newFolder)
             parseBooks(folderUri)
@@ -98,10 +102,8 @@ class FoldersComponentImpl(
     }
 
     private fun parseBooks(folderUri: Uri) {
-        scopeIO.launch {
-            val file = DocumentFile.fromTreeUri(context, folderUri)!!
-            parseCycle(file, folderUri)
-        }
+        val file = DocumentFile.fromTreeUri(context, folderUri)!!
+        parseCycle(file, folderUri)
     }
 
     private fun parseCycle(bookFolder: DocumentFile, rootFolderUri: Uri) {

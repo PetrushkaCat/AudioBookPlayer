@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -96,10 +97,10 @@ fun FoldersComponentUi(component: FoldersComponent) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(0.7f)
-                    .padding(horizontal = 20.dp)
+                    .height(50.dp)
+                    .padding(horizontal = 20.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-
                 Text(
                     stringResource(id = R.string.add_folder_description),
                     modifier = Modifier.weight(5f),

@@ -1,5 +1,7 @@
 package cat.petrushkacat.audiobookplayer.domain.models
 
+import kotlinx.serialization.Serializable
+
 data class BookEntity(
     val folderUri: String,
     /**
@@ -31,10 +33,12 @@ data class BookEntity(
     val isWantToListen: Boolean = false,
     )
 
+@Serializable
 data class Notes(
     val notes: List<Note>
 )
 
+@Serializable
 data class Note(
     val chapterIndex: Int,
     val chapterName: String,
@@ -42,9 +46,12 @@ data class Note(
     val description: String = ""
 )
 
+@Serializable
 data class Chapters(
     val chapters: List<Chapter>
 )
+
+@Serializable
 data class Chapter(
     val bookFolderUri: String,
     val name: String,

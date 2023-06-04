@@ -4,21 +4,27 @@ import android.util.Log
 import androidx.room.TypeConverter
 import cat.petrushkacat.audiobookplayer.data.dto.Chapters
 import cat.petrushkacat.audiobookplayer.data.dto.Notes
-import com.google.gson.Gson
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 class AudiobookTypeConverters {
 
     @TypeConverter
     fun fromChaptersDBToJson(chapters: Chapters): String {
-        return Gson().toJson(chapters)
+        return Json.encodeToString(chapters)
     }
 
     @TypeConverter
     fun fromJsonToChaptersDB(json: String): Chapters {
-        val result = Gson().fromJson(json, Chapters::class.java)
         Log.d("type converters chapters income", json)
 
-        return if (result.chapters == null) {
+        val result: Chapters? = try{
+            Json.decodeFromString<Chapters>(json)
+        } catch (e: Exception) {
+            null
+        }
+
+        return if (result == null) {
             val newString = json
                 .replaceFirst("\"a\"", "\"chapters\"")
                 .replace("\"a\"", "\"bookFolderUri\"")
@@ -27,26 +33,7 @@ class AudiobookTypeConverters {
                 .replace("\"d\"", "\"timeFromBeginning\"")
                 .replace("\"e\"", "\"uri\"")
             Log.d("type converters chapters result if obfuscated", newString)
-            Gson().fromJson(newString, Chapters::class.java)
-        } else {
-            result
-        }
-    }
-
-    @TypeConverter
-    fun fromJsonToNotesDB(json: String): Notes {
-        val result = Gson().fromJson(json, Notes::class.java)
-        Log.d("type converters notes income", json)
-
-        return if (result.notes == null) {
-            val newString = json
-                .replaceFirst("\"a\"", "\"notes\"")
-                .replace("\"a\"", "\"chapterIndex\"")
-                .replace("\"b\"", "\"chapterName\"")
-                .replace("\"c\"", "\"time\"")
-                .replace("\"d\"", "\"description\"")
-            Log.d("type converters notes result if obfuscated", newString)
-            Gson().fromJson(newString, Notes::class.java)
+            Json.decodeFromString<Chapters>(newString)
         } else {
             result
         }
@@ -54,22 +41,51 @@ class AudiobookTypeConverters {
 
     @TypeConverter
     fun fromNotesDBToJson(notes: Notes): String {
-        return Gson().toJson(notes)
+        return Json.encodeToString(notes)
+    }
+
+    @TypeConverter
+    fun fromJsonToNotesDB(json: String): Notes {
+        Log.d("type converters notes income", json)
+
+        val result: Notes? = try{
+            Json.decodeFromString<Notes>(json)
+        } catch (e: Exception) {
+            null
+        }
+
+        return if (result == null) {
+            val newString = json
+                .replaceFirst("\"a\"", "\"notes\"")
+                .replace("\"a\"", "\"chapterIndex\"")
+                .replace("\"b\"", "\"chapterName\"")
+                .replace("\"c\"", "\"time\"")
+                .replace("\"d\"", "\"description\"")
+            Log.d("type converters notes result if obfuscated", newString)
+            Json.decodeFromString<Notes>(newString)
+        } else {
+            result
+        }
     }
 
     //----------------------------------
 
     @TypeConverter
-    fun fromChaptersDBToJson(chapters: cat.petrushkacat.audiobookplayer.domain.models.Chapters): String {
-        return Gson().toJson(chapters)
+    fun fromChaptersToJson(chapters: cat.petrushkacat.audiobookplayer.domain.models.Chapters): String {
+        return Json.encodeToString(chapters)
     }
 
     @TypeConverter
     fun fromJsonToChapters(json: String): cat.petrushkacat.audiobookplayer.domain.models.Chapters {
-        val result = Gson().fromJson(json, cat.petrushkacat.audiobookplayer.domain.models.Chapters::class.java)
         Log.d("type converters chapters income", json)
 
-        return if (result.chapters == null) {
+        val result: cat.petrushkacat.audiobookplayer.domain.models.Chapters? = try{
+            Json.decodeFromString<cat.petrushkacat.audiobookplayer.domain.models.Chapters>(json)
+        } catch (e: Exception) {
+            null
+        }
+
+        return if (result == null) {
             val newString = json
                 .replaceFirst("\"a\"", "\"chapters\"")
                 .replace("\"a\"", "\"bookFolderUri\"")
@@ -78,26 +94,7 @@ class AudiobookTypeConverters {
                 .replace("\"d\"", "\"timeFromBeginning\"")
                 .replace("\"e\"", "\"uri\"")
             Log.d("type converters chapters result if obfuscated", newString)
-            Gson().fromJson(newString, cat.petrushkacat.audiobookplayer.domain.models.Chapters::class.java)
-        } else {
-            result
-        }
-    }
-
-    @TypeConverter
-    fun fromJsonToNotes(json: String): cat.petrushkacat.audiobookplayer.domain.models.Notes {
-        val result = Gson().fromJson(json, cat.petrushkacat.audiobookplayer.domain.models.Notes::class.java)
-        Log.d("type converters notes income", json)
-
-        return if (result.notes == null) {
-            val newString = json
-                .replaceFirst("\"a\"", "\"notes\"")
-                .replace("\"a\"", "\"chapterIndex\"")
-                .replace("\"b\"", "\"chapterName\"")
-                .replace("\"c\"", "\"time\"")
-                .replace("\"d\"", "\"description\"")
-            Log.d("type converters notes result if obfuscated", newString)
-            Gson().fromJson(newString, cat.petrushkacat.audiobookplayer.domain.models.Notes::class.java)
+            Json.decodeFromString<cat.petrushkacat.audiobookplayer.domain.models.Chapters>(newString)
         } else {
             result
         }
@@ -105,6 +102,30 @@ class AudiobookTypeConverters {
 
     @TypeConverter
     fun fromNotesToJson(notes: cat.petrushkacat.audiobookplayer.domain.models.Notes): String {
-        return Gson().toJson(notes)
+        return Json.encodeToString(notes)
+    }
+
+    @TypeConverter
+    fun fromJsonToNotes(json: String): cat.petrushkacat.audiobookplayer.domain.models.Notes {
+        Log.d("type converters notes income", json)
+
+        val result: cat.petrushkacat.audiobookplayer.domain.models.Notes? = try{
+            Json.decodeFromString<cat.petrushkacat.audiobookplayer.domain.models.Notes>(json)
+        } catch (e: Exception) {
+            null
+        }
+
+        return if (result == null) {
+            val newString = json
+                .replaceFirst("\"a\"", "\"notes\"")
+                .replace("\"a\"", "\"chapterIndex\"")
+                .replace("\"b\"", "\"chapterName\"")
+                .replace("\"c\"", "\"time\"")
+                .replace("\"d\"", "\"description\"")
+            Log.d("type converters notes result if obfuscated", newString)
+            Json.decodeFromString<cat.petrushkacat.audiobookplayer.domain.models.Notes>(newString)
+        } else {
+            result
+        }
     }
 }

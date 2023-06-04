@@ -15,8 +15,8 @@ android {
         applicationId = "cat.petrushkacat.audiobookplayer"
         minSdk = 26
         targetSdk = 33
-        versionCode = 10
-        versionName = "1.0.3"
+        versionCode = 12
+        versionName = "1.0.3 patch 1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -71,7 +71,7 @@ dependencies {
     implementation(platform(libs.compose.bom))
     implementation(libs.compose.ui)
     implementation(libs.compose.ui.graphics)
-    implementation("androidx.compose.material:material")
+    implementation(libs.compose.material)
     implementation(libs.compose.material3)
     implementation(libs.compose.ui.tooling.prewiew)
     implementation(libs.compose.material.icons.core)
@@ -80,7 +80,7 @@ dependencies {
     implementation(libs.activity.compose)
     implementation(libs.coil.compose)
 
-    implementation ("com.airbnb.android:lottie-compose:6.0.0")
+    implementation (libs.lottie.compose)
 
     implementation(libs.decompose)
     implementation(libs.decompose.compose)

@@ -1,6 +1,7 @@
 package cat.petrushkacat.audiobookplayer.data.dto
 
 import androidx.room.Entity
+import kotlinx.serialization.Serializable
 
 @Entity(
     tableName = "BookEntity",
@@ -36,20 +37,24 @@ data class BookEntityDB(
     val isWantToListen: Boolean = false,
 )
 
+@Serializable
 data class Notes(
     val notes: List<Note>
 )
 
+@Serializable
 data class Note(
     val chapterIndex: Int,
     val chapterName: String,
     val time: Long,
     val description: String = ""
 )
-
+@Serializable
 data class Chapters(
     val chapters: List<Chapter>
 )
+
+@Serializable
 data class Chapter(
     val bookFolderUri: String,
     val name: String,

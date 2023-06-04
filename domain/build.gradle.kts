@@ -1,7 +1,6 @@
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
-    //kotlin("kapt")
     kotlin("plugin.serialization") version "1.8.21"
 }
 
@@ -32,21 +31,21 @@ android {
     kotlinOptions {
         jvmTarget = "17"
     }
-   /* kotlin {
-        jvmToolchain(11)
-    }*/
 }
 
 dependencies {
 
-    implementation (libs.androidx.core.ktx)
-    implementation("androidx.appcompat:appcompat:1.6.1")
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.appcompat)
 
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
-    /*implementation(libs.hilt.android)
-    kapt(libs.hilt.compiler)*/
+    //implementation(libs.coroutines.core)
 
-    testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test.ext:junit:1.1.5")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+    implementation(libs.kotlinx.serialization.json)
+
+    testImplementation(libs.junit.junit)
+    testImplementation(libs.coroutines.test)
+    testImplementation(libs.google.truth)
+
+    //androidTestImplementation("androidx.test.ext:junit:1.1.5")
+    //androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 }

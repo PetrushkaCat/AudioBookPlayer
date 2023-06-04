@@ -1,6 +1,7 @@
 package cat.petrushkacat.audiobookplayer.components.components.main.bookshelf.bookslist
 
 import android.content.Context
+import android.content.Intent
 import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.util.Log
@@ -93,7 +94,7 @@ class BooksListComponentImpl(
                     } else {
                         getBooksUseCase(GetBooksUseCase.BooksType.All).first()
                     }
-                    _models.value = sortBooks(temp.toMutableList())
+                    _models.value = temp.toMutableList()
                 }
             }
             launch {
@@ -103,10 +104,10 @@ class BooksListComponentImpl(
                     }
                     delay(200)
                     folderUris = if(selectedFolder != null) {
-                        _models.value = sortBooks(getBooksUseCase(GetBooksUseCase.BooksType.Folder(selectedFolder.uri)).first())
+                        _models.value = getBooksUseCase(GetBooksUseCase.BooksType.Folder(selectedFolder.uri)).first()
                         listOf(Uri.parse(selectedFolder.uri))
                     } else {
-                        _models.value = sortBooks(getBooksUseCase(GetBooksUseCase.BooksType.All).first())
+                        _models.value = getBooksUseCase(GetBooksUseCase.BooksType.All).first()
                         list.map { Uri.parse(it.uri) }
                     }
                 }
@@ -119,7 +120,7 @@ class BooksListComponentImpl(
                         if(folderUris.size == 1) folderUris[0].toString() else null
                     ).first()
 
-                    _models.value = sortBooks(books)
+                    _models.value = books
                 }
             }
             launch {
@@ -142,25 +143,36 @@ class BooksListComponentImpl(
     }
 
     override fun refresh() {
-        refreshingFolderUris = folderUris
-        _isRefreshing.value = true
-        _foldersProcessed.value = 0
-        _foldersToProcess.value = 0
-        Log.d("refreshing", _isRefreshing.value.toString())
-        Log.d("refreshing", _foldersProcessed.value.toString())
-        Log.d("refreshing", _foldersToProcess.value.toString())
-        for(uri in folderUris) {
-            scope.launch {
-                parseBooks(uri)
+        CoroutineScope(SupervisorJob() + Dispatchers.IO).launch {
+            refreshingFolderUris = folderUris
+            _isRefreshing.value = true
+            _foldersProcessed.value = 0
+            _foldersToProcess.value = 0
+            Log.d("refreshing", _isRefreshing.value.toString())
+            Log.d("refreshing", _foldersProcessed.value.toString())
+            Log.d("refreshing", _foldersToProcess.value.toString())
+
+            for (uri in folderUris) {
+                launch {
+                    try {
+                        val contentResolver = context.contentResolver
+
+                        val takeFlags: Int = Intent.FLAG_GRANT_READ_URI_PERMISSION or
+                                Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                        contentResolver.takePersistableUriPermission(uri, takeFlags)
+                    } catch(e: Exception) {
+                        e.printStackTrace()
+                        Log.d("books list", "uri permission not granted")
+                    }
+                    parseBooks(uri)
+                }
             }
         }
     }
 
     private fun parseBooks(folderUri: Uri) {
-        scopeIO.launch {
-            val file = DocumentFile.fromTreeUri(context, folderUri)!!
-            parseCycle(file, folderUri)
-        }
+        val file = DocumentFile.fromTreeUri(context, folderUri)!!
+        parseCycle(file, folderUri)
     }
 
     private fun parseCycle(bookFolder: DocumentFile, rootFolderUri: Uri) {
@@ -244,27 +256,6 @@ class BooksListComponentImpl(
         } else {
             books.toMutableList()
         }
-    }
-
-     private fun sortBooks(books: List<BookListEntity>): List<BookListEntity> {
-        val started: MutableList<BookListEntity> = mutableListOf()
-        val completed: MutableList<BookListEntity> = mutableListOf()
-        val notStarted: MutableList<BookListEntity> = mutableListOf()
-        books.forEach { book ->
-                if (book.isStarted && !book.isCompleted) {
-                    started.add(book)
-                } else if (book.isCompleted) {
-                    completed.add(book)
-                } else {
-                    notStarted.add(book)
-                }
-            }
-            started.sortByDescending { startedBook ->
-                startedBook.lastTimeListened
-            }
-
-            started += notStarted + completed
-            return started.toMutableList()
     }
 
     companion object {

@@ -16,4 +16,6 @@ interface NotesComponent {
 
     fun onNoteClick(chapterId: Int, time: Long)
 
+    fun onBack()
+
 }

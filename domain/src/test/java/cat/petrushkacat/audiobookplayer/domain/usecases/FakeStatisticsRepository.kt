@@ -9,22 +9,22 @@ import kotlinx.coroutines.flow.flow
 
 class FakeStatisticsRepository : StatisticsRepository {
 
-    val fakeStatisticsDB: MutableList<StatisticsEntity> = generateStatistics().toMutableList()
+    val fakeStatisticsDB: MutableList<StatisticsEntity?> = generateStatistics().toMutableList()
 
     override suspend fun getAll(): Flow<List<StatisticsEntity>> = flow {
-        emit(fakeStatisticsDB)
+        emit(fakeStatisticsDB.filterNotNull())
     }
 
-    override suspend fun getDetails(year: Int, month: Int, day: Int): Flow<StatisticsEntity> =
+    override suspend fun getDetails(year: Int, month: Int, day: Int): Flow<StatisticsEntity?> =
         flow {
-            fakeStatisticsDB.firstOrNull() {
-                it.year == year && it.month == month && it.day == day
-            }?.let { emit(it) }
+            emit(fakeStatisticsDB.firstOrNull() {
+                it?.year == year && it.month == month && it.day == day
+            })
         }
 
     override suspend fun save(statisticsEntity: StatisticsEntity) {
         fakeStatisticsDB.removeIf {
-            it.year == statisticsEntity.year
+            it?.year == statisticsEntity.year
             && it.month == statisticsEntity.month
             && it.day == statisticsEntity.day
         }

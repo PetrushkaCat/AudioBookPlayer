@@ -68,15 +68,18 @@ class BookComponentImpl(
             BookComponent.Child.Notes(
                 NotesComponentImpl(
                     componentContext,
+                    context,
                     useCasesProvider.booksUseCases.getBookUseCase,
                     useCasesProvider.booksUseCases.updateBookNotesUseCase,
                     audiobookServiceHandler,
                     bookUri.toString(),
+                    onBackClicked = {
+                        navigation.pop()
+                    },
                     onNoteClicked = { id, time ->
                         navigation.pop()
                         audiobookServiceHandler.setTimings(id, time)
                     }
-
                 )
             )
         }

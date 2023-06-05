@@ -29,8 +29,22 @@ class SaveStatisticsUseCaseTest {
                 2007, 7, 2)
 
             Truth.assertThat(repository.fakeStatisticsDB).hasSize(2)
-            Truth.assertThat(repository.fakeStatisticsDB[1].listenedIntervals.intervals).hasSize(2)
-            Truth.assertThat(repository.fakeStatisticsDB[1].listenedTime).isEqualTo(2000)
+            Truth.assertThat(repository.fakeStatisticsDB[1]?.listenedIntervals?.intervals).hasSize(2)
+            Truth.assertThat(repository.fakeStatisticsDB[1]?.listenedTime).isEqualTo(2000)
+        }
+    }
+
+    @Test
+    fun `save within day that does not contain statistics`() {
+        runBlocking {
+            useCase.invoke(
+                ListenedInterval(86302000, 86303000, "book2"),
+                2007, 7, 5,
+                2007, 7, 4)
+
+            Truth.assertThat(repository.fakeStatisticsDB).hasSize(3)
+            Truth.assertThat(repository.fakeStatisticsDB[2]?.listenedIntervals?.intervals).hasSize(1)
+            Truth.assertThat(repository.fakeStatisticsDB[2]?.listenedTime).isEqualTo(1000)
         }
     }
 
@@ -43,10 +57,26 @@ class SaveStatisticsUseCaseTest {
                 2007, 7, 3)
 
             Truth.assertThat(repository.fakeStatisticsDB).hasSize(3)
-            Truth.assertThat(repository.fakeStatisticsDB[1].listenedIntervals.intervals).hasSize(2)
-            Truth.assertThat(repository.fakeStatisticsDB[2].listenedIntervals.intervals).hasSize(1)
-            Truth.assertThat(repository.fakeStatisticsDB[1].listenedTime).isEqualTo(1999)
-            Truth.assertThat(repository.fakeStatisticsDB[2].listenedTime).isEqualTo(1000)
+            Truth.assertThat(repository.fakeStatisticsDB[1]?.listenedIntervals?.intervals).hasSize(2)
+            Truth.assertThat(repository.fakeStatisticsDB[2]?.listenedIntervals?.intervals).hasSize(1)
+            Truth.assertThat(repository.fakeStatisticsDB[1]?.listenedTime).isEqualTo(1999)
+            Truth.assertThat(repository.fakeStatisticsDB[2]?.listenedTime).isEqualTo(1000)
+        }
+    }
+
+    @Test
+    fun `save when interval contains two days and prev day does not contain statistics`() {
+        runBlocking {
+            useCase.invoke(
+                ListenedInterval(86399000, 1000, "book2"),
+                2007, 7, 5,
+                2007, 7, 4)
+
+            Truth.assertThat(repository.fakeStatisticsDB).hasSize(4)
+            Truth.assertThat(repository.fakeStatisticsDB[2]?.listenedIntervals?.intervals).hasSize(1)
+            Truth.assertThat(repository.fakeStatisticsDB[3]?.listenedIntervals?.intervals).hasSize(1)
+            Truth.assertThat(repository.fakeStatisticsDB[2]?.listenedTime).isEqualTo(999)
+            Truth.assertThat(repository.fakeStatisticsDB[3]?.listenedTime).isEqualTo(1000)
         }
     }
 }

@@ -1,6 +1,5 @@
 package cat.petrushkacat.audiobookplayer.data.repository
 
-import android.util.Log
 import cat.petrushkacat.audiobookplayer.data.db.dao.RootFoldersDao
 import cat.petrushkacat.audiobookplayer.data.mappers.toRootFolderEntity
 import cat.petrushkacat.audiobookplayer.data.mappers.toRootFolderEntityDB
@@ -19,7 +18,6 @@ class RootFoldersRepositoryImpl(
     }
 
     override suspend fun addFolder(folder: RootFolderEntity) {
-        Log.d("folderAdd", folder.toString())
         rootFoldersDao.addFolder(folder.toRootFolderEntityDB())
     }
 

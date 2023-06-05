@@ -1,8 +1,6 @@
 plugins {
     id ("com.android.application")
     id ("org.jetbrains.kotlin.android")
-    //id ("com.google.devtools.ksp")
-    //id ("kotlin-parcelize")
     id("dagger.hilt.android.plugin")
     kotlin("kapt")
 }
@@ -15,8 +13,8 @@ android {
         applicationId = "cat.petrushkacat.audiobookplayer"
         minSdk = 26
         targetSdk = 33
-        versionCode = 12
-        versionName = "1.0.3 patch 1"
+        versionCode = 13
+        versionName = "1.0.3 patch 2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -79,7 +77,6 @@ dependencies {
     implementation(libs.compose.material3.window.size)
     implementation(libs.activity.compose)
     implementation(libs.coil.compose)
-
     implementation (libs.lottie.compose)
 
     implementation(libs.decompose)
@@ -89,13 +86,12 @@ dependencies {
     implementation(libs.coroutines.android)
 
     implementation(libs.media3.exoplayer)
-    implementation(libs.media3.session)
-    implementation(libs.media3.ui)
 
     implementation(libs.hilt.android)
     kapt(libs.hilt.compiler)
 
-    implementation(libs.room.common)
+    implementation("com.google.android.play:app-update:2.1.0")
+    implementation("com.google.android.play:app-update-ktx:2.1.0")
 
     testImplementation(libs.junit.junit)
     androidTestImplementation(libs.androidx.test.ext.junit)

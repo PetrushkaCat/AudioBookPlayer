@@ -30,6 +30,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cat.petrushkacat.audiobookplayer.R
+import cat.petrushkacat.audiobookplayer.app.ui.components.shared.CommonTopAppBar
 import cat.petrushkacat.audiobookplayer.app.ui.components.shared.EditDialog
 import cat.petrushkacat.audiobookplayer.app.util.formatDuration
 import cat.petrushkacat.audiobookplayer.components.components.main.bookplayer.notes.NotesComponent
@@ -40,33 +41,56 @@ fun NotesComponentUi(component: NotesComponent) {
 
     val model = component.models.collectAsState()
     val showDialog = rememberSaveable { mutableStateOf(false) }
-
-    Column(modifier = Modifier.fillMaxSize().padding(4.dp)) {
-        LazyColumn(modifier = Modifier.weight(7f)) {
-            items(model.value.notes.notes.size) {
-                NoteItem(
-                    note = model.value.notes.notes[it],
-                    component::onNoteClick,
-                    component::deleteNote,
-                    component::editNote
+    val automaticNote = model.value.notes.notes.firstOrNull() {
+        it.description == stringResource(
+            id = cat.petrushkacat.audiobookplayer.core.R.string.automatic_note_description)
+    }
+    Column {
+        CommonTopAppBar(title = stringResource(id = R.string.notes)) {
+            component.onBack()
+        }
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(4.dp)
+        ) {
+            LazyColumn(modifier = Modifier.weight(1f)) {
+                item {
+                    if(automaticNote != null) {
+                        NoteItem(note = automaticNote,
+                        onNoteClick = component::onNoteClick,
+                            onDeleteClick = component::deleteNote,
+                            onDescriptionChange = { a, b -> })
+                    }
+                }
+                items(model.value.notes.notes.size) {
+                    if(automaticNote != model.value.notes.notes[it]) {
+                        NoteItem(
+                            note = model.value.notes.notes[it],
+                            component::onNoteClick,
+                            component::deleteNote,
+                            component::editNote
+                        )
+                    }
+                }
+            }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(50.dp)
+                    .padding(horizontal = 10.dp),
+                horizontalArrangement = Arrangement.End
+            ) {
+                Icon(Icons.Default.AddCircle,
+                    stringResource(id = R.string.add_note_icon),
+                    modifier = Modifier
+                        .clickable {
+                            showDialog.value = true
+                        }
+                        .size(48.dp)
+                        .padding(5.dp)
                 )
             }
-        }
-        Row(modifier = Modifier
-            .fillMaxWidth()
-            .height(50.dp)
-            .padding(horizontal = 10.dp),
-            horizontalArrangement = Arrangement.End
-        ) {
-            Icon(Icons.Default.AddCircle,
-                stringResource(id = R.string.add_note_icon),
-                modifier = Modifier
-                    .clickable {
-                        showDialog.value = true
-                    }
-                    .size(48.dp)
-                    .padding(5.dp)
-            )
         }
     }
     if (showDialog.value) {

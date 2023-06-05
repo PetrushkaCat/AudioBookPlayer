@@ -48,7 +48,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.media3.common.util.UnstableApi
 import cat.petrushkacat.audiobookplayer.R
 import cat.petrushkacat.audiobookplayer.app.util.formatDuration
 import cat.petrushkacat.audiobookplayer.audioservice.CurrentTimings
@@ -57,7 +56,6 @@ import cat.petrushkacat.audiobookplayer.components.components.main.bookplayer.bo
 import cat.petrushkacat.audiobookplayer.domain.models.Chapters
 
 @Composable
-@UnstableApi
 fun BookPlayerComponentUi(component: BookPlayerComponent) {
 
     val context = LocalContext.current

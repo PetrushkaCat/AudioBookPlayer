@@ -15,6 +15,8 @@ import cat.petrushkacat.audiobookplayer.domain.usecases.folders.GetFoldersUseCas
 import cat.petrushkacat.audiobookplayer.domain.usecases.folders.UpdateFolderUseCase
 import cat.petrushkacat.audiobookplayer.domain.usecases.settings.GetSettingsUseCase
 import cat.petrushkacat.audiobookplayer.domain.usecases.settings.SaveSettingsUseCase
+import cat.petrushkacat.audiobookplayer.domain.usecases.statistics.GetAllMonthsUseCase
+import cat.petrushkacat.audiobookplayer.domain.usecases.statistics.GetAllStatisticsInMonthUseCase
 import cat.petrushkacat.audiobookplayer.domain.usecases.statistics.GetAllStatisticsUseCase
 import cat.petrushkacat.audiobookplayer.domain.usecases.statistics.GetStatisticsDetailsUseCase
 import cat.petrushkacat.audiobookplayer.domain.usecases.statistics.SaveStatisticsUseCase
@@ -53,5 +55,7 @@ data class SettingsUseCases(
 data class StatisticsUseCases(
     val getAllStatisticsUseCase: GetAllStatisticsUseCase,
     val getStatisticsDetailsUseCase: GetStatisticsDetailsUseCase,
-    val saveStatisticsUseCase: SaveStatisticsUseCase
+    val saveStatisticsUseCase: SaveStatisticsUseCase,
+    val getAllMonthsUseCase: GetAllMonthsUseCase,
+    val getAllStatisticsInMonthUseCase: GetAllStatisticsInMonthUseCase
 )

@@ -1,7 +1,6 @@
 package cat.petrushkacat.audiobookplayer.app
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
@@ -9,50 +8,36 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
-import androidx.media3.common.util.UnstableApi
-import androidx.media3.exoplayer.ExoPlayer
 import cat.petrushkacat.audiobookplayer.app.ui.components.RootComponentUi
 import cat.petrushkacat.audiobookplayer.app.ui.theme.AudioBookPlayerTheme
 import cat.petrushkacat.audiobookplayer.audioservice.AudiobookServiceHandler
 import cat.petrushkacat.audiobookplayer.audioservice.sensors.SensorListener
 import cat.petrushkacat.audiobookplayer.components.components.RootComponentImpl
-import cat.petrushkacat.audiobookplayer.data.db.type_converters.StatisticsTypeConverters
-import cat.petrushkacat.audiobookplayer.domain.models.ListenedInterval
-import cat.petrushkacat.audiobookplayer.domain.models.ListenedIntervals
-import cat.petrushkacat.audiobookplayer.domain.models.StatisticsEntity
-import cat.petrushkacat.audiobookplayer.domain.repository.AudiobooksRepository
-import cat.petrushkacat.audiobookplayer.domain.repository.RootFoldersRepository
-import cat.petrushkacat.audiobookplayer.domain.repository.SettingsRepository
 import cat.petrushkacat.audiobookplayer.domain.usecases.UseCasesProvider
 import com.arkivanov.decompose.defaultComponentContext
+import com.google.android.play.core.appupdate.AppUpdateManager
+import com.google.android.play.core.appupdate.AppUpdateManagerFactory
+import com.google.android.play.core.appupdate.AppUpdateOptions
+import com.google.android.play.core.install.InstallStateUpdatedListener
+import com.google.android.play.core.install.model.AppUpdateType
+import com.google.android.play.core.install.model.InstallStatus
+import com.google.android.play.core.install.model.UpdateAvailability
+import com.google.android.play.core.ktx.isFlexibleUpdateAllowed
+import com.google.android.play.core.ktx.isImmediateUpdateAllowed
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.takeWhile
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-@UnstableApi
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     @Inject
     lateinit var audiobookServiceHandler: AudiobookServiceHandler
-
-    @Inject
-    lateinit var player: ExoPlayer
-
-    @Inject
-    lateinit var audiobooksRepository: AudiobooksRepository
-
-    @Inject
-    lateinit var rootFoldersRepository: RootFoldersRepository
-
-    @Inject
-    lateinit var settingsRepository: SettingsRepository
 
     @Inject
     lateinit var sensorListener: SensorListener
@@ -64,8 +49,20 @@ class MainActivity : ComponentActivity() {
 
     private var job = Job()
 
+    private lateinit var appUpdateManager: AppUpdateManager
+    private val updateType = AppUpdateType.FLEXIBLE
+    private val installStateUpdatedListener = InstallStateUpdatedListener {
+        if(it.installStatus() == InstallStatus.DOWNLOADED) {
+            appUpdateManager.completeUpdate()
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        appUpdateManager = AppUpdateManagerFactory.create(this)
+        appUpdateManager.registerListener(installStateUpdatedListener)
+        checkForUpdates()
 
         val root = RootComponentImpl(
             defaultComponentContext(),
@@ -76,15 +73,11 @@ class MainActivity : ComponentActivity() {
         )
 
         CoroutineScope(job + Dispatchers.Default).launch {
-            if (settingsRepository.getSettings().first() == null) { //nope it's not always false
-                settingsRepository.saveSettings(cat.petrushkacat.audiobookplayer.domain.models.SettingsEntity())
-            }
-            settingsRepository.getSettings().takeWhile { job.isActive }
+            useCasesProvider.settingsUseCases.getSettingsUseCase().takeWhile { job.isActive }
                 .collect {
                     isDarkTheme.value =
                         it.theme == cat.petrushkacat.audiobookplayer.domain.models.Theme.DARK
                 }
-
         }
 
         setContent {
@@ -104,6 +97,28 @@ class MainActivity : ComponentActivity() {
 
     override fun onDestroy() {
         job.cancel()
+        appUpdateManager.unregisterListener(installStateUpdatedListener)
         super.onDestroy()
+    }
+
+    private fun checkForUpdates() {
+        appUpdateManager.appUpdateInfo.addOnSuccessListener { info ->
+            val isUpdateAvailable = info.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
+            val isUpdateAllowed = when (updateType) {
+                AppUpdateType.FLEXIBLE -> info.isFlexibleUpdateAllowed
+                AppUpdateType.IMMEDIATE -> info.isImmediateUpdateAllowed
+                else -> false
+            }
+
+            if (isUpdateAvailable && isUpdateAllowed) {
+                appUpdateManager.startUpdateFlow(
+                    info,
+                    this,
+                    AppUpdateOptions.newBuilder(AppUpdateType.FLEXIBLE)
+                        .setAllowAssetPackDeletion(false)
+                        .build(),
+                )
+            }
+        }
     }
 }

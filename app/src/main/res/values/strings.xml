@@ -17,7 +17,7 @@
     <string name="folders_processed">Folders processed: </string>
     <string name="of"> of </string>
     <string name="settings">Setting</string>
-    <string name="designed_with_paws">Designed with paws</string>
+    <string name="designed_with_paws">Made with paws</string>
     <string name="paws_icon">Paws</string>
     <string name="by_petrushka_cat">By Petrushka Cat</string>
     <string name="version">Version</string>
@@ -64,6 +64,7 @@
     <string name="h">h</string>
     <string name="m">m</string>
     <string name="s">s</string>
+    <string name="notes">Notes</string>
 
 
 

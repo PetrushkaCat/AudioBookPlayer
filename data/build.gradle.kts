@@ -47,10 +47,8 @@ dependencies {
     implementation(libs.androidx.core.ktx)
 
     implementation(libs.room.runtime)
-    //annotationProcessor(libs.room.compiler)
     ksp(libs.room.compiler)
     implementation(libs.room.ktx)
-    //implementation(libs.gson)
     implementation(libs.kotlinx.serialization.json)
 
     implementation(libs.hilt.android)
@@ -58,16 +56,15 @@ dependencies {
 
     testImplementation(libs.junit.junit)
     testImplementation(libs.coroutines.test)
-    testImplementation(libs.room.testing)
     testImplementation(libs.androidx.test.core)
-    testImplementation(libs.robolectric)
     testImplementation(libs.androidx.arch.core.testing)
     testImplementation(libs.google.truth)
     testImplementation(libs.turbine)
     testImplementation(libs.mockk)
     testImplementation(libs.mockk.android)
     testImplementation(libs.mockk.agent)
-
+    testImplementation(libs.room.testing)
+    testImplementation(libs.robolectric)
 
     androidTestImplementation(libs.androidx.test.ext.junit)
     androidTestImplementation(libs.androidx.test.espresso.core)
@@ -81,6 +78,9 @@ dependencies {
     androidTestImplementation(libs.androidx.test.runner)
     androidTestImplementation(libs.mockk.android)
     androidTestImplementation(libs.mockk.agent)
+    androidTestImplementation(libs.robolectric)
+    androidTestImplementation(libs.room.testing)
+
 
 
 }

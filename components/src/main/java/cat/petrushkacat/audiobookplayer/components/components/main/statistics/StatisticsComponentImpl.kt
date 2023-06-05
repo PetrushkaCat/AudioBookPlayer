@@ -38,6 +38,8 @@ class StatisticsComponentImpl(
                 StatisticsListComponentImpl(
                     componentContext = componentContext,
                     getAllStatisticsUseCase = useCasesProvider.statisticsUseCases.getAllStatisticsUseCase,
+                    getAllStatisticsInMonthUseCase = useCasesProvider.statisticsUseCases.getAllStatisticsInMonthUseCase,
+                    getAllMonthsUseCase = useCasesProvider.statisticsUseCases.getAllMonthsUseCase,
                     onStatisticsSelected = { year, month, day ->
                         navigation.push(ChildConfig.Details(year, month, day))
                     },

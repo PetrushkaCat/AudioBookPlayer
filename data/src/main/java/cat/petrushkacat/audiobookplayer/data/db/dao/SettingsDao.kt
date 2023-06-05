@@ -14,8 +14,8 @@ interface SettingsDao {
     fun saveSettings(settingsEntity: SettingsEntityDTO)
 
     @Query("SELECT * FROM SettingsEntity")
-    fun getSettings(): Flow<SettingsEntityDTO>
+    fun getSettings(): Flow<SettingsEntityDTO?>
 
     @Query("SELECT * FROM SettingsEntity")
-    fun getAudioServiceSettings(): Flow<SettingsEntityDTO>
+    fun getAudioServiceSettings(): Flow<SettingsEntityDTO?>
 }

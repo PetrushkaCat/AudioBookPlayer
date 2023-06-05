@@ -21,3 +21,8 @@ data class ListenedInterval(
     val endTime: Long,
     val bookName: String
 )
+
+data class Month(
+    val year: Int,
+    val month: Int
+)

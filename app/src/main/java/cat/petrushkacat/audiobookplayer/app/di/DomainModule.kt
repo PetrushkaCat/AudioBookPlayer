@@ -24,6 +24,8 @@ import cat.petrushkacat.audiobookplayer.domain.usecases.folders.GetFoldersUseCas
 import cat.petrushkacat.audiobookplayer.domain.usecases.folders.UpdateFolderUseCase
 import cat.petrushkacat.audiobookplayer.domain.usecases.settings.GetSettingsUseCase
 import cat.petrushkacat.audiobookplayer.domain.usecases.settings.SaveSettingsUseCase
+import cat.petrushkacat.audiobookplayer.domain.usecases.statistics.GetAllMonthsUseCase
+import cat.petrushkacat.audiobookplayer.domain.usecases.statistics.GetAllStatisticsInMonthUseCase
 import cat.petrushkacat.audiobookplayer.domain.usecases.statistics.GetAllStatisticsUseCase
 import cat.petrushkacat.audiobookplayer.domain.usecases.statistics.GetStatisticsDetailsUseCase
 import cat.petrushkacat.audiobookplayer.domain.usecases.statistics.SaveStatisticsUseCase
@@ -72,7 +74,9 @@ class DomainModule {
             statisticsUseCases = StatisticsUseCases(
                 getAllStatisticsUseCase = GetAllStatisticsUseCase(statisticsRepository),
                 getStatisticsDetailsUseCase = GetStatisticsDetailsUseCase(statisticsRepository),
-                saveStatisticsUseCase = saveStatisticsUseCase
+                saveStatisticsUseCase = saveStatisticsUseCase,
+                getAllMonthsUseCase = GetAllMonthsUseCase(statisticsRepository),
+                getAllStatisticsInMonthUseCase = GetAllStatisticsInMonthUseCase(statisticsRepository)
             )
         )
     }

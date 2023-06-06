@@ -16,7 +16,7 @@ class SettingsTypeConverters {
 
     @TypeConverter
     fun fromJsonToSleepTimerType(json: String): SettingsEntityDTO.SleepTimerType {
-        Log.d("1",json)
+        Log.d("settings income",json)
         return Json.decodeFromString<SettingsEntityDTO.SleepTimerType>(json)
     }
 }

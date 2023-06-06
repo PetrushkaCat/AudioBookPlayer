@@ -1,8 +1,10 @@
 package cat.petrushkacat.audiobookplayer.data.dto
 
+import androidx.annotation.Keep
 import androidx.room.Entity
 import kotlinx.serialization.Serializable
 
+@Keep
 @Entity(
     tableName = "BookEntity",
     primaryKeys = ["folderName", "duration"])
@@ -37,11 +39,13 @@ data class BookEntityDB(
     val isWantToListen: Boolean = false,
 )
 
+@Keep
 @Serializable
 data class Notes(
     val notes: List<Note>
 )
 
+@Keep
 @Serializable
 data class Note(
     val chapterIndex: Int,
@@ -49,11 +53,13 @@ data class Note(
     val time: Long,
     val description: String = ""
 )
+
+@Keep
 @Serializable
 data class Chapters(
     val chapters: List<Chapter>
 )
-
+@Keep
 @Serializable
 data class Chapter(
     val bookFolderUri: String,

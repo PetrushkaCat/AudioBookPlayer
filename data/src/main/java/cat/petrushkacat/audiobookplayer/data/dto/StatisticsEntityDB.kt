@@ -1,8 +1,10 @@
 package cat.petrushkacat.audiobookplayer.data.dto
 
+import androidx.annotation.Keep
 import androidx.room.Entity
 import kotlinx.serialization.Serializable
 
+@Keep
 @Entity(tableName = "StatisticsEntity",
     primaryKeys = ["year", "month", "day"])
 data class StatisticsEntityDB(
@@ -13,11 +15,13 @@ data class StatisticsEntityDB(
     val listenedIntervals: ListenedIntervals
 )
 
+@Keep
 @Serializable
 data class ListenedIntervals(
     val intervals: List<ListenedInterval>
 )
 
+@Keep
 @Serializable
 data class ListenedInterval(
     val startTime: Long,

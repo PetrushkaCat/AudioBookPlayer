@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-private const val BUG_REPORT_URL = "https://github.com/PetrushkaCat/AudioBookPlayer/issues"
+private const val BUG_REPORT_MAIL = "simple.audiobook.player@gmail.com"
 const val SHARED_PREFS_NAME = "shared_preferences"
 const val WAS_RATED_KEY = "was_rated_key"
 
@@ -100,8 +100,7 @@ class DrawerComponentImpl(
     }
 
     override fun onBugReportClick() {
-        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(BUG_REPORT_URL))
-        //val chooser = Intent.createChooser(intent, context.getString(cat.petrushkacat.audiobookplayer.strings.R.string.open_with))
+        val intent = Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:$BUG_REPORT_MAIL"))
         context.startActivity(intent)
     }
 }

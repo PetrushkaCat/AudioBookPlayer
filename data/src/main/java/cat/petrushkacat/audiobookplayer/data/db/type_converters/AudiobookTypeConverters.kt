@@ -11,6 +11,7 @@ class AudiobookTypeConverters {
 
     @TypeConverter
     fun fromChaptersDBToJson(chapters: Chapters): String {
+        Log.d("type converters chapters save income", chapters.toString())
         return Json.encodeToString(chapters)
     }
 

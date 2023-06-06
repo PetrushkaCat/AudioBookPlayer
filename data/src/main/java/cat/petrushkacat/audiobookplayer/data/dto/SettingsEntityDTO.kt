@@ -1,10 +1,12 @@
 package cat.petrushkacat.audiobookplayer.data.dto
 
+import androidx.annotation.Keep
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import kotlinx.serialization.Serializable
 
+@Keep
 @Serializable
 @Entity(tableName = "SettingsEntity")
 data class SettingsEntityDTO(
@@ -23,23 +25,24 @@ data class SettingsEntityDTO(
     @ColumnInfo(defaultValue = "1") val isReviewButtonEnabled: Boolean = true,
     @ColumnInfo(defaultValue = "1") val isBugReportButtonEnabled: Boolean = true,
 ) {
+    @Keep
     @Serializable
     sealed class SleepTimerType() {
-
+        @Keep
         @Serializable
         object EndOfTheChapter: SleepTimerType()
-
+        @Keep
         @Serializable
         class Common(val time: Long): SleepTimerType()
     }
 }
-
+@Keep
 enum class Theme {
     //SYSTEM_DEFAULT,
     DARK,
     LIGHT,
 }
-
+@Keep
 enum class Grid {
     LIST,
     BIG_CELLS,

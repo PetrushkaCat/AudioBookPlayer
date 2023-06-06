@@ -14,7 +14,7 @@ android {
         minSdk = 26
         targetSdk = 33
         versionCode = 13
-        versionName = "1.0.3 patch 2"
+        versionName = "1.0.4"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -57,6 +57,7 @@ android {
 
 dependencies {
 
+    implementation(project(":strings"))
     implementation(project(":domain"))
     implementation(project(":components"))
     implementation(project(":data"))

@@ -70,7 +70,10 @@ class BookComponentImpl(
                     componentContext,
                     context,
                     useCasesProvider.booksUseCases.getBookUseCase,
-                    useCasesProvider.booksUseCases.updateBookNotesUseCase,
+                    useCasesProvider.booksUseCases.updateNoteUseCase,
+                    useCasesProvider.booksUseCases.addNoteUseCase,
+                    useCasesProvider.booksUseCases.deleteNoteUseCase,
+                    useCasesProvider.settingsUseCases.getSettingsUseCase,
                     audiobookServiceHandler,
                     bookUri.toString(),
                     onBackClicked = {

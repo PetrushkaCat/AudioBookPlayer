@@ -42,7 +42,7 @@ fun CompletedBooksComponentUi(component: CompletedBooksComponent) {
 
     Column {
         CommonTopAppBar(
-            title = stringResource(id = R.string.completed_books),
+            title = stringResource(id = cat.petrushkacat.audiobookplayer.strings.R.string.completed_books),
             onBack = {
                 component.onBack()
             }
@@ -115,7 +115,7 @@ fun CompletedBooksComponentUi(component: CompletedBooksComponent) {
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
-                Text(stringResource(id = R.string.empty), textAlign = TextAlign.Center)
+                Text(stringResource(id = cat.petrushkacat.audiobookplayer.strings.R.string.empty), textAlign = TextAlign.Center)
             }
         }
     }

@@ -123,7 +123,7 @@ fun BookPlayerComponentUi(component: BookPlayerComponent) {
                 Modifier.height(LocalConfiguration.current.screenHeightDp.dp - 300.dp)
                    },
             bitmap = image,
-            contentDescription = stringResource(id = R.string.book_cover),
+            contentDescription = stringResource(id = cat.petrushkacat.audiobookplayer.strings.R.string.book_cover),
         )
         PlayerControllers(
             onPlayerEvent = component::onPlayerEvent,
@@ -180,7 +180,7 @@ fun PlayerControllers(
             ) {
                 Icon(
                     Icons.Default.ArrowBackIos,
-                    stringResource(id = R.string.previous_chapter),
+                    stringResource(id = cat.petrushkacat.audiobookplayer.strings.R.string.previous_chapter),
                     modifier = Modifier
                         .size(iconsSize2)
                         .weight(1f)
@@ -198,7 +198,7 @@ fun PlayerControllers(
                 ) {
                     Text(currentChapterName)
                     Icon(Icons.Default.ExpandMore,
-                        stringResource(id = R.string.expand_chapters),
+                        stringResource(id = cat.petrushkacat.audiobookplayer.strings.R.string.expand_chapters),
                         modifier = Modifier
                             .size(iconsSize2)
                             .defaultMinSize(30.dp))
@@ -206,7 +206,7 @@ fun PlayerControllers(
 
                 Icon(
                     Icons.Default.ArrowForwardIos,
-                    contentDescription = stringResource(id = R.string.next_chapter),
+                    contentDescription = stringResource(id = cat.petrushkacat.audiobookplayer.strings.R.string.next_chapter),
                     modifier = Modifier
                         .size(iconsSize2)
                         .weight(1f)
@@ -232,7 +232,7 @@ fun PlayerControllers(
         ) {
             Icon(
                 Icons.Default.KeyboardDoubleArrowLeft,
-                contentDescription = stringResource(id = R.string.long_rewind_back),
+                contentDescription = stringResource(id = cat.petrushkacat.audiobookplayer.strings.R.string.long_rewind_back),
                 modifier = Modifier
                     .size(iconsSize)
                     .weight(1f)
@@ -241,7 +241,7 @@ fun PlayerControllers(
                     })
             Icon(
                 Icons.Default.KeyboardArrowLeft,
-                contentDescription = stringResource(id = R.string.rewind_back),
+                contentDescription = stringResource(id = cat.petrushkacat.audiobookplayer.strings.R.string.rewind_back),
                 modifier = Modifier
                     .size(iconsSize)
                     .weight(1f)
@@ -249,7 +249,7 @@ fun PlayerControllers(
                         onPlayerEvent(PlayerEvent.Backward)
                     })
             Icon(icon,
-                contentDescription = stringResource(id = R.string.play_pause),
+                contentDescription = stringResource(id = cat.petrushkacat.audiobookplayer.strings.R.string.play_pause),
                 modifier = Modifier
                     .size(iconsSize)
                     .weight(2f)
@@ -258,7 +258,7 @@ fun PlayerControllers(
                     })
             Icon(
                 Icons.Default.KeyboardArrowRight,
-                contentDescription = stringResource(id = R.string.rewind_forward),
+                contentDescription = stringResource(id = cat.petrushkacat.audiobookplayer.strings.R.string.rewind_forward),
                 modifier = Modifier
                     .size(iconsSize)
                     .weight(1f)
@@ -267,7 +267,7 @@ fun PlayerControllers(
                     })
             Icon(
                 Icons.Default.KeyboardDoubleArrowRight,
-                contentDescription = stringResource(id = R.string.long_rewind_forward),
+                contentDescription = stringResource(id = cat.petrushkacat.audiobookplayer.strings.R.string.long_rewind_forward),
                 modifier = Modifier
                     .size(iconsSize)
                     .weight(1f)

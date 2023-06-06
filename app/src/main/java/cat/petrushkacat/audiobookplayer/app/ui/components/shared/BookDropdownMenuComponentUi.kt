@@ -51,15 +51,15 @@ fun BookDropdownMenuComponentUi(
     val selectedBook by component.selectedBook.collectAsState()
     //val isTakingPicture = remember { mutableStateOf(false) }
 
-    val favoritesText = if (!selectedBook.isFavorite) stringResource(id = R.string.add_to_favorites)
-    else stringResource(id = R.string.remove_from_favorites)
+    val favoritesText = if (!selectedBook.isFavorite) stringResource(id = cat.petrushkacat.audiobookplayer.strings.R.string.add_to_favorites)
+    else stringResource(id = cat.petrushkacat.audiobookplayer.strings.R.string.remove_from_favorites)
 
     val listenLaterText =
-        if (!selectedBook.isWantToListen) stringResource(id = R.string.add_to_listen_later)
-        else stringResource(id = R.string.remove_from_listen_later)
+        if (!selectedBook.isWantToListen) stringResource(id = cat.petrushkacat.audiobookplayer.strings.R.string.add_to_listen_later)
+        else stringResource(id = cat.petrushkacat.audiobookplayer.strings.R.string.remove_from_listen_later)
 
-    val completedText = if (!selectedBook.isCompleted) stringResource(id = R.string.mark_as_completed)
-    else stringResource(id = R.string.mark_as_not_completed)
+    val completedText = if (!selectedBook.isCompleted) stringResource(id = cat.petrushkacat.audiobookplayer.strings.R.string.mark_as_completed)
+    else stringResource(id = cat.petrushkacat.audiobookplayer.strings.R.string.mark_as_not_completed)
 
     val launcher = rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent(), onResult = {
         CoroutineScope(Dispatchers.IO).launch {
@@ -93,7 +93,7 @@ fun BookDropdownMenuComponentUi(
         onDismissRequest = { expanded.value = false },
     ) {
         DropDownItem(
-            stringResource(id = R.string.change_name),
+            stringResource(id = cat.petrushkacat.audiobookplayer.strings.R.string.change_name),
             { showEditDialog.value = true },
             showEditDialog,
             {
@@ -106,7 +106,7 @@ fun BookDropdownMenuComponentUi(
             },
             selectedBook.name
         )
-        DropDownItem(stringResource(id = R.string.change_cover), {
+        DropDownItem(stringResource(id = cat.petrushkacat.audiobookplayer.strings.R.string.change_cover), {
             launcher.launch("image/*")
         })
         DropDownItem(favoritesText, {

@@ -92,8 +92,8 @@ fun BooksListComponentUi(component: BooksListComponent) {
                         strokeWidth = strokeWidth
                     )
                     Row {
-                        Text(stringResource(id = R.string.folders_processed) + " " + foldersProcessed.toString() + " ")
-                        Text(stringResource(id = R.string.of) + " " + foldersToProcess.toString())
+                        Text(stringResource(id = cat.petrushkacat.audiobookplayer.strings.R.string.folders_processed) + " " + foldersProcessed.toString() + " ")
+                        Text(stringResource(id = cat.petrushkacat.audiobookplayer.strings.R.string.of) + " " + foldersToProcess.toString())
                     }
                 }
             }
@@ -165,9 +165,9 @@ fun BooksListComponentUi(component: BooksListComponent) {
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
-                    Text(stringResource(id = R.string.no_books_text), textAlign = TextAlign.Center)
+                    Text(stringResource(id = cat.petrushkacat.audiobookplayer.strings.R.string.no_books_text), textAlign = TextAlign.Center)
                 }
-            } else if(model.isEmpty() && isSearching) {
+            } else if(model.isEmpty()) {
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
@@ -175,7 +175,7 @@ fun BooksListComponentUi(component: BooksListComponent) {
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center
                     ) {
-                        Text(stringResource(id = R.string.nothing_found), textAlign = TextAlign.Center)
+                        Text(stringResource(id = cat.petrushkacat.audiobookplayer.strings.R.string.nothing_found), textAlign = TextAlign.Center)
                     }
                 }
         }

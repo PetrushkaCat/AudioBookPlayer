@@ -35,8 +35,8 @@ fun formatDurationAlt(duration: Long, context: Context): String {
 
     var timeText = ""
 
-    if(hours != 0L) timeText += "${hours}${context.getString(R.string.h)} "
-    if(minutes != 0L) timeText += "${minutes}${context.getString(R.string.m)} "
-    if(seconds != 0L) timeText += "${seconds}${context.getString(R.string.s)} "
+    if(hours != 0L) timeText += "${hours}${context.getString(cat.petrushkacat.audiobookplayer.strings.R.string.h)} "
+    if(minutes != 0L) timeText += "${minutes}${context.getString(cat.petrushkacat.audiobookplayer.strings.R.string.m)} "
+    if(seconds != 0L) timeText += "${seconds}${context.getString(cat.petrushkacat.audiobookplayer.strings.R.string.s)} "
     return timeText
 }

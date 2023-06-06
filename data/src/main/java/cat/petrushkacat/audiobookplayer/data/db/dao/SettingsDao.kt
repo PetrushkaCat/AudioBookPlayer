@@ -16,6 +16,4 @@ interface SettingsDao {
     @Query("SELECT * FROM SettingsEntity")
     fun getSettings(): Flow<SettingsEntityDTO?>
 
-    @Query("SELECT * FROM SettingsEntity")
-    fun getAudioServiceSettings(): Flow<SettingsEntityDTO?>
 }

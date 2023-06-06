@@ -17,7 +17,11 @@ data class SettingsEntityDTO(
     val grid: Grid = Grid.LIST,
     @ColumnInfo(defaultValue = "60000") val greatRewindTime: Long = 60000,
     @ColumnInfo(defaultValue = "{\"type\":\"cat.petrushkacat.audiobookplayer.data.dto.SettingsEntityDTO.SleepTimerType.EndOfTheChapter\"}")
-    val sleepTimerType: SleepTimerType = SleepTimerType.EndOfTheChapter
+    val sleepTimerType: SleepTimerType = SleepTimerType.EndOfTheChapter,
+    @ColumnInfo(defaultValue = "1") val isMaxTimeAutoNoteEnabled: Boolean = true,
+    @ColumnInfo(defaultValue = "1") val isOnPlayTapAutoNoteEnabled: Boolean = true,
+    @ColumnInfo(defaultValue = "1") val isReviewButtonEnabled: Boolean = true,
+    @ColumnInfo(defaultValue = "1") val isBugReportButtonEnabled: Boolean = true,
 ) {
     @Serializable
     sealed class SleepTimerType() {

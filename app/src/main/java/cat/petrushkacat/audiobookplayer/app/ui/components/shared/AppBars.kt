@@ -27,7 +27,7 @@ fun CommonTopAppBar(
     TopAppBar(
         navigationIcon = { Icon(
             Icons.Default.ArrowBack,
-            stringResource(id = R.string.back),
+            stringResource(id = cat.petrushkacat.audiobookplayer.strings.R.string.back),
             modifier = Modifier
                 .clickable {
                     onBack()

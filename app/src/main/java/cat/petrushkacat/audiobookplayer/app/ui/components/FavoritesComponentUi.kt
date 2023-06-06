@@ -44,7 +44,7 @@ fun FavoritesComponentUi(component: FavoritesComponent) {
 
     Column {
         CommonTopAppBar(
-            title = stringResource(id = R.string.favorites),
+            title = stringResource(id = cat.petrushkacat.audiobookplayer.strings.R.string.favorites),
             onBack = {
                 component.onBack()
             }
@@ -117,7 +117,7 @@ fun FavoritesComponentUi(component: FavoritesComponent) {
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
-                Text(stringResource(id = R.string.empty), textAlign = TextAlign.Center)
+                Text(stringResource(id = cat.petrushkacat.audiobookplayer.strings.R.string.empty), textAlign = TextAlign.Center)
             }
         }
     }

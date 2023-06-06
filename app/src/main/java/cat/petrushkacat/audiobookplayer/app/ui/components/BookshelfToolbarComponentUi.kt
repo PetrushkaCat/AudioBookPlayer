@@ -74,7 +74,7 @@ fun BookshelfToolbarComponentUi(
         navigationIcon = {
             Row {
                 Icon(Icons.Default.Menu,
-                    stringResource(id = R.string.menu_icon_description),
+                    stringResource(id = cat.petrushkacat.audiobookplayer.strings.R.string.menu_icon_description),
                     modifier = Modifier
                         .clickable {
                             onDrawerButtonClick()
@@ -100,7 +100,7 @@ fun BookshelfToolbarComponentUi(
             )
             Icon(
                 Icons.Default.Folder,
-                contentDescription = stringResource(id = R.string.grid_icon_description),
+                contentDescription = stringResource(id = cat.petrushkacat.audiobookplayer.strings.R.string.grid_icon_description),
                 modifier = Modifier
                     .clickable {
                         component.onFolderButtonClick()
@@ -128,7 +128,7 @@ fun SearchView(onSearch: (String) -> Unit) {
     if (!isExpanded.value) {
         Icon(
             Icons.Default.Search,
-            contentDescription = stringResource(id = R.string.search_icon_description),
+            contentDescription = stringResource(id = cat.petrushkacat.audiobookplayer.strings.R.string.search_icon_description),
             modifier = Modifier
                 .clickable {
                     isExpanded.value = true
@@ -160,7 +160,7 @@ fun SearchView(onSearch: (String) -> Unit) {
                 .focusRequester(focusRequester),
             trailingIcon = {
                 Icon(Icons.Default.Close,
-                    stringResource(id = R.string.close_search_icon),
+                    stringResource(id = cat.petrushkacat.audiobookplayer.strings.R.string.close_search_icon),
                     modifier = Modifier
                         .size(48.dp)
                         .padding(7.dp)
@@ -257,7 +257,7 @@ fun FolderToolbarItem(
         verticalArrangement = Arrangement.Center
     ) {
         Text(
-            folder?.name ?: stringResource(id = R.string.all), modifier = Modifier
+            folder?.name ?: stringResource(id = cat.petrushkacat.audiobookplayer.strings.R.string.all), modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 4.dp),
             textAlign = TextAlign.Center

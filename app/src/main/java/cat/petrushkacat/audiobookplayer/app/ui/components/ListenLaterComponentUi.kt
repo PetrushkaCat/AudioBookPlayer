@@ -42,7 +42,7 @@ fun ListenLaterComponentUi(component: ListenLaterComponent) {
 
     Column {
         CommonTopAppBar(
-            title = stringResource(id = R.string.listen_later),
+            title = stringResource(id = cat.petrushkacat.audiobookplayer.strings.R.string.listen_later),
             onBack = {
                 component.onBack()
             }
@@ -115,7 +115,7 @@ fun ListenLaterComponentUi(component: ListenLaterComponent) {
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
-                Text(stringResource(id = R.string.empty), textAlign = TextAlign.Center)
+                Text(stringResource(id = cat.petrushkacat.audiobookplayer.strings.R.string.empty), textAlign = TextAlign.Center)
             }
         }
     }

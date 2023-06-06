@@ -73,7 +73,7 @@ class AudiobookNotificationManager @Inject constructor(
     private fun createNotificationChannel() {
         val channel = NotificationChannel(
             NOTIFICATION_CHANNEL_ID,
-            context.getString(R.string.notification_channel_player_controls),
+            context.getString(cat.petrushkacat.audiobookplayer.strings.R.string.notification_channel_player_controls),
             NotificationManager.IMPORTANCE_LOW
         )
         notificationManager.createNotificationChannel(channel)

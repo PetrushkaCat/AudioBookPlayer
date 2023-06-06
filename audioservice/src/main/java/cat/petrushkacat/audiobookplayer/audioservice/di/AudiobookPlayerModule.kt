@@ -9,8 +9,10 @@ import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
 import androidx.media3.session.MediaSession
 import cat.petrushkacat.audiobookplayer.audioservice.AudiobookServiceHandler
 import cat.petrushkacat.audiobookplayer.audioservice.notification.AudiobookNotificationManager
-import cat.petrushkacat.audiobookplayer.audioservice.repository.AudioServiceSettingsRepository
 import cat.petrushkacat.audiobookplayer.audioservice.sensors.SensorListener
+import cat.petrushkacat.audiobookplayer.domain.usecases.UseCasesProvider
+import cat.petrushkacat.audiobookplayer.domain.usecases.books.AddNoteUseCase
+import cat.petrushkacat.audiobookplayer.domain.usecases.books.UpdateNoteUseCase
 import cat.petrushkacat.audiobookplayer.domain.usecases.statistics.SaveStatisticsUseCase
 import dagger.Module
 import dagger.Provides
@@ -68,21 +70,26 @@ class AudiobookPlayerModule {
     @Provides
     @Singleton
     fun provideSensorListener(
-        audioServiceSettingsRepository: AudioServiceSettingsRepository
-    ): SensorListener = SensorListener(audioServiceSettingsRepository)
+        useCasesProvider: UseCasesProvider
+    ): SensorListener = SensorListener(useCasesProvider.settingsUseCases.getSettingsUseCase)
 
     @Provides
     @Singleton
     fun provideServiceHandler(
         player: ExoPlayer,
         sensorListener: SensorListener,
-        settingsRepository: AudioServiceSettingsRepository,
-        saveStatisticsUseCase: SaveStatisticsUseCase
+        saveStatisticsUseCase: SaveStatisticsUseCase,
+        addNoteUseCase: AddNoteUseCase,
+        updateNoteUseCase: UpdateNoteUseCase,
+        useCasesProvider: UseCasesProvider
     ): AudiobookServiceHandler =
         AudiobookServiceHandler(
             player = player,
             sensorListener = sensorListener,
-            settingsRepository = settingsRepository,
-            saveStatisticsUseCase = saveStatisticsUseCase
+            saveStatisticsUseCase = saveStatisticsUseCase,
+            addNoteUseCase = addNoteUseCase,
+            updateNoteUseCase = updateNoteUseCase,
+            getBookUseCase = useCasesProvider.booksUseCases.getBookUseCase,
+            getSettingsUseCase = useCasesProvider.settingsUseCases.getSettingsUseCase
         )
 }

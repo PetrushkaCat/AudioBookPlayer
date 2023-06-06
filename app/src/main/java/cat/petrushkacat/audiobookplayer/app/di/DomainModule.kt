@@ -9,15 +9,17 @@ import cat.petrushkacat.audiobookplayer.domain.usecases.FoldersUseCases
 import cat.petrushkacat.audiobookplayer.domain.usecases.SettingsUseCases
 import cat.petrushkacat.audiobookplayer.domain.usecases.StatisticsUseCases
 import cat.petrushkacat.audiobookplayer.domain.usecases.UseCasesProvider
+import cat.petrushkacat.audiobookplayer.domain.usecases.books.AddNoteUseCase
 import cat.petrushkacat.audiobookplayer.domain.usecases.books.DeleteAllBooksInFolderUseCase
 import cat.petrushkacat.audiobookplayer.domain.usecases.books.DeleteBookUseCase
 import cat.petrushkacat.audiobookplayer.domain.usecases.books.DeleteIfNoInListUseCase
+import cat.petrushkacat.audiobookplayer.domain.usecases.books.DeleteNoteUseCase
 import cat.petrushkacat.audiobookplayer.domain.usecases.books.GetBookUseCase
 import cat.petrushkacat.audiobookplayer.domain.usecases.books.GetBooksUseCase
 import cat.petrushkacat.audiobookplayer.domain.usecases.books.GetSearchedBooksUseCase
 import cat.petrushkacat.audiobookplayer.domain.usecases.books.SaveBookUseCase
-import cat.petrushkacat.audiobookplayer.domain.usecases.books.UpdateBookNotesUseCase
 import cat.petrushkacat.audiobookplayer.domain.usecases.books.UpdateBookUseCase
+import cat.petrushkacat.audiobookplayer.domain.usecases.books.UpdateNoteUseCase
 import cat.petrushkacat.audiobookplayer.domain.usecases.folders.AddFolderUseCase
 import cat.petrushkacat.audiobookplayer.domain.usecases.folders.DeleteFolderUseCase
 import cat.petrushkacat.audiobookplayer.domain.usecases.folders.GetFoldersUseCase
@@ -46,7 +48,9 @@ class DomainModule {
         rootFoldersRepository: RootFoldersRepository,
         settingsRepository: SettingsRepository,
         statisticsRepository: StatisticsRepository,
-        saveStatisticsUseCase: SaveStatisticsUseCase
+        saveStatisticsUseCase: SaveStatisticsUseCase,
+        addNoteUseCase: AddNoteUseCase,
+        updateNoteUseCase: UpdateNoteUseCase
     ): UseCasesProvider {
         val getBooksUseCase = GetBooksUseCase(audiobooksRepository)
         return UseCasesProvider(
@@ -58,7 +62,9 @@ class DomainModule {
                 getBookUseCase = GetBookUseCase(audiobooksRepository),
                 getSearchedBooksUseCase = GetSearchedBooksUseCase(getBooksUseCase),
                 saveBookUseCase = SaveBookUseCase(audiobooksRepository),
-                updateBookNotesUseCase = UpdateBookNotesUseCase(audiobooksRepository),
+                addNoteUseCase = addNoteUseCase,
+                updateNoteUseCase = updateNoteUseCase,
+                deleteNoteUseCase = DeleteNoteUseCase(audiobooksRepository),
                 updateBookUseCase = UpdateBookUseCase(audiobooksRepository)
             ),
             foldersUseCases = FoldersUseCases(
@@ -79,6 +85,22 @@ class DomainModule {
                 getAllStatisticsInMonthUseCase = GetAllStatisticsInMonthUseCase(statisticsRepository)
             )
         )
+    }
+
+    @Provides
+    @Singleton
+    fun provideAddNoteUseCase(
+        audiobooksRepository: AudiobooksRepository
+    ): AddNoteUseCase {
+        return AddNoteUseCase(audiobooksRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideUpdateNoteUseCase(
+        audiobooksRepository: AudiobooksRepository
+    ): UpdateNoteUseCase {
+        return UpdateNoteUseCase(audiobooksRepository)
     }
 
     @Provides

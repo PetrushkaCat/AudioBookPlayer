@@ -65,4 +65,18 @@
     <string name="m">м</string>
     <string name="s">с</string>
     <string name="notes">Заметки</string>
+    <string name="show_auto_max_time_note">Показывать авто заметку максимального времени</string>
+    <string name="show_auto_on_play_tap_note">Показывать авто заметку нажатия на плей</string>
+    <string name="show_review_button">Показывать кнопку оценки приложения</string>
+    <string name="show_bug_report_button">Показывать кнопку предложений/сообщения об ошибке</string>
+    <string name="suggestions_and_bug_report">Предложить идею/сообщить об ошибке</string>
+    <string name="thanks_for_the_review">Спасибо за оценку! &lt;3</string>
+
+    <string name="notification_channel_player_controls">Плеер</string>
+
+    <string name="automatic_max_time_note_description">Автоматическая заметка, которая обновляется при открытии заметок с новым максимальным временем книжки</string>
+    <string name="automatic_play_tap_note_description">Автоматическая заметка, которая обновляется при нажатии на кнопку воспроизведения</string>
+    <string name="open_with">Открыть с помощью</string>
+
+
 </resources>

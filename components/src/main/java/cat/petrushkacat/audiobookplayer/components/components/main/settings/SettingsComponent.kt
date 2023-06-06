@@ -17,5 +17,13 @@ interface SettingsComponent {
 
     fun changeAutoSleepTime(time: Long)
 
+    fun showMaxTimeAutoNote(isEnabled: Boolean)
+
+    fun showPlayTapAutoNote(isEnabled: Boolean)
+
+    fun showReviewButton(isEnabled: Boolean)
+
+    fun showBugReportButton(isEnabled: Boolean)
+
     fun onBack()
 }

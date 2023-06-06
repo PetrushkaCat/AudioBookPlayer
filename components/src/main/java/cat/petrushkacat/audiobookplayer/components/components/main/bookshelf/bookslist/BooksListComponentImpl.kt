@@ -119,7 +119,7 @@ class BooksListComponentImpl(
                         it,
                         if(folderUris.size == 1) folderUris[0].toString() else null
                     ).first()
-
+                    _isSearching.value = it.isNotEmpty()
                     _models.value = books
                 }
             }

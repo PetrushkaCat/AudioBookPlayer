@@ -81,7 +81,7 @@ fun StatisticsListComponentUi(component: StatisticsListComponent) {
     val monthsState = rememberLazyListState()
 
     Column() {
-        CommonTopAppBar(title = stringResource(id = R.string.statistics), onBack = {
+        CommonTopAppBar(title = stringResource(id = cat.petrushkacat.audiobookplayer.strings.R.string.statistics), onBack = {
             scope.launch {
                 unselectYear(component, currentYear, component::onBack)
             }
@@ -269,7 +269,7 @@ fun StatisticsListItem(
             ) {
                 Text(date)
                 Spacer(Modifier.height(10.dp))
-                Text("${stringResource(id = R.string.total)} ${formatDurationAlt(timeListened, context)}")
+                Text("${stringResource(id = cat.petrushkacat.audiobookplayer.strings.R.string.total)} ${formatDurationAlt(timeListened, context)}")
             }
         }
         Divider(Modifier.fillMaxWidth())

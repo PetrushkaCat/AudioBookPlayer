@@ -21,6 +21,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
@@ -29,7 +30,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import cat.petrushkacat.audiobookplayer.R
 import cat.petrushkacat.audiobookplayer.app.ui.components.shared.CommonTopAppBar
 import cat.petrushkacat.audiobookplayer.app.ui.components.shared.EditDialog
 import cat.petrushkacat.audiobookplayer.app.util.formatDuration
@@ -40,13 +40,19 @@ import cat.petrushkacat.audiobookplayer.domain.models.Note
 fun NotesComponentUi(component: NotesComponent) {
 
     val model = component.models.collectAsState()
+    val settings by component.settings.collectAsState()
+
     val showDialog = rememberSaveable { mutableStateOf(false) }
-    val automaticNote = model.value.notes.notes.firstOrNull() {
+    val automaticMaxTimeNote = model.value.notes.notes.firstOrNull() {
         it.description == stringResource(
-            id = cat.petrushkacat.audiobookplayer.core.R.string.automatic_note_description)
+            id = cat.petrushkacat.audiobookplayer.strings.R.string.automatic_max_time_note_description)
+    }
+    val automaticPlayTapNote = model.value.notes.notes.firstOrNull() {
+        it.description == stringResource(
+            id = cat.petrushkacat.audiobookplayer.strings.R.string.automatic_play_tap_note_description)
     }
     Column {
-        CommonTopAppBar(title = stringResource(id = R.string.notes)) {
+        CommonTopAppBar(title = stringResource(id = cat.petrushkacat.audiobookplayer.strings.R.string.notes)) {
             component.onBack()
         }
         Column(
@@ -56,15 +62,25 @@ fun NotesComponentUi(component: NotesComponent) {
         ) {
             LazyColumn(modifier = Modifier.weight(1f)) {
                 item {
-                    if(automaticNote != null) {
-                        NoteItem(note = automaticNote,
+                    if(automaticMaxTimeNote != null && settings.isMaxTimeAutoNoteEnabled) {
+                        NoteItem(note = automaticMaxTimeNote,
                         onNoteClick = component::onNoteClick,
                             onDeleteClick = component::deleteNote,
                             onDescriptionChange = { a, b -> })
                     }
                 }
+                item {
+                    if(automaticPlayTapNote != null && settings.isOnPlayTapAutoNoteEnabled) {
+                        NoteItem(note = automaticPlayTapNote,
+                            onNoteClick = component::onNoteClick,
+                            onDeleteClick = component::deleteNote,
+                            onDescriptionChange = { a, b -> })
+                    }
+                }
                 items(model.value.notes.notes.size) {
-                    if(automaticNote != model.value.notes.notes[it]) {
+                    if(automaticMaxTimeNote != model.value.notes.notes[it]
+                        && automaticPlayTapNote != model.value.notes.notes[it]
+                    ) {
                         NoteItem(
                             note = model.value.notes.notes[it],
                             component::onNoteClick,
@@ -82,7 +98,7 @@ fun NotesComponentUi(component: NotesComponent) {
                 horizontalArrangement = Arrangement.End
             ) {
                 Icon(Icons.Default.AddCircle,
-                    stringResource(id = R.string.add_note_icon),
+                    stringResource(id = cat.petrushkacat.audiobookplayer.strings.R.string.add_note_icon),
                     modifier = Modifier
                         .clickable {
                             showDialog.value = true
@@ -132,7 +148,7 @@ fun NoteItem(
                 .weight(2f)
                 .padding(horizontal = 5.dp)) {
                 Icon(Icons.Default.Delete,
-                    stringResource(id = R.string.delete_note_icon),
+                    stringResource(id = cat.petrushkacat.audiobookplayer.strings.R.string.delete_note_icon),
                     modifier = Modifier
                         .clickable {
                             onDeleteClick(note)
@@ -142,7 +158,7 @@ fun NoteItem(
                         .padding(10.dp)
                 )
                 Icon(Icons.Default.Edit,
-                    stringResource(id = R.string.edit_note_icon),
+                    stringResource(id = cat.petrushkacat.audiobookplayer.strings.R.string.edit_note_icon),
                     modifier = Modifier
                         .clickable {
                             showDialog.value = true
@@ -161,15 +177,13 @@ fun NoteItem(
     }
 
     if(showDialog.value) {
-        EditDialog(description = note.description,
-            showDialog = showDialog, onDescriptionChange = {
+        EditDialog(
+            description = note.description,
+            showDialog = showDialog,
+            onDescriptionChange = {
                 onDescriptionChange(
-                    Note(
-                        note.chapterIndex,
-                        note.chapterName,
-                        note.time,
-                        it),
-                    note.description
+                    note,
+                    it
                 )
             })
     }

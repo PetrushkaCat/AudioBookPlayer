@@ -3,13 +3,18 @@ package cat.petrushkacat.audiobookplayer.components.components.main.bookplayer.n
 import android.content.Context
 import cat.petrushkacat.audiobookplayer.audioservice.AudiobookServiceHandler
 import cat.petrushkacat.audiobookplayer.components.util.componentCoroutineScopeDefault
-import cat.petrushkacat.audiobookplayer.core.R
 import cat.petrushkacat.audiobookplayer.domain.models.BookNotesEntity
 import cat.petrushkacat.audiobookplayer.domain.models.Note
-import cat.petrushkacat.audiobookplayer.domain.models.Notes
+import cat.petrushkacat.audiobookplayer.domain.models.SettingsEntity
+import cat.petrushkacat.audiobookplayer.domain.usecases.books.AddNoteUseCase
+import cat.petrushkacat.audiobookplayer.domain.usecases.books.DeleteNoteUseCase
 import cat.petrushkacat.audiobookplayer.domain.usecases.books.GetBookUseCase
-import cat.petrushkacat.audiobookplayer.domain.usecases.books.UpdateBookNotesUseCase
+import cat.petrushkacat.audiobookplayer.domain.usecases.books.UpdateNoteUseCase
+import cat.petrushkacat.audiobookplayer.domain.usecases.settings.GetSettingsUseCase
 import com.arkivanov.decompose.ComponentContext
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -20,7 +25,10 @@ class NotesComponentImpl(
     componentContext: ComponentContext,
     context: Context,
     private val getBookUseCase: GetBookUseCase,
-    private val updateBookNotesUseCase: UpdateBookNotesUseCase,
+    private val updateNoteUseCase: UpdateNoteUseCase,
+    private val addNoteUseCase: AddNoteUseCase,
+    private val deleteNoteUseCase: DeleteNoteUseCase,
+    private val getSettingsUseCase: GetSettingsUseCase,
     private val audiobookServiceHandler: AudiobookServiceHandler,
     private val bookUri: String,
     private val onNoteClicked: (Int, Long) -> Unit,
@@ -33,10 +41,18 @@ class NotesComponentImpl(
     private val _models = MutableStateFlow(BookNotesEntity())
     override val models: StateFlow<BookNotesEntity> = _models.asStateFlow()
 
+    private val _settings = MutableStateFlow(SettingsEntity())
+    override val settings: StateFlow<SettingsEntity> = _settings.asStateFlow()
+
     init {
         val index = audiobookServiceHandler.currentTimings.value.currentChapterIndex
         val time = audiobookServiceHandler.currentTimings.value.currentTimeInChapter
         scope.launch {
+            launch {
+                getSettingsUseCase().collect {
+                    _settings.value = it
+                }
+            }
             launch {
                 getBookUseCase(bookUri).collect {
                     _models.value = BookNotesEntity(
@@ -50,99 +66,60 @@ class NotesComponentImpl(
                 }
             }
             launch {
-                delay(200)
+                delay(100)
                 val saveNote = models.value.notes.notes.firstOrNull {
-                    it.description == context.getString(R.string.automatic_note_description)
+                    it.description == context.getString(cat.petrushkacat.audiobookplayer.strings.R.string.automatic_max_time_note_description)
                 }
                 if(saveNote != null) {
                     if(index > saveNote.chapterIndex) {
-                        deleteNote(saveNote)
-                        delay(200)
-                        addNote(context.getString(R.string.automatic_note_description))
-                    } else if (index == saveNote.chapterIndex
-                        && time > saveNote.time
-                    ) {
-                        deleteNote(saveNote)
-                        delay(200)
-                        addNote(context.getString(R.string.automatic_note_description))
+                        updateNoteUseCase(
+                            saveNote,
+                            bookUri,
+                            context.getString(cat.petrushkacat.audiobookplayer.strings.R.string.automatic_max_time_note_description),
+                            index,
+                            time
+                        )
+                    } else if (index == saveNote.chapterIndex && time > saveNote.time) {
+                        updateNoteUseCase(
+                            saveNote,
+                            bookUri,
+                            context.getString(cat.petrushkacat.audiobookplayer.strings.R.string.automatic_max_time_note_description),
+                            index,
+                            time
+                        )
                     }
                 } else {
-                    addNote(context.getString(R.string.automatic_note_description))
+                    addNote(context.getString(cat.petrushkacat.audiobookplayer.strings.R.string.automatic_max_time_note_description))
                 }
             }
         }
     }
 
     override fun addNote(description: String) {
-        val notes = models.value.notes.notes.toMutableList()
-
-        val index = audiobookServiceHandler.currentTimings.value.currentChapterIndex
-        val time = audiobookServiceHandler.currentTimings.value.currentTimeInChapter
-        scope.launch {
-            notes.add(
+        CoroutineScope(SupervisorJob() + Dispatchers.IO).launch {
+            val index = audiobookServiceHandler.currentTimings.value.currentChapterIndex
+            val time = audiobookServiceHandler.currentTimings.value.currentTimeInChapter
+            addNoteUseCase(
                 Note(
                     chapterIndex = index,
                     chapterName = chapterNames[index],
                     time = time,
                     description = description
-                )
+                ),
+                bookUri
             )
-            notes.sortWith(
-                compareBy(
-                    { it.chapterIndex },
-                    { it.time }))
-            updateBookNotesUseCase(BookNotesEntity(
-                folderName = models.value.folderName,
-                duration = models.value.duration,
-                currentChapter = index,
-                currentChapterTime = time,
-                notes = Notes(notes)
-            ))
         }
     }
 
     override fun deleteNote(note: Note) {
-        val notes = models.value.notes.notes.toMutableList()
-
-        val index = audiobookServiceHandler.currentTimings.value.currentChapterIndex
-        val time = audiobookServiceHandler.currentTimings.value.currentTimeInChapter
-        scope.launch {
-            notes.remove(note)
-
-            updateBookNotesUseCase(BookNotesEntity(
-                folderName = models.value.folderName,
-                duration = models.value.duration,
-                currentChapter = index,
-                currentChapterTime = time,
-                notes = Notes(notes)
-            ))
+        CoroutineScope(SupervisorJob() + Dispatchers.IO).launch {
+            deleteNoteUseCase(note, bookUri)
         }
     }
 
-    override fun editNote(note: Note, prevDescription: String) {
-        val notes = models.value.notes.notes.toMutableList()
-
-        val index = audiobookServiceHandler.currentTimings.value.currentChapterIndex
-        val time = audiobookServiceHandler.currentTimings.value.currentTimeInChapter
-
-        var noteIndex = 0
-        scope.launch {
-            notes.forEachIndexed { index, it ->
-                if( it.time == note.time && it.chapterIndex == note.chapterIndex && it.description == prevDescription) {
-                    noteIndex = index
-                    return@forEachIndexed
-                }
-            }
-            notes.removeAt(noteIndex)
-            notes.add(note)
-
-            updateBookNotesUseCase(BookNotesEntity(
-                folderName = models.value.folderName,
-                duration = models.value.duration,
-                currentChapter = index,
-                currentChapterTime = time,
-                notes = Notes(notes)
-            ))
+    override fun editNote(note: Note, newDescription: String) {
+        CoroutineScope(SupervisorJob() + Dispatchers.IO).launch {
+            updateNoteUseCase(note, bookUri, newDescription, note.chapterIndex, note.time)
         }
     }
 

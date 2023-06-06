@@ -45,7 +45,7 @@ fun EditDialog(
         confirmButton = {
             Icon(
                 Icons.Default.Save,
-                stringResource(id = R.string.save),
+                stringResource(id = cat.petrushkacat.audiobookplayer.strings.R.string.save),
                 modifier = Modifier
                     .clickable {
                         onDescriptionChange(newDescription.value.text)
@@ -71,7 +71,7 @@ fun EditDialog(
                         disabledIndicatorColor = Color.Transparent,
                         unfocusedIndicatorColor = Color.Transparent
                     ),
-                    placeholder = { Text(stringResource(id = R.string.description)) }
+                    placeholder = { Text(stringResource(id = cat.petrushkacat.audiobookplayer.strings.R.string.description)) }
                 )
             }
         }

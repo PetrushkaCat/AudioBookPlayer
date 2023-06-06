@@ -134,7 +134,10 @@ class BookPlayerComponentImpl(
                                 isInitialization = true
                             )
                             audiobookServiceHandler.setPlaySpeed(it.playSpeed)
-                            audiobookServiceHandler.setBookName(it.name)
+                            audiobookServiceHandler.setBookInfo(
+                                it.name, it.folderUri, it.chapters.chapters,
+                                context.getString(cat.petrushkacat.audiobookplayer.strings.R.string.automatic_play_tap_note_description)
+                            )
                         }
                         startService(it.chapters, it.folderName, it.duration, it.isCompleted)
                     }

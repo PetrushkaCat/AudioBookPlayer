@@ -10,14 +10,20 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Autorenew
 import androidx.compose.material.icons.filled.Bedtime
+import androidx.compose.material.icons.filled.BugReport
 import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.KeyboardDoubleArrowLeft
 import androidx.compose.material.icons.filled.RotateLeft
 import androidx.compose.material.icons.filled.Save
+import androidx.compose.material.icons.filled.StarRate
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Switch
@@ -40,6 +46,7 @@ import cat.petrushkacat.audiobookplayer.R
 import cat.petrushkacat.audiobookplayer.app.ui.components.shared.CommonTopAppBar
 import cat.petrushkacat.audiobookplayer.app.util.formatDuration
 import cat.petrushkacat.audiobookplayer.components.components.main.settings.SettingsComponent
+import cat.petrushkacat.audiobookplayer.domain.models.Theme
 
 @Composable
 fun SettingsComponentUi(component: SettingsComponent) {
@@ -47,42 +54,50 @@ fun SettingsComponentUi(component: SettingsComponent) {
     val model by component.models.collectAsState()
 
     Column {
-        CommonTopAppBar(title = stringResource(id = R.string.settings), onBack = {
+        CommonTopAppBar(title = stringResource(id = cat.petrushkacat.audiobookplayer.strings.R.string.settings), onBack = {
             component.onBack()
         })
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .verticalScroll(rememberScrollState())
                 .padding(horizontal = 16.dp)
         ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable { component.changeTheme(model.theme != cat.petrushkacat.audiobookplayer.domain.models.Theme.DARK) },
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Row {
-                    Icon(
-                        Icons.Default.DarkMode,
-                        null,
-                        modifier = Modifier.align(Alignment.CenterVertically)
-                    )
-                    Spacer(modifier = Modifier.width(30.dp))
-                    Text(
-                        stringResource(id = R.string.dark_theme),
-                        style = TextStyle(fontSize = 17.sp),
-                        modifier = Modifier.align(Alignment.CenterVertically)
-                    )
-                }
-                Switch(
-                    checked = model.theme == cat.petrushkacat.audiobookplayer.domain.models.Theme.DARK,
-                    onCheckedChange = component::changeTheme
-                )
-            }
+            SwitchSettingItem(
+                icon = Icons.Default.DarkMode,
+                name = stringResource(id = cat.petrushkacat.audiobookplayer.strings.R.string.dark_theme),
+                checked = model.theme == Theme.DARK,
+                onClick = component::changeTheme
+            )
+            SwitchSettingItem(
+                icon = Icons.Default.Autorenew,
+                name = stringResource(id = cat.petrushkacat.audiobookplayer.strings.R.string.show_auto_max_time_note),
+                checked = model.isMaxTimeAutoNoteEnabled,
+                onClick = component::showMaxTimeAutoNote
+            )
+            SwitchSettingItem(
+                icon = Icons.Default.Autorenew,
+                name = stringResource(id = cat.petrushkacat.audiobookplayer.strings.R.string.show_auto_on_play_tap_note),
+                checked = model.isOnPlayTapAutoNoteEnabled,
+                onClick = component::showPlayTapAutoNote
+            )
+            SwitchSettingItem(
+                icon = Icons.Default.StarRate,
+                name = stringResource(id = cat.petrushkacat.audiobookplayer.strings.R.string.show_review_button),
+                checked = model.isReviewButtonEnabled,
+                onClick = component::showReviewButton
+            )
+            SwitchSettingItem(
+                icon = Icons.Default.BugReport,
+                name = stringResource(id = cat.petrushkacat.audiobookplayer.strings.R.string.show_bug_report_button),
+                checked = model.isBugReportButtonEnabled,
+                onClick = component::showBugReportButton
+            )
+            Divider(modifier = Modifier.fillMaxWidth())
+
             TimeSettingItem(
                 icon = Icons.Default.KeyboardArrowLeft,
-                name = stringResource(id = R.string.rewind),
+                name = stringResource(id = cat.petrushkacat.audiobookplayer.strings.R.string.rewind),
                 time = model.rewindTime,
                 maxTime = 60000,
                 minTime = 1000,
@@ -91,7 +106,7 @@ fun SettingsComponentUi(component: SettingsComponent) {
             )
             TimeSettingItem(
                 icon = Icons.Default.KeyboardDoubleArrowLeft,
-                name = stringResource(id = R.string.long_rewind),
+                name = stringResource(id = cat.petrushkacat.audiobookplayer.strings.R.string.long_rewind),
                 time = model.greatRewindTime,
                 maxTime = 60000 * 5,
                 minTime = 60000,
@@ -100,7 +115,7 @@ fun SettingsComponentUi(component: SettingsComponent) {
             )
             TimeSettingItem(
                 icon = Icons.Default.RotateLeft,
-                name = stringResource(id = R.string.auto_rewind_back_on_pause),
+                name = stringResource(id = cat.petrushkacat.audiobookplayer.strings.R.string.auto_rewind_back_on_pause),
                 time = model.autoRewindBackTime,
                 maxTime = 30000,
                 minTime = 1000,
@@ -109,7 +124,7 @@ fun SettingsComponentUi(component: SettingsComponent) {
             )
             TimeSettingItem(
                 icon = Icons.Default.Bedtime,
-                name = stringResource(id = R.string.auto_sleep),
+                name = stringResource(id = cat.petrushkacat.audiobookplayer.strings.R.string.auto_sleep),
                 time = model.autoSleepTime,
                 maxTime = 60000 * 60 * 6,
                 minTime = 600000,
@@ -120,6 +135,41 @@ fun SettingsComponentUi(component: SettingsComponent) {
     }
 }
 
+@Composable
+fun SwitchSettingItem(
+    icon: ImageVector,
+    name: String,
+    checked: Boolean,
+    onClick: (Boolean) -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(70.dp)
+            .clickable { onClick(!checked) },
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Row(modifier = Modifier.weight(5f)) {
+            Icon(
+                icon,
+                null,
+                modifier = Modifier.align(Alignment.CenterVertically)
+            )
+            Spacer(modifier = Modifier.width(30.dp))
+            Text(
+                name,
+                style = TextStyle(fontSize = 17.sp),
+                modifier = Modifier.align(Alignment.CenterVertically)
+            )
+        }
+        Switch(
+            modifier = Modifier.weight(1f),
+            checked = checked,
+            onCheckedChange = onClick
+        )
+    }
+}
 
 @Composable
 fun TimeSettingItem(icon: ImageVector, name: String, time: Long, maxTime: Long, minTime: Long, steps: Int, onTimeChange: (Long) -> Unit) {
@@ -157,7 +207,7 @@ fun ChooseTimeDialog(time: Long, maxTime: Long, minTime: Long, steps: Int, onTim
         onDismissRequest = { showDialog.value = false },
         confirmButton = {
             Icon(Icons.Default.Save,
-                contentDescription = stringResource(id = R.string.save),
+                contentDescription = stringResource(id = cat.petrushkacat.audiobookplayer.strings.R.string.save),
                 modifier = Modifier.clickable {
                     onTimeChange((value.value).toLong())
                     showDialog.value = false

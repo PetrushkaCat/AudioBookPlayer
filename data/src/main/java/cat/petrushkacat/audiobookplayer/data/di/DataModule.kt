@@ -2,7 +2,6 @@ package cat.petrushkacat.audiobookplayer.data.di
 
 import android.content.Context
 import androidx.room.Room
-import cat.petrushkacat.audiobookplayer.audioservice.repository.AudioServiceSettingsRepository
 import cat.petrushkacat.audiobookplayer.audioservice.repository.TimeUpdateRepository
 import cat.petrushkacat.audiobookplayer.data.db.AudiobooksDatabase
 import cat.petrushkacat.audiobookplayer.data.db.dao.AudiobooksDao
@@ -73,10 +72,6 @@ class DataModule {
     @Provides
     @Singleton
     fun provideSettingsRepository(settingsDao: SettingsDao): SettingsRepository = SettingsRepositoryImpl(settingsDao)
-
-    @Provides
-    @Singleton
-    fun provideAudioServiceSettingsRepository(settingsDao: SettingsDao): AudioServiceSettingsRepository = SettingsRepositoryImpl(settingsDao)
 
     @Provides
     @Singleton

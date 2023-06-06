@@ -5,10 +5,15 @@ import android.util.Log
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
-import cat.petrushkacat.audiobookplayer.audioservice.repository.AudioServiceSettingsRepository
 import cat.petrushkacat.audiobookplayer.audioservice.sensors.SensorListener
+import cat.petrushkacat.audiobookplayer.domain.models.Chapter
 import cat.petrushkacat.audiobookplayer.domain.models.ListenedInterval
+import cat.petrushkacat.audiobookplayer.domain.models.Note
 import cat.petrushkacat.audiobookplayer.domain.models.SettingsEntity
+import cat.petrushkacat.audiobookplayer.domain.usecases.books.AddNoteUseCase
+import cat.petrushkacat.audiobookplayer.domain.usecases.books.GetBookUseCase
+import cat.petrushkacat.audiobookplayer.domain.usecases.books.UpdateNoteUseCase
+import cat.petrushkacat.audiobookplayer.domain.usecases.settings.GetSettingsUseCase
 import cat.petrushkacat.audiobookplayer.domain.usecases.statistics.SaveStatisticsUseCase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -17,6 +22,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.time.LocalDate
@@ -27,8 +33,11 @@ import javax.inject.Inject
 class AudiobookServiceHandler @Inject constructor(
     private val player: ExoPlayer,
     private val sensorListener: SensorListener,
-    private val settingsRepository: AudioServiceSettingsRepository,
-    private val saveStatisticsUseCase: SaveStatisticsUseCase
+    private val saveStatisticsUseCase: SaveStatisticsUseCase,
+    private val addNoteUseCase: AddNoteUseCase,
+    private val updateNoteUseCase: UpdateNoteUseCase,
+    private val getBookUseCase: GetBookUseCase,
+    private val getSettingsUseCase: GetSettingsUseCase
 ) : Player.Listener {
 
     private val _currentTimings = MutableStateFlow(CurrentTimings(player.currentPosition, player.currentMediaItemIndex))
@@ -48,16 +57,18 @@ class AudiobookServiceHandler @Inject constructor(
     private var greatSeek: Long = 0
 
     private var startedTime = 0L
-    private var bookName = ""
+    private lateinit var bookName: String
+    private lateinit var bookUri: String
+    private lateinit var chapters: List<Chapter>
+    private lateinit var noteDescription: String
 
     init {
         CoroutineScope(SupervisorJob() + Dispatchers.Default).launch {
-            settingsRepository.getAudioServiceSettings().collect {
-                //it can be null, do not touch
-                    autoSeekBack = it?.autoRewindBackTime ?: 0
-                    seek = it?.rewindTime ?: 0
-                    greatSeek = it?.greatRewindTime ?: 0
-                Log.d("Audiobook service handler init settings", it?.toString() ?: "null")
+            getSettingsUseCase().collect { settings ->
+                autoSeekBack = settings.autoRewindBackTime
+                seek = settings.rewindTime
+                greatSeek = settings.greatRewindTime
+                Log.d("Audiobook service handler init settings", settings.toString())
             }
         }
         player.addListener(this)
@@ -69,8 +80,11 @@ class AudiobookServiceHandler @Inject constructor(
         player.prepare()
     }
 
-    fun setBookName(name: String) {
-        bookName = name
+    fun setBookInfo(bookName: String, bookUri: String, chapters: List<Chapter>, noteDescription: String) {
+        this.bookName = bookName
+        this.bookUri = bookUri
+        this.chapters = chapters
+        this.noteDescription = noteDescription
     }
 
     fun isStopped() = player.playbackState != Player.STATE_READY
@@ -138,11 +152,9 @@ class AudiobookServiceHandler @Inject constructor(
                         currentTimings.value.currentTimeInChapter - seek
                     else 0
                 )
-                _currentTimings.value = CurrentTimings(player.currentPosition, player.currentMediaItemIndex)
             }
             is PlayerEvent.Forward -> {
                 player.seekTo(currentTimings.value.currentTimeInChapter + seek)
-                _currentTimings.value = CurrentTimings(player.currentPosition, player.currentMediaItemIndex)
             }
             PlayerEvent.PlayPause -> {
                 if (player.isPlaying) {
@@ -162,19 +174,15 @@ class AudiobookServiceHandler @Inject constructor(
 
             PlayerEvent.NextChapter -> {
                 player.seekToNextMediaItem()
-                _currentTimings.value = CurrentTimings(player.currentPosition, player.currentMediaItemIndex)
             }
             PlayerEvent.PreviousChapter -> {
                 player.seekToPreviousMediaItem()
-                _currentTimings.value = CurrentTimings(player.currentPosition, player.currentMediaItemIndex)
             }
             is PlayerEvent.UpdateProgress -> {
                 player.seekTo((player.duration * playerEvent.newProgress).toLong())
-                _currentTimings.value = CurrentTimings(player.currentPosition, player.currentMediaItemIndex)
             }
             is PlayerEvent.ChooseChapter -> {
                 player.seekTo(playerEvent.chapterId, 0)
-                _currentTimings.value = CurrentTimings(player.currentPosition, player.currentMediaItemIndex)
             }
 
             PlayerEvent.GreatBackward -> {
@@ -183,13 +191,13 @@ class AudiobookServiceHandler @Inject constructor(
                         currentTimings.value.currentTimeInChapter - greatSeek
                     else 0
                 )
-                _currentTimings.value = CurrentTimings(player.currentPosition, player.currentMediaItemIndex)
             }
             PlayerEvent.GreatForward -> {
                 player.seekTo(currentTimings.value.currentTimeInChapter + greatSeek)
-                _currentTimings.value = CurrentTimings(player.currentPosition, player.currentMediaItemIndex)
             }
         }
+
+        _currentTimings.value = CurrentTimings(player.currentPosition, player.currentMediaItemIndex)
     }
 
     @SuppressLint("SwitchIntDef")
@@ -202,6 +210,7 @@ class AudiobookServiceHandler @Inject constructor(
             CoroutineScope(Dispatchers.Main).launch {
                 startProgressUpdate()
             }
+            updateNote()
         } else {
             stopProgressUpdate()
         }
@@ -209,6 +218,12 @@ class AudiobookServiceHandler @Inject constructor(
             delay(300)
             this@AudiobookServiceHandler.isPlaying.value = player.isPlaying
         }
+    }
+
+    fun stopProgressUpdate() {
+        Log.d("player-2", "progress is now not updating")
+        job.cancel()
+        isProgressBeingWatched = false
     }
 
     private suspend fun startProgressUpdate() {
@@ -219,48 +234,88 @@ class AudiobookServiceHandler @Inject constructor(
                 if(!isProgressBeingWatched) {
                     isProgressBeingWatched = true
                     startedTime = LocalTime.now().toNanoOfDay() / 1000000
+                    
                     while (job.isActive) {
-                        //Log.d("player-2.1", "progress..")
-                        delay(500)
-                        _currentTimings.value = CurrentTimings(player.currentPosition, player.currentMediaItemIndex)
-                        if(GregorianCalendar().timeInMillis >= sensorListener.timeToStop) {
-                            player.pause()
-                            stopProgressUpdate()
-                        }
-                        val sleepAfter = manualSleepTimerState.value.sleepAfter - 500
-                        _manualSleepTimerState.value = _manualSleepTimerState.value.copy(sleepAfter = sleepAfter)
-                        if(sleepAfter <= 0 && _manualSleepTimerState.value.isActive) {
-                            _manualSleepTimerState.value = _manualSleepTimerState.value.copy(sleepAfter = 0, isActive = false)
-                            player.pause()
-                        }
-
+                        updateTimings()
                     }
-                    withContext(Dispatchers.IO) {
-                        val date = LocalDate.now()
-                        val prevDay = date.minusDays(1)
-                        saveStatisticsUseCase(
-                            ListenedInterval(
-                            startedTime,
-                            LocalTime.now().toNanoOfDay() / 1000000,
-                            bookName
-                            ),
-                            date.year,
-                            date.monthValue,
-                            date.dayOfMonth,
-                            prevDay.year,
-                            prevDay.monthValue,
-                            prevDay.dayOfMonth
-                        )
-                    }
+                    
+                    updateStatistics()
                 }
             }
         }
     }
+    
+    private suspend fun updateTimings() {
+        delay(500)
+        _currentTimings.value = CurrentTimings(player.currentPosition, player.currentMediaItemIndex)
+        if(GregorianCalendar().timeInMillis >= sensorListener.timeToStop) {
+            player.pause()
+            stopProgressUpdate()
+        }
+        val sleepAfter = manualSleepTimerState.value.sleepAfter - 500
+        _manualSleepTimerState.value = _manualSleepTimerState.value.copy(sleepAfter = sleepAfter)
+        if(sleepAfter <= 0 && _manualSleepTimerState.value.isActive) {
+            _manualSleepTimerState.value = _manualSleepTimerState.value.copy(sleepAfter = 0, isActive = false)
+            player.pause()
+        }
+    }
+    
+    private suspend fun updateStatistics() {
+        withContext(Dispatchers.IO) {
+            val date = LocalDate.now()
+            val prevDay = date.minusDays(1)
+            saveStatisticsUseCase(
+                ListenedInterval(
+                    startedTime,
+                    LocalTime.now().toNanoOfDay() / 1000000,
+                    bookName
+                ),
+                date.year,
+                date.monthValue,
+                date.dayOfMonth,
+                prevDay.year,
+                prevDay.monthValue,
+                prevDay.dayOfMonth
+            )
+        }
+    }
 
-    fun stopProgressUpdate() {
-        Log.d("player-2", "progress is now not updating")
-        job.cancel()
-        isProgressBeingWatched = false
+    private fun updateNote() {
+        CoroutineScope(Dispatchers.IO).launch {
+            val index: Int
+            val time: Long
+
+            withContext(Dispatchers.Main) {
+                index = player.currentMediaItemIndex
+                time = player.currentPosition
+            }
+
+            try {
+                val note = getBookUseCase(bookUri).first().notes.notes.firstOrNull {
+                    it.description == noteDescription
+                }
+                Log.d("note", note.toString())
+                if (note != null) {
+                    updateNoteUseCase(
+                        note,
+                        bookUri,
+                        noteDescription,
+                        index,
+                        time
+                    )
+                } else {
+                    val newNote = Note(
+                        index,
+                        chapters[index].name,
+                        time,
+                        noteDescription
+                    )
+                    addNoteUseCase(newNote, bookUri)
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
     }
 }
 

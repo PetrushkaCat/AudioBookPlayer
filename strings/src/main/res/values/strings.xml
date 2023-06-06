@@ -65,6 +65,19 @@
     <string name="m">m</string>
     <string name="s">s</string>
     <string name="notes">Notes</string>
+    <string name="show_auto_max_time_note">Show max time auto note</string>
+    <string name="show_auto_on_play_tap_note">Show on play tap note</string>
+    <string name="show_review_button">Show review button</string>
+    <string name="show_bug_report_button">Show suggestions/bug report button</string>
+    <string name="suggestions_and_bug_report">Suggestions/Bug report</string>
+    <string name="thanks_for_the_review">Thanks for the review! &lt;3</string>
+
+    <string name="notification_channel_player_controls">Player</string>
+
+    <string name="automatic_max_time_note_description">This is an automatic note that is updated every time you open notes page with a new max book time</string>
+    <string name="automatic_play_tap_note_description">This is an automatic note that is updated every time you tap on play button</string>
+    <string name="open_with">Open with</string>
+
 
 
 

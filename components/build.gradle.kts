@@ -37,6 +37,7 @@ android {
 
 dependencies {
 
+    implementation(project(":strings"))
     implementation(project(":domain"))
     implementation(project(":audioservice"))
     

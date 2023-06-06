@@ -1,14 +1,16 @@
 package cat.petrushkacat.audiobookplayer.domain.usecases
 
+import cat.petrushkacat.audiobookplayer.domain.usecases.books.AddNoteUseCase
 import cat.petrushkacat.audiobookplayer.domain.usecases.books.DeleteAllBooksInFolderUseCase
 import cat.petrushkacat.audiobookplayer.domain.usecases.books.DeleteBookUseCase
 import cat.petrushkacat.audiobookplayer.domain.usecases.books.DeleteIfNoInListUseCase
+import cat.petrushkacat.audiobookplayer.domain.usecases.books.DeleteNoteUseCase
 import cat.petrushkacat.audiobookplayer.domain.usecases.books.GetBookUseCase
 import cat.petrushkacat.audiobookplayer.domain.usecases.books.GetBooksUseCase
 import cat.petrushkacat.audiobookplayer.domain.usecases.books.GetSearchedBooksUseCase
 import cat.petrushkacat.audiobookplayer.domain.usecases.books.SaveBookUseCase
-import cat.petrushkacat.audiobookplayer.domain.usecases.books.UpdateBookNotesUseCase
 import cat.petrushkacat.audiobookplayer.domain.usecases.books.UpdateBookUseCase
+import cat.petrushkacat.audiobookplayer.domain.usecases.books.UpdateNoteUseCase
 import cat.petrushkacat.audiobookplayer.domain.usecases.folders.AddFolderUseCase
 import cat.petrushkacat.audiobookplayer.domain.usecases.folders.DeleteFolderUseCase
 import cat.petrushkacat.audiobookplayer.domain.usecases.folders.GetFoldersUseCase
@@ -36,7 +38,9 @@ data class BooksUseCases(
     val getBookUseCase: GetBookUseCase,
     val getSearchedBooksUseCase: GetSearchedBooksUseCase,
     val saveBookUseCase: SaveBookUseCase,
-    val updateBookNotesUseCase: UpdateBookNotesUseCase,
+    val addNoteUseCase: AddNoteUseCase,
+    val updateNoteUseCase: UpdateNoteUseCase,
+    val deleteNoteUseCase: DeleteNoteUseCase,
     val updateBookUseCase: UpdateBookUseCase
     )
 

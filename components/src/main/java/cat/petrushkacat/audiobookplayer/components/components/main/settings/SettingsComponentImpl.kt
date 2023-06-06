@@ -2,10 +2,14 @@ package cat.petrushkacat.audiobookplayer.components.components.main.settings
 
 import cat.petrushkacat.audiobookplayer.components.util.componentCoroutineScopeDefault
 import cat.petrushkacat.audiobookplayer.components.util.componentCoroutineScopeIO
+import cat.petrushkacat.audiobookplayer.domain.models.SettingsEntity
 import cat.petrushkacat.audiobookplayer.domain.models.Theme
 import cat.petrushkacat.audiobookplayer.domain.usecases.settings.GetSettingsUseCase
 import cat.petrushkacat.audiobookplayer.domain.usecases.settings.SaveSettingsUseCase
 import com.arkivanov.decompose.ComponentContext
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -32,8 +36,8 @@ class SettingsComponentImpl(
             }
         }
     }
-    override fun saveSettings(settings: cat.petrushkacat.audiobookplayer.domain.models.SettingsEntity) {
-        scopeIO.launch {
+    override fun saveSettings(settings: SettingsEntity) {
+        CoroutineScope(SupervisorJob() + Dispatchers.IO).launch {
             saveSettingsUseCase(settings)
         }
     }
@@ -84,6 +88,38 @@ class SettingsComponentImpl(
                 )
             )
         }
+    }
+
+    override fun showMaxTimeAutoNote(isEnabled: Boolean) {
+        saveSettings(
+            models.value.copy(
+                isMaxTimeAutoNoteEnabled = isEnabled
+            )
+        )
+    }
+
+    override fun showPlayTapAutoNote(isEnabled: Boolean) {
+        saveSettings(
+            models.value.copy(
+                isOnPlayTapAutoNoteEnabled = isEnabled
+            )
+        )
+    }
+
+    override fun showReviewButton(isEnabled: Boolean) {
+        saveSettings(
+            models.value.copy(
+                isReviewButtonEnabled = isEnabled
+            )
+        )
+    }
+
+    override fun showBugReportButton(isEnabled: Boolean) {
+        saveSettings(
+            models.value.copy(
+                isBugReportButtonEnabled = isEnabled
+            )
+        )
     }
 
     override fun onBack() {

@@ -55,6 +55,7 @@ class BookshelfComponentImpl(
     override val drawerComponent = DrawerComponentImpl(
         childContext("drawer_component"),
         context,
+        getSettingsUseCase = useCasesProvider.settingsUseCases.getSettingsUseCase,
         onSettingsClicked = onSettingsClicked,
         onFavoritesClicked = onFavoritesClicked,
         onListenLaterClicked = onListenLaterClicked,

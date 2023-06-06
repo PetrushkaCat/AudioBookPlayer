@@ -53,7 +53,7 @@ fun FoldersComponentUi(component: FoldersComponent) {
 
     Column {
         CommonTopAppBar(
-            title = stringResource(id = R.string.folders),
+            title = stringResource(id = cat.petrushkacat.audiobookplayer.strings.R.string.folders),
             onBack = {
             component.onBack()
         })
@@ -79,8 +79,8 @@ fun FoldersComponentUi(component: FoldersComponent) {
                         strokeWidth = strokeWidth
                     )
                     Row {
-                        Text(stringResource(id = R.string.folders_processed) + " " + foldersProcessed.toString() + " ")
-                        Text(stringResource(id = R.string.of) + " " + foldersToProcess.toString())
+                        Text(stringResource(id = cat.petrushkacat.audiobookplayer.strings.R.string.folders_processed) + " " + foldersProcessed.toString() + " ")
+                        Text(stringResource(id = cat.petrushkacat.audiobookplayer.strings.R.string.of) + " " + foldersToProcess.toString())
                     }
                 }
             }
@@ -102,13 +102,13 @@ fun FoldersComponentUi(component: FoldersComponent) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    stringResource(id = R.string.add_folder_description),
+                    stringResource(id = cat.petrushkacat.audiobookplayer.strings.R.string.add_folder_description),
                     modifier = Modifier.weight(5f),
                     style = TextStyle(color = Color.Gray)
                 )
 
                 Icon(imageVector = Icons.Default.AddCircle,
-                    stringResource(id = R.string.add_folder_icon),
+                    stringResource(id = cat.petrushkacat.audiobookplayer.strings.R.string.add_folder_icon),
                     modifier = Modifier
                         .clickable {
                             launcher.launch(null)
@@ -134,7 +134,7 @@ fun FolderItem(folder: RootFolderEntity, onDelete: (RootFolderEntity) -> Unit) {
         ) {
             Text(folder.name, style = TextStyle(fontSize = 20.sp), modifier = Modifier.weight(9f))
             Icon(Icons.Default.Delete,
-                stringResource(id = R.string.remove_folder_icon),
+                stringResource(id = cat.petrushkacat.audiobookplayer.strings.R.string.remove_folder_icon),
                 modifier = Modifier
                     .clickable {
                         onDelete(folder)

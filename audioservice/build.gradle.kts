@@ -36,6 +36,7 @@ android {
 
 dependencies {
 
+    implementation(project(":strings"))
     implementation(project(":domain"))
 
     implementation(libs.androidx.core.ktx)

@@ -70,7 +70,7 @@ fun BookPlayerToolbarComponentUi(component: BookPlayerToolbarComponent) {
             ) {
                 Icon(
                     Icons.Default.ArrowBack,
-                    stringResource(id = R.string.back),
+                    stringResource(id = cat.petrushkacat.audiobookplayer.strings.R.string.back),
                     modifier = Modifier
                         .clickable {
                             component.onBack()
@@ -99,7 +99,7 @@ fun BookPlayerToolbarComponentUi(component: BookPlayerToolbarComponent) {
                 ) {
                     Icon(
                         Icons.Outlined.Timer,
-                        contentDescription = stringResource(id = R.string.speed_icon_description),
+                        contentDescription = stringResource(id = cat.petrushkacat.audiobookplayer.strings.R.string.speed_icon_description),
                         modifier = Modifier
                             .size(48.dp)
                             .padding(10.dp),
@@ -115,7 +115,7 @@ fun BookPlayerToolbarComponentUi(component: BookPlayerToolbarComponent) {
             }
             Icon(
                 Icons.Default.Speed,
-                contentDescription = stringResource(id = R.string.speed_icon_description),
+                contentDescription = stringResource(id = cat.petrushkacat.audiobookplayer.strings.R.string.speed_icon_description),
                 modifier = Modifier
                     .clickable {
                         showPlaySpeedDialog.value = true
@@ -125,7 +125,7 @@ fun BookPlayerToolbarComponentUi(component: BookPlayerToolbarComponent) {
             )
             Icon(
                 Icons.Default.Bookmarks,
-                contentDescription = stringResource(id = R.string.bookmarks_icon_description),
+                contentDescription = stringResource(id = cat.petrushkacat.audiobookplayer.strings.R.string.bookmarks_icon_description),
                 modifier = Modifier
                     .clickable {
                         component.onNotesButtonClick()
@@ -182,7 +182,7 @@ fun ManualSleepTimerConfigurationDialog(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(stringResource(id = R.string.ok))
+                Text(stringResource(id = cat.petrushkacat.audiobookplayer.strings.R.string.ok))
             }
         },
         text = {
@@ -196,10 +196,10 @@ fun ManualSleepTimerConfigurationDialog(
                             formatDuration((timerTime.value as SettingsEntity.SleepTimerType.Common).time)
                         }
                         SettingsEntity.SleepTimerType.EndOfTheChapter -> {
-                            stringResource(id = R.string.the_end_of_the_chapter)
+                            stringResource(id = cat.petrushkacat.audiobookplayer.strings.R.string.the_end_of_the_chapter)
                         }
                     }
-                    Text(stringResource(id = R.string.current) + " $text")
+                    Text(stringResource(id = cat.petrushkacat.audiobookplayer.strings.R.string.current) + " $text")
                 }
                 LazyVerticalGrid(columns = GridCells.Fixed(3), content = {
                     items(8) { index ->
@@ -225,11 +225,11 @@ fun ManualSleepTimerConfigurationDialog(
                             verticalArrangement = Arrangement.Center
                         ) {
                             if (currentClickedItemIndex.value != 8) {
-                                Text(stringResource(id = R.string.the_end_of_the_chapter),
+                                Text(stringResource(id = cat.petrushkacat.audiobookplayer.strings.R.string.the_end_of_the_chapter),
                                     textAlign = TextAlign.Center)
                             } else {
                                 Text(
-                                    stringResource(id = R.string.the_end_of_the_chapter),
+                                    stringResource(id = cat.petrushkacat.audiobookplayer.strings.R.string.the_end_of_the_chapter),
                                     style = TextStyle(color = Color.Blue),
                                     textAlign = TextAlign.Center
                                 )
@@ -258,7 +258,7 @@ fun ManualSleepTimerConfigurationDialog(
                             timerTime.value = SettingsEntity.SleepTimerType.Common(15 * 60000)
                         }
                     },
-                    label = { Text(stringResource(id = R.string.your_value_minuter)) },
+                    label = { Text(stringResource(id = cat.petrushkacat.audiobookplayer.strings.R.string.your_value_minuter)) },
                     colors = TextFieldDefaults.colors(
                         unfocusedContainerColor = Color.Transparent,
                         focusedContainerColor = Color.Transparent
@@ -314,7 +314,7 @@ fun PlaySpeedChangeDialog(
         confirmButton = {
             Icon(
                 Icons.Default.Save,
-                stringResource(id = R.string.save),
+                stringResource(id = cat.petrushkacat.audiobookplayer.strings.R.string.save),
                 modifier = Modifier
                     .clickable {
                         onPlaySpeedChange(newValue.value)

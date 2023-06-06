@@ -27,11 +27,6 @@ interface AudiobooksDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun saveBookAfterParse(book: BookEntityDB)
 
-/*
-    @Update(entity = BookEntity::class)
-    fun updateBook(book: BookPlayerComponent.UpdateInfo)
-*/
-
     @Update(entity = BookEntityDB::class)
     fun updateBook(book: BookNotesEntity)
 

@@ -80,7 +80,7 @@ fun BookListItem(
                         modifier = Modifier
                             .size(100.dp),
                         bitmap = bitmap.value!!.asImageBitmap(),
-                        contentDescription = stringResource(id = R.string.book_cover),
+                        contentDescription = stringResource(id = cat.petrushkacat.audiobookplayer.strings.R.string.book_cover),
                     )
                     Row(modifier = Modifier.align(Alignment.TopEnd)) {
                         if (model.isWantToListen) {
@@ -191,7 +191,7 @@ fun BookGridItem(model: BookListEntity, modifier: Modifier) {
                             .fillMaxWidth(),
                             //.padding(horizontal = 12.dp),
                         bitmap = bitmap.value!!.asImageBitmap(),
-                        contentDescription = stringResource(id = R.string.book_cover),
+                        contentDescription = stringResource(id = cat.petrushkacat.audiobookplayer.strings.R.string.book_cover),
                     )
                     Row(modifier = Modifier.align(Alignment.TopEnd)) {
                         if (model.isWantToListen) {

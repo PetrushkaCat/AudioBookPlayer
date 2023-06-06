@@ -1,6 +1,5 @@
 package cat.petrushkacat.audiobookplayer.data.mappers
 
-import cat.petrushkacat.audiobookplayer.audioservice.model.AudioServiceSettings
 import cat.petrushkacat.audiobookplayer.data.dto.SettingsEntityDTO
 import cat.petrushkacat.audiobookplayer.domain.models.Grid
 import cat.petrushkacat.audiobookplayer.domain.models.SettingsEntity
@@ -24,7 +23,11 @@ fun SettingsEntityDTO.toSettingsEntity(): SettingsEntity {
         theme = Theme.valueOf(this.theme.name),
         grid = Grid.valueOf(this.grid.name),
         greatRewindTime = this.greatRewindTime,
-        sleepTimerType = sleepTimerType
+        sleepTimerType = sleepTimerType,
+        isMaxTimeAutoNoteEnabled = this.isMaxTimeAutoNoteEnabled,
+        isOnPlayTapAutoNoteEnabled = this.isOnPlayTapAutoNoteEnabled,
+        isReviewButtonEnabled = this.isReviewButtonEnabled,
+        isBugReportButtonEnabled = this.isBugReportButtonEnabled
     )
 }
 
@@ -48,10 +51,15 @@ fun SettingsEntity.toSettingsEntityDTO(): SettingsEntityDTO {
         theme = cat.petrushkacat.audiobookplayer.data.dto.Theme.valueOf(this.theme.name),
         grid = cat.petrushkacat.audiobookplayer.data.dto.Grid.valueOf(this.grid.name),
         greatRewindTime = this.greatRewindTime,
-        sleepTimerType = sleepTimerType
+        sleepTimerType = sleepTimerType,
+        isMaxTimeAutoNoteEnabled = this.isMaxTimeAutoNoteEnabled,
+        isOnPlayTapAutoNoteEnabled = this.isOnPlayTapAutoNoteEnabled,
+        isReviewButtonEnabled = this.isReviewButtonEnabled,
+        isBugReportButtonEnabled = this.isBugReportButtonEnabled
     )
 }
 
+/*
 fun SettingsEntityDTO.toAudioServiceSettings(): AudioServiceSettings {
     return AudioServiceSettings(
         id = this.id,
@@ -60,5 +68,6 @@ fun SettingsEntityDTO.toAudioServiceSettings(): AudioServiceSettings {
         rewindTime = this.rewindTime,
         autoRewindBackTime = this.autoRewindBackTime,
         greatRewindTime = this.greatRewindTime,
+        isOnPlayTapAutoNoteEnabled = this.isOnPlayTapAutoNoteEnabled
     )
-}
+}*/

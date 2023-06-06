@@ -3,8 +3,8 @@ package cat.petrushkacat.audiobookplayer.audioservice.sensors
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
-import cat.petrushkacat.audiobookplayer.audioservice.model.AudioServiceSettings
-import cat.petrushkacat.audiobookplayer.audioservice.repository.AudioServiceSettingsRepository
+import cat.petrushkacat.audiobookplayer.domain.models.SettingsEntity
+import cat.petrushkacat.audiobookplayer.domain.usecases.settings.GetSettingsUseCase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -12,19 +12,19 @@ import kotlinx.coroutines.launch
 import java.util.GregorianCalendar
 
 class SensorListener(
-   private val audioServiceSettingsRepository: AudioServiceSettingsRepository
+   private val getSettingsUseCase: GetSettingsUseCase
 ): SensorEventListener {
 
     var timeToStop: Long = Long.MAX_VALUE
 
-    private val settings: MutableStateFlow<AudioServiceSettings> = MutableStateFlow(AudioServiceSettings())
+    private val settings: MutableStateFlow<SettingsEntity> = MutableStateFlow(SettingsEntity())
 
     private var lastValues: FloatArray? = floatArrayOf(0f)
     private var isTimerSet = false
 
     init {
         CoroutineScope(Dispatchers.Default).launch {
-            audioServiceSettingsRepository.getAudioServiceSettings().collect {
+            getSettingsUseCase().collect {
                 settings.value = it
             }
         }

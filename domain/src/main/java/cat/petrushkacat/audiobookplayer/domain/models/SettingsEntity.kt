@@ -9,7 +9,11 @@ data class SettingsEntity(
     val theme: Theme = Theme.DARK,
     val grid: Grid = Grid.LIST,
     val greatRewindTime: Long = 60000,
-    val sleepTimerType: SleepTimerType = SleepTimerType.EndOfTheChapter
+    val sleepTimerType: SleepTimerType = SleepTimerType.EndOfTheChapter,
+    val isMaxTimeAutoNoteEnabled: Boolean = true,
+    val isOnPlayTapAutoNoteEnabled: Boolean = true,
+    val isReviewButtonEnabled: Boolean = true,
+    val isBugReportButtonEnabled: Boolean = true,
 ) {
     sealed class SleepTimerType() {
 

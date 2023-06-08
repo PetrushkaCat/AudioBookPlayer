@@ -13,13 +13,15 @@ android {
         applicationId = "cat.petrushkacat.audiobookplayer"
         minSdk = 26
         targetSdk = 33
-        versionCode = 13
+        versionCode = 15
         versionName = "1.0.4"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        resourceConfigurations.addAll(listOf("en", "ru"))
     }
 
     buildTypes {

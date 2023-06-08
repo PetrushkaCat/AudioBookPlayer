@@ -1,7 +1,6 @@
 package cat.petrushkacat.audiobookplayer.components.components.main.bookshelf.bookslist
 
 import android.content.Context
-import android.content.Intent
 import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.util.Log
@@ -29,6 +28,7 @@ import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.childContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -36,7 +36,11 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.isActive
+import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
+import java.util.Date
 
 class BooksListComponentImpl(
     componentContext: ComponentContext,
@@ -95,6 +99,11 @@ class BooksListComponentImpl(
                         getBooksUseCase(GetBooksUseCase.BooksType.All).first()
                     }
                     _models.value = temp.toMutableList()
+                    var size = 0L
+                    it.forEach { book ->
+                        size += book.image?.size ?: 0
+                    }
+                    Log.d("size", size.toString())
                 }
             }
             launch {
@@ -126,13 +135,13 @@ class BooksListComponentImpl(
             launch {
                 _foldersProcessed.collect {
                     if(it == _foldersToProcess.value && it > 0) {
-                        Log.d("refreshing", bookUris.toString())
                         deleteIfNoInListUseCase(bookUris, refreshingFolderUris.map { uri -> uri.toString() })
                         _isRefreshing.value = false
                         _foldersProcessed.value = 0
                         _foldersToProcess.value = 0
                         bookUris.clear()
                         refreshingFolderUris = emptyList()
+                        Log.d("refreshing time", "duration: " + (Date().time - refreshingStartTime) / 1000.0)
                     }
                 }
             }
@@ -144,26 +153,14 @@ class BooksListComponentImpl(
 
     override fun refresh() {
         CoroutineScope(SupervisorJob() + Dispatchers.IO).launch {
+            refreshingStartTime = Date().time
             refreshingFolderUris = folderUris
             _isRefreshing.value = true
             _foldersProcessed.value = 0
             _foldersToProcess.value = 0
-            Log.d("refreshing", _isRefreshing.value.toString())
-            Log.d("refreshing", _foldersProcessed.value.toString())
-            Log.d("refreshing", _foldersToProcess.value.toString())
 
             for (uri in folderUris) {
                 launch {
-                    try {
-                        val contentResolver = context.contentResolver
-
-                        val takeFlags: Int = Intent.FLAG_GRANT_READ_URI_PERMISSION or
-                                Intent.FLAG_GRANT_WRITE_URI_PERMISSION
-                        contentResolver.takePersistableUriPermission(uri, takeFlags)
-                    } catch(e: Exception) {
-                        e.printStackTrace()
-                        Log.d("books list", "uri permission not granted")
-                    }
                     parseBooks(uri)
                 }
             }
@@ -172,49 +169,67 @@ class BooksListComponentImpl(
 
     private fun parseBooks(folderUri: Uri) {
         val file = DocumentFile.fromTreeUri(context, folderUri)!!
-        parseCycle(file, folderUri)
+        Log.d("refreshing folder", file.name.toString())
+        parseCycle(file, folderUri, Mutex())
     }
 
-    private fun parseCycle(bookFolder: DocumentFile, rootFolderUri: Uri) {
+    private fun parseCycle(bookFolder: DocumentFile, rootFolderUri: Uri, mutex: Mutex) {
         CoroutineScope(SupervisorJob() + Dispatchers.IO).launch {
-        _foldersToProcess.value += 1
+            Log.d("refreshing started", bookFolder.name.toString())
+            globalMutex.withLock {
+                _foldersToProcess.value += 1
+            }
             var name: String? = null
             var image: ByteArray? = null
             var bookDuration: Long = 0
-
             val chapters: MutableList<Chapter> = mutableListOf()
-
-            val mmr = MediaMetadataRetriever()
+            val jobs = mutableListOf<Job>()
 
             bookFolder.listFiles().forEachIndexed { index, content ->
                 if (content == null) return@forEachIndexed
                 if (content.isDirectory) {
-                    parseCycle(content, rootFolderUri)
+                    parseCycle(content, rootFolderUri, Mutex())
+                    return@forEachIndexed
                 }
                 if (content.isAudio()) {
-                    mmr.setDataSource(context, content.uri)
-                    name = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM) ?: bookFolder.name!!
+                    jobs.add(launch {
+                        val mmr = MediaMetadataRetriever()
+                        mmr.setDataSource(context, content.uri)
+                        if(name == null) {
+                            name = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM)
+                                ?: bookFolder.name!!
+                        }
 
-                    val chapterDuration = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)?.toLong()!!
-                    bookDuration += chapterDuration
+                        val chapterDuration =
+                            mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
+                                ?.toLong() ?: 0
 
-                    if(image == null) {
-                        image = mmr.embeddedPicture
-                    }
+                        mutex.withLock {
+                            bookDuration += chapterDuration
+                        }
 
-                    chapters.add(
-                        Chapter(bookFolder.uri.toString(),
-                        content.name?.substringBeforeLast('.') ?: "Chapter ${index + 1}",
-                        chapterDuration,
-                        0,
-                        content.uri.toString())
-                    )
+                        if (image == null) {
+                            image = mmr.embeddedPicture
+                        }
+
+                        mutex.withLock {
+                            chapters.add(
+                                Chapter(
+                                    bookFolder.uri.toString(),
+                                    content.name?.substringBeforeLast('.')
+                                        ?: "Chapter ${index + 1}",
+                                    chapterDuration,
+                                    bookDuration - chapterDuration,
+                                    content.uri.toString()
+                                )
+                            )
+                        }
+                    })
                 }
-
             }
+            jobs.joinAll()
 
             name?.let {
-
                 val sortedChapters = chapters.sortedWith { a, b ->
                     extractInt(a) - extractInt(b)
                 }
@@ -224,7 +239,6 @@ class BooksListComponentImpl(
                     it.timeFromBeginning = timeFromBeginning
                     timeFromBeginning += it.duration
                 }
-
                 if(!isActive) return@launch
                 saveBookUseCase(
                     BookEntity(
@@ -240,10 +254,15 @@ class BooksListComponentImpl(
                         image = image,
                     )
                 )
-                bookUris.add(bookFolder.uri.toString())
-                Log.d("refreshing", "saved")
+                globalMutex.withLock {
+                    bookUris.add(bookFolder.uri.toString())
+                }
             }
-            _foldersProcessed.value += 1
+
+            globalMutex.withLock {
+                _foldersProcessed.value += 1
+            }
+            Log.d("refreshing complete", name.toString())
         }
     }
 
@@ -264,5 +283,7 @@ class BooksListComponentImpl(
         private val _isRefreshing = MutableStateFlow(false)
         private val bookUris: MutableList<String> = mutableListOf()
         private var refreshingFolderUris: List<Uri> = emptyList()
+        private var refreshingStartTime = 0L
+        private val globalMutex = Mutex()
     }
 }

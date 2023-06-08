@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -42,7 +43,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import cat.petrushkacat.audiobookplayer.R
 import cat.petrushkacat.audiobookplayer.app.ui.components.shared.CommonTopAppBar
 import cat.petrushkacat.audiobookplayer.app.util.formatDuration
 import cat.petrushkacat.audiobookplayer.components.components.main.settings.SettingsComponent
@@ -61,7 +61,6 @@ fun SettingsComponentUi(component: SettingsComponent) {
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
-                .padding(horizontal = 16.dp)
         ) {
             SwitchSettingItem(
                 icon = Icons.Default.DarkMode,
@@ -93,7 +92,9 @@ fun SettingsComponentUi(component: SettingsComponent) {
                 checked = model.isBugReportButtonEnabled,
                 onClick = component::showBugReportButton
             )
-            Divider(modifier = Modifier.fillMaxWidth())
+            Divider(modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp))
 
             TimeSettingItem(
                 icon = Icons.Default.KeyboardArrowLeft,
@@ -144,9 +145,10 @@ fun SwitchSettingItem(
 ) {
     Row(
         modifier = Modifier
+            .clickable { onClick(!checked) }
             .fillMaxWidth()
-            .height(70.dp)
-            .clickable { onClick(!checked) },
+            .height(60.dp)
+            .padding(horizontal = 16.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -177,11 +179,10 @@ fun TimeSettingItem(icon: ImageVector, name: String, time: Long, maxTime: Long, 
     val showDialog = rememberSaveable { mutableStateOf(false) }
 
     Row(modifier = Modifier
+        .clickable { showDialog.value = true }
         .fillMaxWidth()
-        .height(70.dp)
-        .clickable {
-            showDialog.value = true
-        },
+        .height(60.dp)
+        .padding(horizontal = 16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(icon, null, modifier = Modifier.align(Alignment.CenterVertically))
@@ -208,10 +209,14 @@ fun ChooseTimeDialog(time: Long, maxTime: Long, minTime: Long, steps: Int, onTim
         confirmButton = {
             Icon(Icons.Default.Save,
                 contentDescription = stringResource(id = cat.petrushkacat.audiobookplayer.strings.R.string.save),
-                modifier = Modifier.clickable {
-                    onTimeChange((value.value).toLong())
-                    showDialog.value = false
-            })
+                modifier = Modifier
+                    .clickable {
+                        onTimeChange((value.value).toLong())
+                        showDialog.value = false
+                    }
+                    .size(48.dp)
+                    .padding(10.dp)
+            )
         },
         text = {
             Column {
@@ -222,9 +227,7 @@ fun ChooseTimeDialog(time: Long, maxTime: Long, minTime: Long, steps: Int, onTim
                     },
                     valueRange = minTime.toFloat().rangeTo(maxTime.toFloat()),
                     steps = steps,
-                    onValueChangeFinished = {
-                        //useNewValue.value = false
-                    }
+                    onValueChangeFinished = { }
                 )
                 Row(
                     modifier = Modifier.fillMaxWidth(),

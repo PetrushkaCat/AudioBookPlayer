@@ -32,7 +32,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import cat.petrushkacat.audiobookplayer.R
 import cat.petrushkacat.audiobookplayer.app.ui.components.shared.CommonTopAppBar
 import cat.petrushkacat.audiobookplayer.app.ui.theme.Purple40
 import cat.petrushkacat.audiobookplayer.components.components.main.folderselector.FoldersComponent
@@ -44,8 +43,9 @@ fun FoldersComponentUi(component: FoldersComponent) {
     val model = component.models.collectAsState()
     val foldersToProcess by component.foldersToProcess.collectAsState()
     val foldersProcessed by component.foldersProcessed.collectAsState()
-    val launcher = rememberLauncherForActivityResult(contract = ActivityResultContracts.OpenDocumentTree(), onResult =
-        component::onFolderSelected
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.OpenDocumentTree(),
+        onResult = component::onFolderSelected
     )
 
     val strokeWidth = 5.dp

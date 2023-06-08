@@ -20,7 +20,7 @@
 #-keep,allowoptimization class kotlinx.serialization.** { public protected *; }
 
 ##---------------Begin: proguard configuration for kotlinx.serialization  ----------
--keepattributes *Annotation*, InnerClasses
+-keepattributes *Annotation*, InnerClasses, EnclosingMethod
 -dontnote kotlinx.serialization.AnnotationsKt # core serialization annotations
 
 # kotlinx-serialization-json specific. Add this if you have java.lang.NoClassDefFoundError kotlinx.serialization.json.JsonObjectSerializer

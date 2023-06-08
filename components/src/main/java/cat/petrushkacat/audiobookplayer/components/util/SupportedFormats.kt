@@ -30,5 +30,6 @@ val supportedAudioFormats = arrayOf(
 val supportedImageFormats = arrayOf(
     "jpg",
     "jpeg",
-    "png"
+    "png",
+    "webp"
 )

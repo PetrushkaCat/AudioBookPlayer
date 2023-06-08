@@ -14,19 +14,19 @@ fun decodeImage(data: ByteArray?): Bitmap? {
 }
 
 fun arrayFromBitmap(bitmap: Bitmap): ByteArray {
-    val scale = if(bitmap.width > 1000) {
-        bitmap.width / 1000.0
+    val scale = if(bitmap.width > 500) {
+        bitmap.width / 500.0
     } else 1.0
     val width = bitmap.width / scale
     val height = bitmap.height / scale
     val scaledBitmap = bitmap.scale(width.toInt(), height.toInt())
-    val newBitmap: Bitmap = if(scaledBitmap.width >= 1000 && scaledBitmap.height >= 1000) {
+    val newBitmap: Bitmap = if(scaledBitmap.width >= 500 && scaledBitmap.height >= 500) {
          Bitmap.createBitmap(
             scaledBitmap,
             0,
-            (scaledBitmap.height - 999) / 2,
-            1000,
-            1000
+            (scaledBitmap.height - 499) / 2,
+            500,
+            500
         )
     } else if (scaledBitmap.width > scaledBitmap.height) {
         Bitmap.createBitmap(
@@ -48,6 +48,6 @@ fun arrayFromBitmap(bitmap: Bitmap): ByteArray {
         scaledBitmap
     }
     val stream = ByteArrayOutputStream()
-    newBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
+    newBitmap.compress(Bitmap.CompressFormat.JPEG, 80, stream)
     return stream.toByteArray()
 }

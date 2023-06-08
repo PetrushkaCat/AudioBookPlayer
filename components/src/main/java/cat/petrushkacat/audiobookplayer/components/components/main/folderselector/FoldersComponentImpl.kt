@@ -22,11 +22,15 @@ import cat.petrushkacat.audiobookplayer.domain.usecases.folders.GetFoldersUseCas
 import com.arkivanov.decompose.ComponentContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
 class FoldersComponentImpl(
     componentContext: ComponentContext,
@@ -103,45 +107,60 @@ class FoldersComponentImpl(
 
     private fun parseBooks(folderUri: Uri) {
         val file = DocumentFile.fromTreeUri(context, folderUri)!!
-        parseCycle(file, folderUri)
+        parseCycle(file, folderUri, Mutex())
     }
 
-    private fun parseCycle(bookFolder: DocumentFile, rootFolderUri: Uri) {
+    private fun parseCycle(bookFolder: DocumentFile, rootFolderUri: Uri, mutex: Mutex) {
         CoroutineScope(SupervisorJob() + Dispatchers.IO).launch {
-            _foldersToProcess.value += 1
+            globalMutex.withLock {
+                _foldersToProcess.value += 1
+            }
+
             var name: String? = null
             var image: ByteArray? = null
             var bookDuration: Long = 0
-
             val chapters: MutableList<Chapter> = mutableListOf()
-
-            val mmr = MediaMetadataRetriever()
+            val jobs = mutableListOf<Job>()
 
             bookFolder.listFiles().forEachIndexed { index, content ->
                 if (content == null) return@forEachIndexed
+
                 if (content.isDirectory) {
-                    parseCycle(content, rootFolderUri)
+                    parseCycle(content, rootFolderUri, Mutex())
                 }
+
                 if (content.isAudio()) {
-                    mmr.setDataSource(context, content.uri)
-                    name = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM) ?: bookFolder.name!!
+                    jobs.add(launch {
+                        val mmr = MediaMetadataRetriever()
+                        mmr.setDataSource(context, content.uri)
+                        name = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM)
+                            ?: bookFolder.name!!
 
-                    val chapterDuration = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)?.toLong()!!
-                    bookDuration += chapterDuration
+                        val chapterDuration =
+                            mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
+                                ?.toLong()!!
+                        bookDuration += chapterDuration
 
-                    if(image == null) {
-                        image = mmr.embeddedPicture
-                    }
+                        if (image == null) {
+                            image = mmr.embeddedPicture
+                        }
 
-                    chapters.add(
-                        Chapter(bookFolder.uri.toString(),
-                        content.name?.substringBeforeLast('.') ?: "Chapter ${index + 1}",
-                        chapterDuration,
-                        0,
-                        content.uri.toString())
-                    )
+                        mutex.withLock {
+                            chapters.add(
+                                Chapter(
+                                    bookFolder.uri.toString(),
+                                    content.name?.substringBeforeLast('.')
+                                        ?: "Chapter ${index + 1}",
+                                    chapterDuration,
+                                    bookDuration - chapterDuration,
+                                    content.uri.toString()
+                                )
+                            )
+                        }
+                    })
                 }
             }
+            jobs.joinAll()
 
             name?.let {
 
@@ -171,14 +190,16 @@ class FoldersComponentImpl(
                 )
                 )
             }
-            _foldersProcessed.value += 1
-            //Log.d("folder5.6", booksToSave.toString())
+            globalMutex.withLock {
+                _foldersProcessed.value += 1
+            }
         }
     }
 
     companion object {
         private val _foldersToProcess = MutableStateFlow(0)
         private val _foldersProcessed = MutableStateFlow(0)
+        private val globalMutex = Mutex()
     }
 }
 

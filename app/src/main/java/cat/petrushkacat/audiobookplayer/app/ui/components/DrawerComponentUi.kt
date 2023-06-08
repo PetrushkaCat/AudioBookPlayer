@@ -55,11 +55,12 @@ fun DrawerComponentUi(component: DrawerComponent) {
     val settings by component.settings.collectAsState()
     val wasRated by component.wasRated.collectAsState()
 
-    Column(modifier = Modifier
-        .fillMaxHeight()
-        .width(260.dp)
-        .background(color = MaterialTheme.colorScheme.background)
-        .verticalScroll(rememberScrollState()),
+    Column(
+        modifier = Modifier
+            .fillMaxHeight()
+            .width(260.dp)
+            .background(color = MaterialTheme.colorScheme.background)
+            .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         Column {
@@ -72,26 +73,43 @@ fun DrawerComponentUi(component: DrawerComponent) {
         }
         Column {
             Column {
-                DrawerItem(icon = Icons.Default.Favorite, text = stringResource(id = cat.petrushkacat.audiobookplayer.strings.R.string.favorites), onClick = {
-                    component.onFavoritesClick()
-                })
+                DrawerItem(
+                    icon = Icons.Default.Favorite,
+                    text = stringResource(id = cat.petrushkacat.audiobookplayer.strings.R.string.favorites),
+                    onClick = {
+                        component.onFavoritesClick()
+                    })
 
-                DrawerItem(icon = Icons.Default.WatchLater, text = stringResource(id = cat.petrushkacat.audiobookplayer.strings.R.string.listen_later), onClick = {
-                    component.onListenLaterClick()
-                })
-                DrawerItem(icon = Icons.Default.CheckCircle, text = stringResource(id = cat.petrushkacat.audiobookplayer.strings.R.string.completed_books), onClick = {
-                    component.onCompletedBooksClick()
-                })
+                DrawerItem(
+                    icon = Icons.Default.WatchLater,
+                    text = stringResource(id = cat.petrushkacat.audiobookplayer.strings.R.string.listen_later),
+                    onClick = {
+                        component.onListenLaterClick()
+                    })
+                DrawerItem(
+                    icon = Icons.Default.CheckCircle,
+                    text = stringResource(id = cat.petrushkacat.audiobookplayer.strings.R.string.completed_books),
+                    onClick = {
+                        component.onCompletedBooksClick()
+                    })
 
-                DrawerItem(icon = Icons.Default.BarChart, text = stringResource(id = cat.petrushkacat.audiobookplayer.strings.R.string.statistics), onClick = {
-                    component.onStatisticsClick()
-                })
+                DrawerItem(
+                    icon = Icons.Default.BarChart,
+                    text = stringResource(id = cat.petrushkacat.audiobookplayer.strings.R.string.statistics),
+                    onClick = {
+                        component.onStatisticsClick()
+                    })
 
-                DrawerItem(icon = Icons.Default.Settings, text = stringResource(id = cat.petrushkacat.audiobookplayer.strings.R.string.settings), onClick = {
-                    component.onSettingsClick()
-                }, stringResource(id = cat.petrushkacat.audiobookplayer.strings.R.string.settings_icon_description))
+                DrawerItem(
+                    icon = Icons.Default.Settings,
+                    text = stringResource(id = cat.petrushkacat.audiobookplayer.strings.R.string.settings),
+                    onClick = {
+                        component.onSettingsClick()
+                    },
+                    stringResource(id = cat.petrushkacat.audiobookplayer.strings.R.string.settings_icon_description)
+                )
 
-                if(settings.isBugReportButtonEnabled) {
+                if (settings.isBugReportButtonEnabled) {
                     DrawerItem(
                         icon = Icons.Default.BugReport,
                         text = stringResource(id = cat.petrushkacat.audiobookplayer.strings.R.string.suggestions_and_bug_report),
@@ -99,8 +117,8 @@ fun DrawerComponentUi(component: DrawerComponent) {
                             component.onBugReportClick()
                         })
                 }
-                if(settings.isReviewButtonEnabled) {
-                    val text = if(wasRated) {
+                if (settings.isReviewButtonEnabled) {
+                    val text = if (wasRated) {
                         stringResource(id = cat.petrushkacat.audiobookplayer.strings.R.string.thanks_for_the_review)
                     } else {
                         stringResource(id = cat.petrushkacat.audiobookplayer.strings.R.string.rate_this_app)
@@ -116,26 +134,36 @@ fun DrawerComponentUi(component: DrawerComponent) {
                 Divider(modifier = Modifier.fillMaxWidth())
             }
             Column(modifier = Modifier.padding(horizontal = 6.dp, vertical = 4.dp)) {
-                Row(modifier = Modifier.width(180.dp),
+                Row(
+                    modifier = Modifier.width(180.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(stringResource(id = cat.petrushkacat.audiobookplayer.strings.R.string.designed_with_paws),
-                        style = TextStyle(color = Color.Gray, fontSize = 14.sp))
+                    Text(
+                        stringResource(id = cat.petrushkacat.audiobookplayer.strings.R.string.designed_with_paws),
+                        style = TextStyle(color = Color.Gray, fontSize = 14.sp)
+                    )
                     Spacer(Modifier.width(5.dp))
-                    Icon(Icons.Default.Pets, stringResource(id = cat.petrushkacat.audiobookplayer.strings.R.string.paws_icon),
+                    Icon(
+                        Icons.Default.Pets,
+                        stringResource(id = cat.petrushkacat.audiobookplayer.strings.R.string.paws_icon),
                         tint = Color.Gray,
                         modifier = Modifier.size(16.dp)
                     )
                 }
-                Row(modifier = Modifier.width(180.dp),
+                Row(
+                    modifier = Modifier.width(180.dp),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Text(stringResource(id = cat.petrushkacat.audiobookplayer.strings.R.string.by_petrushka_cat),
-                        style = TextStyle(color = Color.Gray, fontSize = 14.sp))
+                    Text(
+                        stringResource(id = cat.petrushkacat.audiobookplayer.strings.R.string.by_petrushka_cat),
+                        style = TextStyle(color = Color.Gray, fontSize = 14.sp)
+                    )
                     //Icon(Icons.Default.LocalFlorist, null)
                 }
-                Text(stringResource(id = cat.petrushkacat.audiobookplayer.strings.R.string.version) + " " + version,
-                    style = TextStyle(color = Color.Gray, fontSize = 13.sp))
+                Text(
+                    stringResource(id = cat.petrushkacat.audiobookplayer.strings.R.string.version) + " " + version,
+                    style = TextStyle(color = Color.Gray, fontSize = 13.sp)
+                )
             }
         }
     }
@@ -144,10 +172,10 @@ fun DrawerComponentUi(component: DrawerComponent) {
 @Composable
 fun DrawerItem(icon: ImageVector, text: String, onClick: () -> Unit, iconDescription: String = "") {
     Column(modifier = Modifier
+        .clickable { onClick() }
         .fillMaxWidth()
         .height(50.dp)
-        .padding(horizontal = 6.dp)
-        .clickable { onClick() },
+        .padding(horizontal = 6.dp),
         verticalArrangement = Arrangement.Center
     ) {
         Row(modifier = Modifier
@@ -168,10 +196,10 @@ fun DrawerItem(icon: ImageVector, text: String, onClick: () -> Unit, iconDescrip
 @Composable
 fun HeaderDrawerItem(icon: Painter, text: String, onClick: () -> Unit, iconDescription: String = "") {
     Column(modifier = Modifier
+        .clickable { onClick() }
         .fillMaxWidth()
         .height(50.dp)
-        .padding(horizontal = 6.dp)
-        .clickable { onClick() },
+        .padding(horizontal = 6.dp),
         verticalArrangement = Arrangement.Center
     ) {
         Row(modifier = Modifier

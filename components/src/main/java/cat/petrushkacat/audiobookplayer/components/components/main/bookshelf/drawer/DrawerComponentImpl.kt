@@ -4,6 +4,7 @@ import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.widget.Toast
 import androidx.core.content.ContextCompat.startActivity
 import cat.petrushkacat.audiobookplayer.components.util.componentCoroutineScopeDefault
 import cat.petrushkacat.audiobookplayer.domain.models.SettingsEntity
@@ -101,6 +102,15 @@ class DrawerComponentImpl(
 
     override fun onBugReportClick() {
         val intent = Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:$BUG_REPORT_MAIL"))
-        context.startActivity(intent)
+
+        try {
+            context.startActivity(intent)
+        } catch(e: Exception) {
+            e.printStackTrace()
+            Toast.makeText(context,
+                context.getString(cat.petrushkacat.audiobookplayer.strings.R.string.no_mail_apps_found),
+                Toast.LENGTH_LONG
+            ).show()
+        }
     }
 }

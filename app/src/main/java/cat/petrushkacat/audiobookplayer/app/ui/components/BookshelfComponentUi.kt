@@ -24,12 +24,14 @@ fun BookshelfComponentUi(component: BookshelfComponent) {
         drawerState = drawerState,
     ) {
         Column {
-            BookshelfToolbarComponentUi(component = component.bookshelfToolbarComponent, {
+            BookshelfToolbarComponentUi(component = component.bookshelfToolbarComponent, 
+                onDrawerButtonClick = {
                 scope.launch {
                     drawerState.open()
                 }
             })
             BooksListComponentUi(component = component.booksListComponent)
         }
+        //BooksScannerComponentUi(component = component.booksScannerComponent)
     }
 }

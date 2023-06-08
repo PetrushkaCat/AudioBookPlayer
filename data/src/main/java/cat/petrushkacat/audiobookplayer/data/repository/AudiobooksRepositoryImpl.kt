@@ -4,7 +4,9 @@ import cat.petrushkacat.audiobookplayer.data.db.dao.AudiobooksDao
 import cat.petrushkacat.audiobookplayer.data.mappers.toBookEntityDB
 import cat.petrushkacat.audiobookplayer.domain.models.BookEntity
 import cat.petrushkacat.audiobookplayer.domain.models.BookNotesEntity
+import cat.petrushkacat.audiobookplayer.domain.models.BookUri
 import cat.petrushkacat.audiobookplayer.domain.repository.AudiobooksRepository
+import kotlinx.coroutines.flow.Flow
 
 
 class AudiobooksRepositoryImpl(
@@ -41,6 +43,10 @@ class AudiobooksRepositoryImpl(
 
     override suspend fun deleteIfNoInList(uris: List<String>, rootFolderUris: List<String>) {
         audiobooksDao.deleteIfNoInList(uris, rootFolderUris)
+    }
+
+    override suspend fun getBooksUris(): Flow<List<BookUri>> {
+        return audiobooksDao.getUris()
     }
 
 }

@@ -61,5 +61,6 @@ data class Chapter(
 )
 
 data class BookUri(
-    val folderUri: String
+    val folderUri: String,
+    val rootFolderUri: String
 )

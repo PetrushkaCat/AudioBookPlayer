@@ -15,6 +15,7 @@ import cat.petrushkacat.audiobookplayer.domain.usecases.books.DeleteBookUseCase
 import cat.petrushkacat.audiobookplayer.domain.usecases.books.DeleteIfNoInListUseCase
 import cat.petrushkacat.audiobookplayer.domain.usecases.books.DeleteNoteUseCase
 import cat.petrushkacat.audiobookplayer.domain.usecases.books.GetBookUseCase
+import cat.petrushkacat.audiobookplayer.domain.usecases.books.GetBooksUrisUseCase
 import cat.petrushkacat.audiobookplayer.domain.usecases.books.GetBooksUseCase
 import cat.petrushkacat.audiobookplayer.domain.usecases.books.GetSearchedBooksUseCase
 import cat.petrushkacat.audiobookplayer.domain.usecases.books.SaveBookUseCase
@@ -65,7 +66,8 @@ class DomainModule {
                 addNoteUseCase = addNoteUseCase,
                 updateNoteUseCase = updateNoteUseCase,
                 deleteNoteUseCase = DeleteNoteUseCase(audiobooksRepository),
-                updateBookUseCase = UpdateBookUseCase(audiobooksRepository)
+                updateBookUseCase = UpdateBookUseCase(audiobooksRepository),
+                getBooksUrisUseCase = GetBooksUrisUseCase(audiobooksRepository)
             ),
             foldersUseCases = FoldersUseCases(
                 addFolderUseCase = AddFolderUseCase(rootFoldersRepository),

@@ -3,6 +3,7 @@ package cat.petrushkacat.audiobookplayer.domain.repository
 import cat.petrushkacat.audiobookplayer.domain.models.BookEntity
 import cat.petrushkacat.audiobookplayer.domain.models.BookListEntity
 import cat.petrushkacat.audiobookplayer.domain.models.BookNotesEntity
+import cat.petrushkacat.audiobookplayer.domain.models.BookUri
 import kotlinx.coroutines.flow.Flow
 
 interface AudiobooksRepository {
@@ -26,4 +27,6 @@ interface AudiobooksRepository {
     suspend fun deleteIfNoInList(uris: List<String>, rootFolderUris: List<String>)
 
     suspend fun updateBook(book: BookEntity)
+
+    suspend fun getBooksUris(): Flow<List<BookUri>>
 }

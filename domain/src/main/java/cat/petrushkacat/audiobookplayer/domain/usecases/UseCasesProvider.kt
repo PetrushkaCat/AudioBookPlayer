@@ -6,6 +6,7 @@ import cat.petrushkacat.audiobookplayer.domain.usecases.books.DeleteBookUseCase
 import cat.petrushkacat.audiobookplayer.domain.usecases.books.DeleteIfNoInListUseCase
 import cat.petrushkacat.audiobookplayer.domain.usecases.books.DeleteNoteUseCase
 import cat.petrushkacat.audiobookplayer.domain.usecases.books.GetBookUseCase
+import cat.petrushkacat.audiobookplayer.domain.usecases.books.GetBooksUrisUseCase
 import cat.petrushkacat.audiobookplayer.domain.usecases.books.GetBooksUseCase
 import cat.petrushkacat.audiobookplayer.domain.usecases.books.GetSearchedBooksUseCase
 import cat.petrushkacat.audiobookplayer.domain.usecases.books.SaveBookUseCase
@@ -41,7 +42,8 @@ data class BooksUseCases(
     val addNoteUseCase: AddNoteUseCase,
     val updateNoteUseCase: UpdateNoteUseCase,
     val deleteNoteUseCase: DeleteNoteUseCase,
-    val updateBookUseCase: UpdateBookUseCase
+    val updateBookUseCase: UpdateBookUseCase,
+    val getBooksUrisUseCase: GetBooksUrisUseCase
     )
 
 data class FoldersUseCases(

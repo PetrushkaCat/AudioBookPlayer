@@ -37,7 +37,7 @@ interface AudiobooksDao {
     fun deleteByUris(booksUris: List<String>)
 
     @Query("SELECT * FROM BookEntity")
-    fun getUris(): List<BookUri>
+    fun getUris(): Flow<List<BookUri>>
 
     @Query("DELETE FROM BookEntity WHERE rootFolderUri = :rootFolderUri")
     fun deleteAllInFolder(rootFolderUri: String)

@@ -1,4 +1,4 @@
-package cat.petrushkacat.audiobookplayer.components.components.main.bookshelf.books_scanner
+package cat.petrushkacat.audiobookplayer.app.scanner
 
 import android.content.Context
 import android.media.MediaMetadataRetriever
@@ -7,7 +7,6 @@ import android.util.Log
 import androidx.documentfile.provider.DocumentFile
 import cat.petrushkacat.audiobookplayer.components.components.main.folderselector.extractInt
 import cat.petrushkacat.audiobookplayer.components.components.main.folderselector.isAudio
-import cat.petrushkacat.audiobookplayer.components.util.componentCoroutineScopeDefault
 import cat.petrushkacat.audiobookplayer.domain.models.BookEntity
 import cat.petrushkacat.audiobookplayer.domain.models.BookUri
 import cat.petrushkacat.audiobookplayer.domain.models.Chapter
@@ -16,8 +15,6 @@ import cat.petrushkacat.audiobookplayer.domain.usecases.books.DeleteBookUseCase
 import cat.petrushkacat.audiobookplayer.domain.usecases.books.GetBooksUrisUseCase
 import cat.petrushkacat.audiobookplayer.domain.usecases.books.SaveBookUseCase
 import cat.petrushkacat.audiobookplayer.domain.usecases.folders.GetFoldersUseCase
-import com.arkivanov.decompose.ComponentContext
-import com.arkivanov.essenty.lifecycle.doOnCreate
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -29,34 +26,19 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import java.util.Date
 
-class BooksScannerComponentImpl(
-    componentComponent: ComponentContext,
+class Scanner(
     private val context: Context,
     private val getFoldersUseCase: GetFoldersUseCase,
     private val saveBookUseCase: SaveBookUseCase,
     private val getBooksUrisUseCase: GetBooksUrisUseCase,
     private val deleteBookUseCase: DeleteBookUseCase
-) : BooksScannerComponent, ComponentContext by componentComponent {
+) {
 
-    private val scopeDefault = componentCoroutineScopeDefault()
     private val booksUris = mutableListOf<BookUri>()
 
-    init {
-        scopeDefault.launch {
-            launch {
-                lifecycle.doOnCreate {
-                    //_scanState.value = BooksScannerComponent.ScanState.Scanning
-                    scan()
-                }
-            }
-        }
-    }
-
-    //private val _scanState = MutableStateFlow<BooksScannerComponent.ScanState>(BooksScannerComponent.ScanState.NotScanning)
-    //override val scanState: StateFlow<BooksScannerComponent.ScanState> = _scanState.asStateFlow()
     private val globalMutex = Mutex()
 
-    override fun scan() {
+     fun scan() {
         CoroutineScope(SupervisorJob() + Dispatchers.IO).launch {
             val started = Date().time
             val folders = getFoldersUseCase.invoke().first()
@@ -100,7 +82,6 @@ class BooksScannerComponentImpl(
             })
 
             jobs.joinAll()
-            //_scanState.value = BooksScannerComponent.ScanState.NotScanning
             Log.d("auto refresh time", "time: ${Date().time - started}")
         }
     }

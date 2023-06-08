@@ -2,7 +2,6 @@ package cat.petrushkacat.audiobookplayer.components.components.main.bookshelf
 
 import android.content.Context
 import android.net.Uri
-import cat.petrushkacat.audiobookplayer.components.components.main.bookshelf.books_scanner.BooksScannerComponentImpl
 import cat.petrushkacat.audiobookplayer.components.components.main.bookshelf.bookslist.BooksListComponentImpl
 import cat.petrushkacat.audiobookplayer.components.components.main.bookshelf.drawer.DrawerComponentImpl
 import cat.petrushkacat.audiobookplayer.components.components.main.bookshelf.toolbar.BookshelfToolbarComponentImpl
@@ -63,13 +62,4 @@ class BookshelfComponentImpl(
         onCompletedBooksClicked = onCompletedBooksClicked,
         onStatisticsClicked = onStatisticsClicked
     )
-    override val booksScannerComponent = BooksScannerComponentImpl(
-        childContext("bookshelf_books_scanner"),
-        context,
-        useCasesProvider.foldersUseCases.getFoldersUseCase,
-        useCasesProvider.booksUseCases.saveBookUseCase,
-        useCasesProvider.booksUseCases.getBooksUrisUseCase,
-        useCasesProvider.booksUseCases.deleteBookUseCase
-    )
-
 }

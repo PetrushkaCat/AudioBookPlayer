@@ -118,9 +118,9 @@ fun FoldersComponentUi(component: FoldersComponent) {
                     modifier = Modifier
                         .clickable {
                             if (
-                                !RefreshingStates.isAutomaticallyRefreshing.value &&
-                                !RefreshingStates.isManuallyRefreshing.value &&
-                                !RefreshingStates.isAddingNewFolder.value
+                                !RefreshingStates.isAutomaticallyRefreshing &&
+                                !RefreshingStates.isManuallyRefreshing &&
+                                !RefreshingStates.isAddingNewFolder
                             ) {
                                 launcher.launch(null)
                             } else {

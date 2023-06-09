@@ -67,7 +67,7 @@ class FoldersComponentImpl(
         uri?.let {
             Log.d("folders component folder_uri", uri.path!!)
 
-            RefreshingStates.isAddingNewFolder.value = true
+            RefreshingStates.isAddingNewFolder = true
 
             addFolder(uri)
         }
@@ -75,9 +75,9 @@ class FoldersComponentImpl(
 
     override fun onFolderRemoveButtonClick(rootFolderEntity: RootFolderEntity) {
         if (
-            !RefreshingStates.isAutomaticallyRefreshing.value &&
-            !RefreshingStates.isManuallyRefreshing.value &&
-            !RefreshingStates.isAddingNewFolder.value
+            !RefreshingStates.isAutomaticallyRefreshing &&
+            !RefreshingStates.isManuallyRefreshing &&
+            !RefreshingStates.isAddingNewFolder
         ) {
             scopeDefault.launch {
                 deleteFolderUseCase(rootFolderEntity)
@@ -216,7 +216,7 @@ class FoldersComponentImpl(
             globalMutex.withLock {
                 _foldersProcessed.value += 1
                 if(_foldersProcessed.value == _foldersToProcess.value) {
-                    RefreshingStates.isAddingNewFolder.value = false
+                    RefreshingStates.isAddingNewFolder = false
                     Log.d("folders component", "is adding = false")
                 }
             }

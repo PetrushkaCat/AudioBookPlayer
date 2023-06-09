@@ -1,9 +1,8 @@
 package cat.petrushkacat.audiobookplayer.components.states
 
-import kotlinx.coroutines.flow.MutableStateFlow
-
 object RefreshingStates {
-    val isAddingNewFolder = MutableStateFlow(false)
-    val isManuallyRefreshing = MutableStateFlow(false)
-    val isAutomaticallyRefreshing = MutableStateFlow(false)
+    var isAddingNewFolder = false
+    var isManuallyRefreshing = false
+    var isAutomaticallyRefreshing = false
+    var autoRefreshPercent = 0
 }

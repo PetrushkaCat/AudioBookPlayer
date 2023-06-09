@@ -34,85 +34,103 @@ class Scanner(
     private val getBooksUrisUseCase: GetBooksUrisUseCase,
     private val deleteBookUseCase: DeleteBookUseCase
 ) {
-     fun scan() {
-         if(
-             !isScanning &&
-             !RefreshingStates.isAddingNewFolder.value &&
-             !RefreshingStates.isManuallyRefreshing.value
-         ) {
-             CoroutineScope(SupervisorJob() + Dispatchers.IO).launch {
-                 Log.d("scanner", "scan is started")
-                 started = Date().time
-                 RefreshingStates.isAutomaticallyRefreshing.value = true
-                 isScanning = true
-                 booksUris.clear()
 
-                 val folders = getFoldersUseCase.invoke().first()
-
-
-                 folders.forEach {
-                     val folder = DocumentFile.fromTreeUri(context, Uri.parse(it.uri))
-                     try {
-                         parseBooksUris(folder!!, it.uri)
-                     } catch (e: Exception) {
-                         e.printStackTrace()
-                     }
-                 }
-
-                 val savedUris = getBooksUrisUseCase().first()
-
-                 val parseBooksUris = booksUris.filter { bookUri ->
-                     Uri.parse(bookUri.folderUri) !in savedUris.map { Uri.parse(it.folderUri) }
-                 }
-
-                 val urisToDelete = savedUris
-                     .filter { bookUri ->
-                         Uri.parse(bookUri.folderUri) !in booksUris.map { Uri.parse(it.folderUri) }
-                     }
-
-                 Log.d("auto refresh db uris", savedUris.map { Uri.parse(it.folderUri) }.toString())
-                 Log.d("auto refresh save", parseBooksUris.map { Uri.parse(it.folderUri) }.toString())
-                 Log.d("auto refresh delete", urisToDelete.map { it.toString() }.toString())
-
-                 val jobs = mutableListOf<Job>()
-
-                 val newFolders = getFoldersUseCase.invoke().first()
-                 jobs.add(launch {
-                     parseBooksUris.forEach {bookUri ->
-                         if(bookUri.rootFolderUri in newFolders.map { it.uri }) {
-                             parseBooks(Uri.parse(bookUri.folderUri), bookUri.rootFolderUri)
-                         }
-                     }
-                 })
-
-                 jobs.add(launch {
-                     urisToDelete.forEach {
-                         deleteBookUseCase(it.folderUri)
-                     }
-                 })
-
-                 jobs.joinAll()
-                 if(parseBooksUris.isEmpty()) {
-                     RefreshingStates.isAutomaticallyRefreshing.value = false
-                     isScanning = false
-                     Log.d("scanner auto empty refresh time", "time: ${Date().time - started}")
-                 }
-             }
-         } else {
-             Log.d("scanner", "scan is not started")
-         }
+    fun startScan() {
+        if(
+            !isScanning &&
+            !RefreshingStates.isAddingNewFolder &&
+            !RefreshingStates.isManuallyRefreshing
+        ) {
+            scan()
+        } else {
+            Log.d("scanner", "scan is not started")
+        }
     }
+
+        private fun scan() {
+            CoroutineScope(SupervisorJob() + Dispatchers.IO).launch {
+                Log.d("scanner", "scan is started")
+                started = Date().time
+                RefreshingStates.isAutomaticallyRefreshing = true
+                isScanning = true
+                booksUris.clear()
+                RefreshingStates.autoRefreshPercent = 0
+
+                val folders = getFoldersUseCase().first()
+
+                val folderJobs = mutableListOf<Job>()
+                folders.forEach {
+                    folderJobs.add(CoroutineScope(SupervisorJob() + Dispatchers.IO).launch {
+                        val folder = DocumentFile.fromTreeUri(context, Uri.parse(it.uri))
+                        try {
+                            parseBooksUris(folder!!, it.uri)
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
+                    })
+                }
+
+                val savedUris = getBooksUrisUseCase().first()
+
+                folderJobs.joinAll()
+
+                Log.d("auto refresh filter", "uris")
+                val parseBooksUris = booksUris.filter { bookUri ->
+                    Uri.parse(bookUri.folderUri) !in savedUris.map { Uri.parse(it.folderUri) }
+                }
+
+                val urisToDelete = savedUris.filter { bookUri ->
+                    Uri.parse(bookUri.folderUri) !in booksUris.map { Uri.parse(it.folderUri) }
+                }
+
+
+                Log.d("auto refresh db uris", savedUris.map { Uri.parse(it.folderUri) }.toString())
+                Log.d(
+                    "auto refresh save",
+                    parseBooksUris.map { Uri.parse(it.folderUri) }.toString()
+                )
+                Log.d("auto refresh delete", urisToDelete.map { it.toString() }.toString())
+
+                val jobs = mutableListOf<Job>()
+
+                val newFolders = getFoldersUseCase.invoke().first()
+                jobs.add(launch {
+                    parseBooksUris.forEach { bookUri ->
+                        if (bookUri.rootFolderUri in newFolders.map { it.uri }) {
+                            parseBooks(Uri.parse(bookUri.folderUri), bookUri.rootFolderUri)
+                        }
+                    }
+                })
+
+                jobs.add(launch {
+                    urisToDelete.forEach {
+                        deleteBookUseCase(it.folderUri)
+                    }
+                })
+
+                jobs.joinAll()
+                if (parseBooksUris.isEmpty()) {
+                    RefreshingStates.isAutomaticallyRefreshing = false
+                    isScanning = false
+                    Log.d("scanner auto empty refresh time", "time: ${Date().time - started}")
+                }
+            }
+        }
 
     private suspend fun parseBooksUris(bookFolder: DocumentFile, rootFolderUri: String) {
         mutex.withLock {
             booksUris.add(BookUri(bookFolder.uri.toString(), rootFolderUri))
         }
-
+        val jobs = mutableListOf<Job>()
         bookFolder.listFiles().forEach { file ->
             if(file.isDirectory) {
-                parseBooksUris(file, rootFolderUri)
+                jobs.add(CoroutineScope(SupervisorJob() + Dispatchers.IO).launch {
+                    parseBooksUris(file, rootFolderUri)
+                })
             }
         }
+        Log.d("auto", jobs.size.toString())
+        jobs.joinAll()
     }
 
     private fun parseBooks(fileUri: Uri, rootFolderUri: String) {
@@ -205,8 +223,9 @@ class Scanner(
             }
             mutex.withLock {
                 foldersProcessed += 1
+                RefreshingStates.autoRefreshPercent = ((foldersProcessed.toFloat() / foldersToProcess) * 100).toInt()
                 if(foldersProcessed == foldersToProcess) {
-                    RefreshingStates.isAutomaticallyRefreshing.value = false
+                    RefreshingStates.isAutomaticallyRefreshing = false
                     isScanning = false
                     foldersProcessed = 0
                     foldersToProcess = 0

@@ -133,24 +133,10 @@ class BooksListComponentImpl(
                     _models.value = books
                 }
             }
-            launch {
-                _foldersProcessed.collect {
-                    if(it == _foldersToProcess.value && it > 0) {
-                        deleteIfNoInListUseCase(bookUris, refreshingFolderUris.map { uri -> uri.toString() })
-                        _isRefreshing.value = false
-                        _foldersProcessed.value = 0
-                        _foldersToProcess.value = 0
-                        bookUris.clear()
-                        refreshingFolderUris = emptyList()
-                        RefreshingStates.isManuallyRefreshing.value = false
-                        Log.d("refreshing time", "duration: " + (Date().time - refreshingStartTime) / 1000.0)
-                    }
-                }
-            }
         }
     }
     override fun onBookClick(uri: Uri) {
-        if (!RefreshingStates.isAddingNewFolder.value) {
+        if (!RefreshingStates.isAddingNewFolder) {
             onBookSelected(uri)
         } else {
             Toast.makeText(
@@ -163,11 +149,11 @@ class BooksListComponentImpl(
 
     override fun refresh() {
         if(
-            !RefreshingStates.isAddingNewFolder.value &&
-            !RefreshingStates.isAutomaticallyRefreshing.value
+            !RefreshingStates.isAddingNewFolder &&
+            !RefreshingStates.isAutomaticallyRefreshing
         ) {
             CoroutineScope(SupervisorJob() + Dispatchers.IO).launch {
-                RefreshingStates.isManuallyRefreshing.value = true
+                RefreshingStates.isManuallyRefreshing = true
                 refreshingStartTime = Date().time
                 refreshingFolderUris = folderUris
                 _isRefreshing.value = true
@@ -286,14 +272,32 @@ class BooksListComponentImpl(
                 }
 
                 globalMutex.withLock {
+                    Log.d("refreshing complete", name.toString())
                     _foldersProcessed.value += 1
                 }
-                Log.d("refreshing complete", name.toString())
+                delay(300)
+                globalMutex.withLock {
+                    if (_foldersToProcess.value == _foldersProcessed.value && _foldersProcessed.value > 0) {
+                        completeRefresh()
+                    }
+                }
+
             } catch (e: Exception) {
                 e.printStackTrace()
                 Log.d("refreshing failed", name.toString())
             }
         }
+    }
+
+    private suspend fun completeRefresh() {
+        deleteIfNoInListUseCase(bookUris, refreshingFolderUris.map { uri -> uri.toString() })
+        _isRefreshing.value = false
+        _foldersProcessed.value = 0
+        _foldersToProcess.value = 0
+        bookUris.clear()
+        refreshingFolderUris = emptyList()
+        RefreshingStates.isManuallyRefreshing = false
+        Log.d("refreshing time", "duration: " + (Date().time - refreshingStartTime) / 1000.0)
     }
 
     companion object {

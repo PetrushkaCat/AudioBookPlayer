@@ -108,7 +108,7 @@ class MainActivity : ComponentActivity() {
         super.onStart()
         lifecycleScope.launch {
             kotlinx.coroutines.delay(300)
-            scanner.scan()
+            scanner.startScan()
         }
     }
 

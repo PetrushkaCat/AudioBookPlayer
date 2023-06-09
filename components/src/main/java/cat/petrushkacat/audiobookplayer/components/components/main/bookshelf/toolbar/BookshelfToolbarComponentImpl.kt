@@ -73,8 +73,8 @@ class BookshelfToolbarComponentImpl(
 
     override fun onFolderButtonClick() {
         if(
-            !RefreshingStates.isAutomaticallyRefreshing.value &&
-            !RefreshingStates.isManuallyRefreshing.value
+            !RefreshingStates.isAutomaticallyRefreshing &&
+            !RefreshingStates.isManuallyRefreshing
         ) {
             onFolderButtonClicked()
         } else {

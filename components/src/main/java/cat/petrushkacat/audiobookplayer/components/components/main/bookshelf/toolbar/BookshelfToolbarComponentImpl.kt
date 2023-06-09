@@ -1,5 +1,8 @@
 package cat.petrushkacat.audiobookplayer.components.components.main.bookshelf.toolbar
 
+import android.content.Context
+import android.widget.Toast
+import cat.petrushkacat.audiobookplayer.components.states.RefreshingStates
 import cat.petrushkacat.audiobookplayer.components.util.componentCoroutineScopeDefault
 import cat.petrushkacat.audiobookplayer.components.util.componentCoroutineScopeIO
 import cat.petrushkacat.audiobookplayer.domain.models.RootFolderEntity
@@ -15,6 +18,7 @@ import kotlinx.coroutines.launch
 
 class BookshelfToolbarComponentImpl(
     componentContext: ComponentContext,
+    private val context: Context,
     private val getSettingsUseCase: GetSettingsUseCase,
     private val getFoldersUseCase: GetFoldersUseCase,
     private val updateFolderUseCase: UpdateFolderUseCase,
@@ -68,7 +72,16 @@ class BookshelfToolbarComponentImpl(
     }
 
     override fun onFolderButtonClick() {
-        onFolderButtonClicked()
+        if(
+            !RefreshingStates.isAutomaticallyRefreshing.value &&
+            !RefreshingStates.isManuallyRefreshing.value
+        ) {
+            onFolderButtonClicked()
+        } else {
+            Toast.makeText(context,
+                context.getString(cat.petrushkacat.audiobookplayer.strings.R.string.not_available_during_scan),
+                Toast.LENGTH_SHORT).show()
+        }
     }
 
     override fun onGridButtonClick() {

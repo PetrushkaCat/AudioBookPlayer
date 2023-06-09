@@ -78,4 +78,5 @@
     <string name="automatic_play_tap_note_description">Автоматическая заметка, которая обновляется при нажатии на кнопку воспроизведения</string>
     <string name="open_with">Открыть с помощью</string>
     <string name="no_mail_apps_found">Почтовых приложений не найдено</string>
+    <string name="not_available_during_scan">Недоступно во время сканирования. Попробуйте немного позже</string>
 </resources>

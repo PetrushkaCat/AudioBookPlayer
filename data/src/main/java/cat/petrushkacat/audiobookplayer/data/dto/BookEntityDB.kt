@@ -1,6 +1,7 @@
 package cat.petrushkacat.audiobookplayer.data.dto
 
 import androidx.annotation.Keep
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import kotlinx.serialization.Serializable
 
@@ -37,6 +38,7 @@ data class BookEntityDB(
     val isFavorite: Boolean = false,
     val isTemporarilyDeleted: Boolean = false,
     val isWantToListen: Boolean = false,
+    @ColumnInfo(defaultValue = "0") val addedTime: Long = 0
 )
 
 @Keep

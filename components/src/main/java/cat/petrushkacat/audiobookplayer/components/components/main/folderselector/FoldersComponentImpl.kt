@@ -5,7 +5,9 @@ import android.content.Intent
 import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.util.Log
+import android.widget.Toast
 import androidx.documentfile.provider.DocumentFile
+import cat.petrushkacat.audiobookplayer.components.states.RefreshingStates
 import cat.petrushkacat.audiobookplayer.components.util.componentCoroutineScopeDefault
 import cat.petrushkacat.audiobookplayer.components.util.componentCoroutineScopeIO
 import cat.petrushkacat.audiobookplayer.components.util.supportedAudioFormats
@@ -31,6 +33,7 @@ import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import java.util.Date
 
 class FoldersComponentImpl(
     componentContext: ComponentContext,
@@ -62,15 +65,30 @@ class FoldersComponentImpl(
 
     override fun onFolderSelected(uri: Uri?) {
         uri?.let {
-            Log.d("folder_uri", uri.path!!)
+            Log.d("folders component folder_uri", uri.path!!)
+
+            RefreshingStates.isAddingNewFolder.value = true
+
             addFolder(uri)
         }
     }
 
     override fun onFolderRemoveButtonClick(rootFolderEntity: RootFolderEntity) {
-        scopeDefault.launch {
-            deleteFolderUseCase(rootFolderEntity)
-            deleteAllBooksInFolderUseCase(rootFolderEntity.uri)
+        if (
+            !RefreshingStates.isAutomaticallyRefreshing.value &&
+            !RefreshingStates.isManuallyRefreshing.value &&
+            !RefreshingStates.isAddingNewFolder.value
+        ) {
+            scopeDefault.launch {
+                deleteFolderUseCase(rootFolderEntity)
+                deleteAllBooksInFolderUseCase(rootFolderEntity.uri)
+            }
+        } else {
+            Toast.makeText(
+                context,
+                context.getString(cat.petrushkacat.audiobookplayer.strings.R.string.not_available_during_scan),
+                Toast.LENGTH_SHORT
+            ).show()
         }
     }
 
@@ -80,6 +98,8 @@ class FoldersComponentImpl(
 
     private fun addFolder(folderUri: Uri) {
         CoroutineScope(SupervisorJob() + Dispatchers.IO).launch {
+            Log.d("folders component", "is adding = true")
+
             _foldersToProcess.value = 0
             _foldersProcessed.value = 0
 
@@ -145,6 +165,8 @@ class FoldersComponentImpl(
                             image = mmr.embeddedPicture
                         }
 
+                        mmr.release()
+
                         mutex.withLock {
                             chapters.add(
                                 Chapter(
@@ -177,21 +199,26 @@ class FoldersComponentImpl(
 
                 saveBookUseCase(
                     BookEntity(
-                    folderUri = bookFolder.uri.toString(),
-                    folderName = bookFolder.name!!,
-                    name = name!!,
-                    chapters = Chapters(sortedChapters),
-                    currentChapter = 0,
-                    currentChapterTime = 0,
-                    currentTime = 0,
-                    duration = bookDuration,
-                    rootFolderUri = rootFolderUri.toString(),
-                    image = image,
-                )
+                        folderUri = bookFolder.uri.toString(),
+                        folderName = bookFolder.name!!,
+                        name = name!!,
+                        chapters = Chapters(sortedChapters),
+                        currentChapter = 0,
+                        currentChapterTime = 0,
+                        currentTime = 0,
+                        duration = bookDuration,
+                        rootFolderUri = rootFolderUri.toString(),
+                        image = image,
+                        addedTime = Date().time
+                    )
                 )
             }
             globalMutex.withLock {
                 _foldersProcessed.value += 1
+                if(_foldersProcessed.value == _foldersToProcess.value) {
+                    RefreshingStates.isAddingNewFolder.value = false
+                    Log.d("folders component", "is adding = false")
+                }
             }
         }
     }

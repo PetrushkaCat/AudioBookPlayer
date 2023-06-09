@@ -1,6 +1,7 @@
 package cat.petrushkacat.audiobookplayer.app
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
@@ -8,6 +9,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.lifecycleScope
 import cat.petrushkacat.audiobookplayer.app.scanner.Scanner
 import cat.petrushkacat.audiobookplayer.app.ui.components.RootComponentUi
 import cat.petrushkacat.audiobookplayer.app.ui.theme.AudioBookPlayerTheme
@@ -32,6 +34,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.takeWhile
 import kotlinx.coroutines.launch
+import java.util.Date
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -83,7 +86,9 @@ class MainActivity : ComponentActivity() {
                         it.theme == cat.petrushkacat.audiobookplayer.domain.models.Theme.DARK
                 }
         }
-
+        val date = Date()
+        date.time = 0
+        Log.d("date", date.toString())
         setContent {
             AudioBookPlayerTheme(
                 darkTheme = isDarkTheme.collectAsState().value
@@ -101,7 +106,10 @@ class MainActivity : ComponentActivity() {
 
     override fun onStart() {
         super.onStart()
-        scanner.scan()
+        lifecycleScope.launch {
+            kotlinx.coroutines.delay(300)
+            scanner.scan()
+        }
     }
 
     override fun onDestroy() {

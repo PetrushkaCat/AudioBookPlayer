@@ -3,6 +3,7 @@ package cat.petrushkacat.audiobookplayer.domain.usecases
 import cat.petrushkacat.audiobookplayer.domain.models.BookEntity
 import cat.petrushkacat.audiobookplayer.domain.models.BookListEntity
 import cat.petrushkacat.audiobookplayer.domain.models.BookNotesEntity
+import cat.petrushkacat.audiobookplayer.domain.models.BookUri
 import cat.petrushkacat.audiobookplayer.domain.repository.AudiobooksRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -51,6 +52,10 @@ class FakeAudiobooksRepository : AudiobooksRepository {
     }
 
     override suspend fun deleteIfNoInList(uris: List<String>, rootFolderUris: List<String>) {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun getBooksUris(): Flow<List<BookUri>> {
         TODO("Not yet implemented")
     }
 

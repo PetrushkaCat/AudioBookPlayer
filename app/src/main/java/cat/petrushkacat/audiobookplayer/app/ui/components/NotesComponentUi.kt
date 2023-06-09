@@ -43,11 +43,11 @@ fun NotesComponentUi(component: NotesComponent) {
     val settings by component.settings.collectAsState()
 
     val showDialog = rememberSaveable { mutableStateOf(false) }
-    val automaticMaxTimeNote = model.value.notes.notes.firstOrNull() {
+    val automaticMaxTimeNote = model.value.notes.notes.firstOrNull {
         it.description == stringResource(
             id = cat.petrushkacat.audiobookplayer.strings.R.string.automatic_max_time_note_description)
     }
-    val automaticPlayTapNote = model.value.notes.notes.firstOrNull() {
+    val automaticPlayTapNote = model.value.notes.notes.firstOrNull {
         it.description == stringResource(
             id = cat.petrushkacat.audiobookplayer.strings.R.string.automatic_play_tap_note_description)
     }
@@ -66,7 +66,7 @@ fun NotesComponentUi(component: NotesComponent) {
                         NoteItem(note = automaticMaxTimeNote,
                         onNoteClick = component::onNoteClick,
                             onDeleteClick = component::deleteNote,
-                            onDescriptionChange = { a, b -> })
+                            onDescriptionChange = { _, _ -> })
                     }
                 }
                 item {
@@ -74,7 +74,7 @@ fun NotesComponentUi(component: NotesComponent) {
                         NoteItem(note = automaticPlayTapNote,
                             onNoteClick = component::onNoteClick,
                             onDeleteClick = component::deleteNote,
-                            onDescriptionChange = { a, b -> })
+                            onDescriptionChange = { _, _ -> })
                     }
                 }
                 items(model.value.notes.notes.size) {

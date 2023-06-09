@@ -6,6 +6,8 @@ import android.content.Intent
 import android.net.Uri
 import android.widget.Toast
 import androidx.core.content.ContextCompat.startActivity
+import cat.petrushkacat.audiobookplayer.components.consts.Constants.SHARED_PREFS_NAME
+import cat.petrushkacat.audiobookplayer.components.consts.Constants.WAS_RATED_KEY
 import cat.petrushkacat.audiobookplayer.components.util.componentCoroutineScopeDefault
 import cat.petrushkacat.audiobookplayer.domain.models.SettingsEntity
 import cat.petrushkacat.audiobookplayer.domain.usecases.settings.GetSettingsUseCase
@@ -16,8 +18,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 private const val BUG_REPORT_MAIL = "simple.audiobook.player@gmail.com"
-const val SHARED_PREFS_NAME = "shared_preferences"
-const val WAS_RATED_KEY = "was_rated_key"
 
 class DrawerComponentImpl(
     componentContext: ComponentContext,

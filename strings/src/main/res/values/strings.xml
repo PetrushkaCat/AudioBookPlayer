@@ -78,6 +78,7 @@
     <string name="automatic_play_tap_note_description">This is an automatic note that is updated every time you tap on play button</string>
     <string name="open_with">Open with</string>
     <string name="no_mail_apps_found">No mail apps found</string>
+    <string name="not_available_during_scan">Not available during scan. Try a bit later</string>
 
 
 

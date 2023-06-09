@@ -4,18 +4,19 @@ import android.content.Context
 import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.util.Log
+import android.widget.Toast
 import androidx.documentfile.provider.DocumentFile
 import cat.petrushkacat.audiobookplayer.components.components.main.folderselector.extractInt
 import cat.petrushkacat.audiobookplayer.components.components.main.folderselector.isAudio
 import cat.petrushkacat.audiobookplayer.components.components.shared.bookdropdownmenu.BookDropdownMenuComponent
 import cat.petrushkacat.audiobookplayer.components.components.shared.bookdropdownmenu.BookDropdownMenuComponentImpl
+import cat.petrushkacat.audiobookplayer.components.states.RefreshingStates
 import cat.petrushkacat.audiobookplayer.components.util.componentCoroutineScopeDefault
 import cat.petrushkacat.audiobookplayer.components.util.componentCoroutineScopeIO
 import cat.petrushkacat.audiobookplayer.domain.models.BookEntity
 import cat.petrushkacat.audiobookplayer.domain.models.BookListEntity
 import cat.petrushkacat.audiobookplayer.domain.models.Chapter
 import cat.petrushkacat.audiobookplayer.domain.models.Chapters
-import cat.petrushkacat.audiobookplayer.domain.models.RootFolderEntity
 import cat.petrushkacat.audiobookplayer.domain.usecases.books.DeleteIfNoInListUseCase
 import cat.petrushkacat.audiobookplayer.domain.usecases.books.GetBookUseCase
 import cat.petrushkacat.audiobookplayer.domain.usecases.books.GetBooksUseCase
@@ -141,6 +142,7 @@ class BooksListComponentImpl(
                         _foldersToProcess.value = 0
                         bookUris.clear()
                         refreshingFolderUris = emptyList()
+                        RefreshingStates.isManuallyRefreshing.value = false
                         Log.d("refreshing time", "duration: " + (Date().time - refreshingStartTime) / 1000.0)
                     }
                 }
@@ -148,22 +150,40 @@ class BooksListComponentImpl(
         }
     }
     override fun onBookClick(uri: Uri) {
-        onBookSelected(uri)
+        if (!RefreshingStates.isAddingNewFolder.value) {
+            onBookSelected(uri)
+        } else {
+            Toast.makeText(
+                context,
+                context.getString(cat.petrushkacat.audiobookplayer.strings.R.string.not_available_during_scan),
+                Toast.LENGTH_SHORT
+            ).show()
+        }
     }
 
     override fun refresh() {
-        CoroutineScope(SupervisorJob() + Dispatchers.IO).launch {
-            refreshingStartTime = Date().time
-            refreshingFolderUris = folderUris
-            _isRefreshing.value = true
-            _foldersProcessed.value = 0
-            _foldersToProcess.value = 0
+        if(
+            !RefreshingStates.isAddingNewFolder.value &&
+            !RefreshingStates.isAutomaticallyRefreshing.value
+        ) {
+            CoroutineScope(SupervisorJob() + Dispatchers.IO).launch {
+                RefreshingStates.isManuallyRefreshing.value = true
+                refreshingStartTime = Date().time
+                refreshingFolderUris = folderUris
+                _isRefreshing.value = true
+                _foldersProcessed.value = 0
+                _foldersToProcess.value = 0
 
-            for (uri in folderUris) {
-                launch {
-                    parseBooks(uri)
+                for (uri in folderUris) {
+                    launch {
+                        parseBooks(uri)
+                    }
                 }
             }
+        } else {
+            Toast.makeText(context,
+                context.getString(cat.petrushkacat.audiobookplayer.strings.R.string.not_available_during_scan),
+                Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -184,96 +204,95 @@ class BooksListComponentImpl(
             var bookDuration: Long = 0
             val chapters: MutableList<Chapter> = mutableListOf()
             val jobs = mutableListOf<Job>()
+            try {
+                bookFolder.listFiles().forEachIndexed { index, content ->
+                    if (content == null) return@forEachIndexed
+                    if (content.isDirectory) {
+                        parseCycle(content, rootFolderUri, Mutex())
+                        return@forEachIndexed
+                    }
+                    if (content.isAudio()) {
+                        jobs.add(launch {
+                            val mmr = MediaMetadataRetriever()
+                            mmr.setDataSource(context, content.uri)
 
-            bookFolder.listFiles().forEachIndexed { index, content ->
-                if (content == null) return@forEachIndexed
-                if (content.isDirectory) {
-                    parseCycle(content, rootFolderUri, Mutex())
-                    return@forEachIndexed
-                }
-                if (content.isAudio()) {
-                    jobs.add(launch {
-                        val mmr = MediaMetadataRetriever()
-                        mmr.setDataSource(context, content.uri)
-                        if(name == null) {
-                            name = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM)
-                                ?: bookFolder.name!!
-                        }
+                            if (name == null) {
+                                name =
+                                    mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM)
+                                        ?: bookFolder.name!!
+                            }
 
-                        val chapterDuration =
-                            mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
-                                ?.toLong() ?: 0
+                            val chapterDuration =
+                                mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
+                                    ?.toLong() ?: 0
 
-                        mutex.withLock {
-                            bookDuration += chapterDuration
-                        }
+                            mutex.withLock {
+                                bookDuration += chapterDuration
+                            }
 
-                        if (image == null) {
-                            image = mmr.embeddedPicture
-                        }
+                            if (image == null) {
+                                image = mmr.embeddedPicture
+                            }
 
-                        mutex.withLock {
-                            chapters.add(
-                                Chapter(
-                                    bookFolder.uri.toString(),
-                                    content.name?.substringBeforeLast('.')
-                                        ?: "Chapter ${index + 1}",
-                                    chapterDuration,
-                                    bookDuration - chapterDuration,
-                                    content.uri.toString()
+                            mmr.release()
+
+                            mutex.withLock {
+                                chapters.add(
+                                    Chapter(
+                                        bookFolder.uri.toString(),
+                                        content.name?.substringBeforeLast('.')
+                                            ?: "Chapter ${index + 1}",
+                                        chapterDuration,
+                                        bookDuration - chapterDuration,
+                                        content.uri.toString()
+                                    )
                                 )
-                            )
-                        }
-                    })
-                }
-            }
-            jobs.joinAll()
-
-            name?.let {
-                val sortedChapters = chapters.sortedWith { a, b ->
-                    extractInt(a) - extractInt(b)
+                            }
+                        })
+                    }
                 }
 
-                var timeFromBeginning = 0L
-                sortedChapters.forEach {
-                    it.timeFromBeginning = timeFromBeginning
-                    timeFromBeginning += it.duration
-                }
-                if(!isActive) return@launch
-                saveBookUseCase(
-                    BookEntity(
-                        folderUri = bookFolder.uri.toString(),
-                        folderName = bookFolder.name!!,
-                        name = name!!,
-                        chapters = Chapters(sortedChapters),
-                        currentChapter = 0,
-                        currentChapterTime = 0,
-                        currentTime = 0,
-                        duration = bookDuration,
-                        rootFolderUri = rootFolderUri.toString(),
-                        image = image,
+                jobs.joinAll()
+
+                name?.let {
+                    val sortedChapters = chapters.sortedWith { a, b ->
+                        extractInt(a) - extractInt(b)
+                    }
+
+                    var timeFromBeginning = 0L
+                    sortedChapters.forEach {
+                        it.timeFromBeginning = timeFromBeginning
+                        timeFromBeginning += it.duration
+                    }
+                    if (!isActive) return@launch
+                    saveBookUseCase(
+                        BookEntity(
+                            folderUri = bookFolder.uri.toString(),
+                            folderName = bookFolder.name!!,
+                            name = name!!,
+                            chapters = Chapters(sortedChapters),
+                            currentChapter = 0,
+                            currentChapterTime = 0,
+                            currentTime = 0,
+                            duration = bookDuration,
+                            rootFolderUri = rootFolderUri.toString(),
+                            image = image,
+                            addedTime = Date().time
+                        )
                     )
-                )
-                globalMutex.withLock {
-                    bookUris.add(bookFolder.uri.toString())
+                    globalMutex.withLock {
+                        bookUris.add(bookFolder.uri.toString())
+                    }
                 }
-            }
 
-            globalMutex.withLock {
-                _foldersProcessed.value += 1
+                globalMutex.withLock {
+                    _foldersProcessed.value += 1
+                }
+                Log.d("refreshing complete", name.toString())
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Log.d("refreshing failed", name.toString())
             }
-            Log.d("refreshing complete", name.toString())
-        }
-    }
-
-    private fun filterBooks(folders: List<RootFolderEntity>, books: List<BookListEntity>): List<BookListEntity> {
-        val currentFolder = folders.firstOrNull { it.isCurrent }
-        return if(currentFolder != null) {
-            books.filter {
-                it.rootFolderUri == currentFolder.uri
-            }
-        } else {
-            books.toMutableList()
         }
     }
 

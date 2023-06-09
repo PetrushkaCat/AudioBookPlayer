@@ -27,6 +27,7 @@ class BookshelfComponentImpl(
 
     override val bookshelfToolbarComponent = BookshelfToolbarComponentImpl(
         childContext("toolbar_component"),
+        context,
         useCasesProvider.settingsUseCases.getSettingsUseCase,
         useCasesProvider.foldersUseCases.getFoldersUseCase,
         useCasesProvider.foldersUseCases.updateFolderUseCase,

@@ -1,5 +1,6 @@
 package cat.petrushkacat.audiobookplayer.app.ui.components
 
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
@@ -28,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
@@ -35,11 +37,13 @@ import androidx.compose.ui.unit.sp
 import cat.petrushkacat.audiobookplayer.app.ui.components.shared.CommonTopAppBar
 import cat.petrushkacat.audiobookplayer.app.ui.theme.Purple40
 import cat.petrushkacat.audiobookplayer.components.components.main.folderselector.FoldersComponent
+import cat.petrushkacat.audiobookplayer.components.states.RefreshingStates
 import cat.petrushkacat.audiobookplayer.domain.models.RootFolderEntity
 
 @Composable
 fun FoldersComponentUi(component: FoldersComponent) {
 
+    val context = LocalContext.current
     val model = component.models.collectAsState()
     val foldersToProcess by component.foldersToProcess.collectAsState()
     val foldersProcessed by component.foldersProcessed.collectAsState()
@@ -101,6 +105,8 @@ fun FoldersComponentUi(component: FoldersComponent) {
                     .padding(horizontal = 20.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                val notAvailableText = stringResource(cat.petrushkacat.audiobookplayer.strings.R.string.not_available_during_scan)
+
                 Text(
                     stringResource(id = cat.petrushkacat.audiobookplayer.strings.R.string.add_folder_description),
                     modifier = Modifier.weight(5f),
@@ -111,7 +117,19 @@ fun FoldersComponentUi(component: FoldersComponent) {
                     stringResource(id = cat.petrushkacat.audiobookplayer.strings.R.string.add_folder_icon),
                     modifier = Modifier
                         .clickable {
-                            launcher.launch(null)
+                            if (
+                                !RefreshingStates.isAutomaticallyRefreshing.value &&
+                                !RefreshingStates.isManuallyRefreshing.value &&
+                                !RefreshingStates.isAddingNewFolder.value
+                            ) {
+                                launcher.launch(null)
+                            } else {
+                                Toast.makeText(
+                                    context,
+                                    notAvailableText,
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
                         }
                         .weight(1f)
                         .size(48.dp)

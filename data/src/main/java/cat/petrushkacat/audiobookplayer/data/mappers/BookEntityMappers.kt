@@ -47,7 +47,8 @@ fun BookEntityDB.toBookEntity(): BookEntity {
         lastTimeListened = this.lastTimeListened,
         isFavorite = this.isFavorite,
         isTemporarilyDeleted = this.isTemporarilyDeleted,
-        isWantToListen = this.isWantToListen
+        isWantToListen = this.isWantToListen,
+        addedTime = this.addedTime
     )
 }
 
@@ -91,6 +92,7 @@ fun BookEntity.toBookEntityDB(): BookEntityDB {
         lastTimeListened = this.lastTimeListened,
         isFavorite = this.isFavorite,
         isTemporarilyDeleted = this.isTemporarilyDeleted,
-        isWantToListen = this.isWantToListen
+        isWantToListen = this.isWantToListen,
+        addedTime = this.addedTime
     )
 }

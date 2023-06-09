@@ -2,6 +2,7 @@ package cat.petrushkacat.audiobookplayer.domain.usecases
 
 import cat.petrushkacat.audiobookplayer.domain.models.ListenedInterval
 import cat.petrushkacat.audiobookplayer.domain.models.ListenedIntervals
+import cat.petrushkacat.audiobookplayer.domain.models.Month
 import cat.petrushkacat.audiobookplayer.domain.models.StatisticsEntity
 import cat.petrushkacat.audiobookplayer.domain.repository.StatisticsRepository
 import kotlinx.coroutines.flow.Flow
@@ -29,6 +30,17 @@ class FakeStatisticsRepository : StatisticsRepository {
             && it.day == statisticsEntity.day
         }
         fakeStatisticsDB.add(statisticsEntity)
+    }
+
+    override suspend fun getAllMonth(): Flow<List<Month>> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun getAllStatisticsInMonth(
+        year: Int,
+        month: Int
+    ): Flow<List<StatisticsEntity>> {
+        TODO("Not yet implemented")
     }
 
     private fun generateStatistics(): List<StatisticsEntity> {

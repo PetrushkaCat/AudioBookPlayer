@@ -2,7 +2,6 @@ package cat.petrushkacat.audiobookplayer.data.repository
 
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
-import cat.petrushkacat.audiobookplayer.audioservice.model.AudioServiceSettings
 import cat.petrushkacat.audiobookplayer.data.db.AudiobooksDatabase
 import cat.petrushkacat.audiobookplayer.data.db.dao.SettingsDao
 import cat.petrushkacat.audiobookplayer.domain.models.Grid
@@ -47,7 +46,7 @@ class SettingsRepositoryImplTest {
 
     @Test
     fun `returns not null audio service settings if there is no settings yet`() = runTest {
-        val settings = repository.getAudioServiceSettings().first()
+        val settings = repository.getSettings().first()
         Truth.assertThat(settings).isNotNull()
     }
 
@@ -59,8 +58,10 @@ class SettingsRepositoryImplTest {
 
         repository.saveSettings(settingsSaved)
 
-        val settings = repository.getAudioServiceSettings().first()
-        Truth.assertThat(settings).isEqualTo(AudioServiceSettings(1,1,1,1,1,1))
+        val settings = repository.getSettings().first()
+        Truth.assertThat(settings).isEqualTo(SettingsEntity(1, 1, 1,
+            1, 1, Theme.DARK, Grid.SMALL_CELLS, 1,
+            SettingsEntity.SleepTimerType.EndOfTheChapter))
     }
 
     @Test

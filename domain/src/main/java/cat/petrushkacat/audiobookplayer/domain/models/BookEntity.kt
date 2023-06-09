@@ -31,6 +31,7 @@ data class BookEntity(
     val isFavorite: Boolean = false,
     val isTemporarilyDeleted: Boolean = false,
     val isWantToListen: Boolean = false,
+    val addedTime: Long = 0
     )
 
 @Serializable

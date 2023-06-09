@@ -30,7 +30,7 @@ import cat.petrushkacat.audiobookplayer.data.dto.StatisticsEntityDB
         SettingsEntityDTO::class,
         StatisticsEntityDB::class
                ],
-    version = 4,
+    version = 5,
     autoMigrations = [
         AutoMigration(
             from = 1,
@@ -43,6 +43,10 @@ import cat.petrushkacat.audiobookplayer.data.dto.StatisticsEntityDB
         AutoMigration(
             from = 3,
             to = 4
+        ),
+        AutoMigration(
+            from = 4,
+            to = 5
         )
     ],
     exportSchema = true

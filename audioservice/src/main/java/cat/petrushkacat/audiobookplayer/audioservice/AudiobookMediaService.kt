@@ -18,8 +18,6 @@ const val FOLDER_NAME_EXTRA = "folder_name_extra"
 const val DURATION_EXTRA = "duration_extra"
 const val CHAPTER_DURATIONS_EXTRA = "chapter_durations"
 const val IS_COMPLETED_EXTRA = "is_completed"
-const val SERVICE_CALL_CODE_STOP = 1
-const val SERVICE_CALL_CODE_START = 0
 
 @AndroidEntryPoint
 class AudiobookMediaService : MediaSessionService() {

@@ -97,7 +97,7 @@ fun BookPlayerComponentUi(component: BookPlayerComponent) {
 
     val bitmap = remember { mutableStateOf<Bitmap?>(null) }
 
-    LaunchedEffect(key1 = model) {
+    LaunchedEffect(key1 = model.image) {
         scope.launch(Dispatchers.IO) {
             bitmap.value = if (model.image != null) {
                 BitmapFactory.decodeByteArray(model.image, 0, model.image!!.size)

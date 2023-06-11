@@ -24,6 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -36,7 +37,6 @@ import androidx.compose.ui.unit.sp
 import cat.petrushkacat.audiobookplayer.R
 import cat.petrushkacat.audiobookplayer.app.util.formatDuration
 import cat.petrushkacat.audiobookplayer.domain.models.BookListEntity
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -52,10 +52,11 @@ fun BookListItem(
 ) {
 
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
     val bitmap = remember { mutableStateOf<Bitmap?>(null) }
 
-    LaunchedEffect(key1 = model) {
-        CoroutineScope(Dispatchers.IO).launch {
+    LaunchedEffect(key1 = model.image) {
+        scope.launch(Dispatchers.IO) {
             bitmap.value = if (model.image != null) {
                 BitmapFactory.decodeByteArray(model.image, 0, model.image!!.size)
             } else {
@@ -166,10 +167,11 @@ fun BookListItem(
 fun BookGridItem(model: BookListEntity, modifier: Modifier) {
 
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
     val bitmap = remember { mutableStateOf<Bitmap?>(null) }
 
-    LaunchedEffect(key1 = model) {
-        CoroutineScope(Dispatchers.IO).launch {
+    LaunchedEffect(key1 = model.image) {
+        scope.launch(Dispatchers.IO) {
             bitmap.value = if (model.image != null) {
                 BitmapFactory.decodeByteArray(model.image, 0, model.image!!.size)
             } else {
@@ -177,6 +179,7 @@ fun BookGridItem(model: BookListEntity, modifier: Modifier) {
             }
         }
     }
+
     Box(modifier = modifier.padding(4.dp)) {
         Column(
             modifier = Modifier

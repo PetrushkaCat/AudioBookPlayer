@@ -2,8 +2,10 @@ package cat.petrushkacat.audiobookplayer.domain.usecases.books
 
 import cat.petrushkacat.audiobookplayer.domain.models.BookListEntity
 import cat.petrushkacat.audiobookplayer.domain.repository.AudiobooksRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 
 class GetBooksUseCase(
     private val audiobooksRepository: AudiobooksRepository
@@ -48,7 +50,7 @@ class GetBooksUseCase(
         }
     }
 
-    private fun sortBooks(books: List<BookListEntity>): List<BookListEntity> {
+    private suspend fun sortBooks(books: List<BookListEntity>): List<BookListEntity> = withContext(Dispatchers.Default) {
         val started: MutableList<BookListEntity> = mutableListOf()
         val completed: MutableList<BookListEntity> = mutableListOf()
         val notStarted: MutableList<BookListEntity> = mutableListOf()
@@ -66,7 +68,7 @@ class GetBooksUseCase(
             }
 
             started += notStarted + completed
-            return started.toMutableList()
+            started.toMutableList()
     }
 
     sealed interface BooksType {

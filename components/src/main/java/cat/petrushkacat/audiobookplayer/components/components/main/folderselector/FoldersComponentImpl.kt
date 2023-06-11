@@ -8,7 +8,6 @@ import android.util.Log
 import android.widget.Toast
 import androidx.documentfile.provider.DocumentFile
 import cat.petrushkacat.audiobookplayer.components.states.RefreshingStates
-import cat.petrushkacat.audiobookplayer.components.util.componentCoroutineScopeDefault
 import cat.petrushkacat.audiobookplayer.components.util.componentCoroutineScopeIO
 import cat.petrushkacat.audiobookplayer.components.util.supportedAudioFormats
 import cat.petrushkacat.audiobookplayer.components.util.supportedImageFormats
@@ -33,6 +32,7 @@ import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.withContext
 import java.util.Date
 
 class FoldersComponentImpl(
@@ -46,7 +46,6 @@ class FoldersComponentImpl(
     val onBackClicked: () -> Unit
 ) : FoldersComponent, ComponentContext by componentContext {
 
-    private val scopeDefault = componentCoroutineScopeDefault()
     private val scopeIO = componentCoroutineScopeIO()
 
     private val _models: MutableStateFlow<List<RootFolderEntity>> = MutableStateFlow(emptyList())
@@ -56,7 +55,7 @@ class FoldersComponentImpl(
     override val foldersProcessed = _foldersProcessed.asStateFlow()
 
     init {
-        scopeDefault.launch {
+        scopeIO.launch {
             getFoldersUseCase().collect {
                 _models.value = it
             }
@@ -79,7 +78,7 @@ class FoldersComponentImpl(
             !RefreshingStates.isManuallyRefreshing &&
             !RefreshingStates.isAddingNewFolder
         ) {
-            scopeDefault.launch {
+            CoroutineScope(SupervisorJob() + Dispatchers.IO).launch {
                 deleteFolderUseCase(rootFolderEntity)
                 deleteAllBooksInFolderUseCase(rootFolderEntity.uri)
             }
@@ -186,16 +185,18 @@ class FoldersComponentImpl(
 
             name?.let {
 
-                val sortedChapters = chapters.sortedWith { a, b ->
-                    extractInt(a) - extractInt(b)
-                }
+                val sortedChapters = withContext(Dispatchers.Default) {
+                    val temp = chapters.sortedWith { a, b ->
+                        extractInt(a) - extractInt(b)
+                    }
 
-                var timeFromBeginning = 0L
-                sortedChapters.forEach {
-                    it.timeFromBeginning = timeFromBeginning
-                    timeFromBeginning += it.duration
+                    var timeFromBeginning = 0L
+                    temp.forEach {
+                        it.timeFromBeginning = timeFromBeginning
+                        timeFromBeginning += it.duration
+                    }
+                    temp
                 }
-
 
                 saveBookUseCase(
                     BookEntity(

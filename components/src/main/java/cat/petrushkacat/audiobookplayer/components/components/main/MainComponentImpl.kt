@@ -69,7 +69,7 @@ class MainComponentImpl(
                                 "Seems like there is no more such a book. Deleting...",
                                 Toast.LENGTH_SHORT).show()
                             scopeIO.launch {
-                            useCasesProvider.booksUseCases.deleteBookUseCase(it.toString())
+                                useCasesProvider.booksUseCases.deleteBookUseCase(it.toString())
                             }
                         }
                     },

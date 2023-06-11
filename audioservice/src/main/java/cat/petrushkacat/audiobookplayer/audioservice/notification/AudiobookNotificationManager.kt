@@ -38,10 +38,6 @@ class AudiobookNotificationManager @Inject constructor(
         startForegroundNotification(mediaSessionService)
     }
 
-    fun removeNotification() {
-        notificationManager.cancelAll()
-    }
-
     private fun buildNotification(mediaSession: MediaSession) {
         PlayerNotificationManager.Builder(context, NOTIFICATION_ID, NOTIFICATION_CHANNEL_ID)
             .setMediaDescriptionAdapter(

@@ -63,7 +63,7 @@ class AudiobookServiceHandler @Inject constructor(
     private lateinit var noteDescription: String
 
     init {
-        CoroutineScope(SupervisorJob() + Dispatchers.Default).launch {
+        CoroutineScope(SupervisorJob() + Dispatchers.IO).launch {
             getSettingsUseCase().collect { settings ->
                 autoSeekBack = settings.autoRewindBackTime
                 seek = settings.rewindTime

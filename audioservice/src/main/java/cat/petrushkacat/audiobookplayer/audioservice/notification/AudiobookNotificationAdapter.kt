@@ -23,7 +23,7 @@ class AudiobookNotificationAdapter(
         return pendingIntent
     }
 
-    override fun getCurrentContentText(player: Player): CharSequence? {
+    override fun getCurrentContentText(player: Player): CharSequence {
         return player.mediaMetadata.title ?: ""
     }
 

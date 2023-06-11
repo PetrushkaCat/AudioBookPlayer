@@ -1,6 +1,6 @@
 package cat.petrushkacat.audiobookplayer.components.components.main.statistics.list
 
-import cat.petrushkacat.audiobookplayer.components.util.componentCoroutineScopeDefault
+import cat.petrushkacat.audiobookplayer.components.util.componentCoroutineScopeIO
 import cat.petrushkacat.audiobookplayer.domain.models.Month
 import cat.petrushkacat.audiobookplayer.domain.models.StatisticsEntity
 import cat.petrushkacat.audiobookplayer.domain.usecases.statistics.GetAllMonthsUseCase
@@ -23,7 +23,7 @@ class StatisticsListComponentImpl(
     private val onBackClicked: () -> Unit
 ) : StatisticsListComponent, ComponentContext by componentContext {
 
-    private val scopeDefault = componentCoroutineScopeDefault()
+    private val scopeIO = componentCoroutineScopeIO()
     private val _models = MutableStateFlow<List<StatisticsEntity>>(emptyList())
     override val models: StateFlow<List<StatisticsEntity>> = _models.asStateFlow()
 
@@ -33,7 +33,7 @@ class StatisticsListComponentImpl(
     override val months: StateFlow<List<Month>> = _months.asStateFlow()
 
     init {
-        scopeDefault.launch {
+        scopeIO.launch {
             val date = LocalDate.now()
             val month = Month(date.year, date.monthValue)
             if (_month.value == null) {

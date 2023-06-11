@@ -1,7 +1,7 @@
 package cat.petrushkacat.audiobookplayer.app.di
 
 import android.content.Context
-import cat.petrushkacat.audiobookplayer.app.scanner.Scanner
+import cat.petrushkacat.audiobookplayer.app.scanner.BooksScanner
 import cat.petrushkacat.audiobookplayer.domain.usecases.UseCasesProvider
 import dagger.Module
 import dagger.Provides
@@ -17,7 +17,7 @@ class ScannerModule {
     fun provideScanner(
         @ActivityContext context: Context,
         useCasesProvider: UseCasesProvider
-    ) = Scanner(
+    ) = BooksScanner(
         context,
         useCasesProvider.foldersUseCases.getFoldersUseCase,
         useCasesProvider.booksUseCases.saveBookUseCase,

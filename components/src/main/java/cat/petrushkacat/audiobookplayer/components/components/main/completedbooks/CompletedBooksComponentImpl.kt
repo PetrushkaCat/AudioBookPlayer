@@ -2,7 +2,7 @@ package cat.petrushkacat.audiobookplayer.components.components.main.completedboo
 
 import cat.petrushkacat.audiobookplayer.components.components.shared.bookdropdownmenu.BookDropdownMenuComponent
 import cat.petrushkacat.audiobookplayer.components.components.shared.bookdropdownmenu.BookDropdownMenuComponentImpl
-import cat.petrushkacat.audiobookplayer.components.util.componentCoroutineScopeDefault
+import cat.petrushkacat.audiobookplayer.components.util.componentCoroutineScopeIO
 import cat.petrushkacat.audiobookplayer.domain.models.BookListEntity
 import cat.petrushkacat.audiobookplayer.domain.usecases.books.GetBookUseCase
 import cat.petrushkacat.audiobookplayer.domain.usecases.books.GetBooksUseCase
@@ -31,7 +31,7 @@ class CompletedBooksComponentImpl (
             updateBookUseCase
         )
 
-        private val scope = componentCoroutineScopeDefault()
+        private val scopeIO = componentCoroutineScopeIO()
 
         private val _models = MutableStateFlow<List<BookListEntity>>(emptyList())
         override val models = _models.asStateFlow()
@@ -41,7 +41,7 @@ class CompletedBooksComponentImpl (
 
 
         init {
-            scope.launch {
+            scopeIO.launch {
                 launch {
                    getBooksUseCase(GetBooksUseCase.BooksType.Completed).collect { books ->
                         _models.value = books

@@ -2,7 +2,7 @@ package cat.petrushkacat.audiobookplayer.components.components.main.bookplayer.n
 
 import android.content.Context
 import cat.petrushkacat.audiobookplayer.audioservice.AudiobookServiceHandler
-import cat.petrushkacat.audiobookplayer.components.util.componentCoroutineScopeDefault
+import cat.petrushkacat.audiobookplayer.components.util.componentCoroutineScopeIO
 import cat.petrushkacat.audiobookplayer.domain.models.BookNotesEntity
 import cat.petrushkacat.audiobookplayer.domain.models.Note
 import cat.petrushkacat.audiobookplayer.domain.models.SettingsEntity
@@ -35,7 +35,7 @@ class NotesComponentImpl(
     private val onBackClicked: () -> Unit
 ) : NotesComponent, ComponentContext by componentContext {
 
-    private val scope = componentCoroutineScopeDefault()
+    private val scopeIO = componentCoroutineScopeIO()
 
     private var chapterNames = emptyList<String>()
     private val _models = MutableStateFlow(BookNotesEntity())
@@ -47,7 +47,7 @@ class NotesComponentImpl(
     init {
         val index = audiobookServiceHandler.currentTimings.value.currentChapterIndex
         val time = audiobookServiceHandler.currentTimings.value.currentTimeInChapter
-        scope.launch {
+        scopeIO.launch {
             launch {
                 getSettingsUseCase().collect {
                     _settings.value = it

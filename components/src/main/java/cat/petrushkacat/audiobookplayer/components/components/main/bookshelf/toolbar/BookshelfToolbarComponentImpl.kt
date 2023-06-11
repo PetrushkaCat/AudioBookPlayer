@@ -37,7 +37,7 @@ class BookshelfToolbarComponentImpl(
     override val folders = _folders.asStateFlow()
 
     init {
-        scope.launch {
+        scopeIO.launch {
             launch {
                 getSettingsUseCase().collect {
                     _settings.value = it
@@ -85,7 +85,7 @@ class BookshelfToolbarComponentImpl(
     }
 
     override fun onGridButtonClick() {
-        scope.launch {
+        scopeIO.launch {
             var index = settings.value.grid.ordinal
             index = if (index + 1 == cat.petrushkacat.audiobookplayer.domain.models.Grid.values().size) 0 else ++index
             saveSettingsUseCase(

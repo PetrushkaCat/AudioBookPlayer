@@ -17,7 +17,7 @@ import cat.petrushkacat.audiobookplayer.audioservice.FOLDER_NAME_EXTRA
 import cat.petrushkacat.audiobookplayer.audioservice.IS_COMPLETED_EXTRA
 import cat.petrushkacat.audiobookplayer.audioservice.PlayerEvent
 import cat.petrushkacat.audiobookplayer.audioservice.sensors.SensorListener
-import cat.petrushkacat.audiobookplayer.components.util.componentCoroutineScopeDefault
+import cat.petrushkacat.audiobookplayer.components.util.componentCoroutineScopeIO
 import cat.petrushkacat.audiobookplayer.components.util.componentCoroutineScopeMain
 import cat.petrushkacat.audiobookplayer.domain.models.BookEntity
 import cat.petrushkacat.audiobookplayer.domain.models.Chapter
@@ -42,10 +42,8 @@ class BookPlayerComponentImpl(
     private val onBack: () -> Unit,
 ) : BookPlayerComponent, ComponentContext by componentContext {
 
-    private val stateSaverString = "state_saver_player"
-
     private var alive = true
-    private val scope = componentContext.componentCoroutineScopeDefault()
+    private val scopeIO = componentContext.componentCoroutineScopeIO()
     private val scopeMain = componentContext.componentCoroutineScopeMain()
 
     private val mediaItems: MutableList<MediaItem> = mutableListOf()
@@ -77,14 +75,8 @@ class BookPlayerComponentImpl(
     )
     override val models = _models.asStateFlow()
 
-    override fun onPlayerEvent(playerEvent: PlayerEvent) {
-        scopeMain.launch {
-            audiobookServiceHandler.onPlayerEvent(playerEvent)
-        }
-    }
-
     init {
-        scope.launch {
+        scopeIO.launch {
             launch {
                 Log.d("player-5", isInitialized.toString() + " $counter")
                 backHandler.register(BackCallback {
@@ -144,21 +136,30 @@ class BookPlayerComponentImpl(
 
                 }
             }
-            Log.d("list null" , "3")
+            launch {
+                Log.d("list null", "3")
 
-            sensorManager = context.getSystemService(ComponentActivity.SENSOR_SERVICE) as SensorManager
-            val sensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
+                sensorManager =
+                    context.getSystemService(ComponentActivity.SENSOR_SERVICE) as SensorManager
+                val sensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
 
-            try {
-                sensorManager.registerListener(
-                    sensorListener,
-                    sensor!!,
-                    SensorManager.SENSOR_DELAY_NORMAL
-                )
-            } catch (e: Exception) {
-                e.printStackTrace()
-                Log.d("sensor", "no sensor Registered")
+                try {
+                    sensorManager.registerListener(
+                        sensorListener,
+                        sensor!!,
+                        SensorManager.SENSOR_DELAY_NORMAL
+                    )
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    Log.d("sensor", "no sensor Registered")
+                }
             }
+        }
+    }
+
+    override fun onPlayerEvent(playerEvent: PlayerEvent) {
+        scopeMain.launch {
+            audiobookServiceHandler.onPlayerEvent(playerEvent)
         }
     }
 

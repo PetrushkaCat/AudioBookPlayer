@@ -2,13 +2,15 @@ package cat.petrushkacat.audiobookplayer.components.components.main.bookplayer.b
 
 import cat.petrushkacat.audiobookplayer.audioservice.AudiobookServiceHandler
 import cat.petrushkacat.audiobookplayer.audioservice.ManualSleepTimerState
-import cat.petrushkacat.audiobookplayer.components.util.componentCoroutineScopeDefault
 import cat.petrushkacat.audiobookplayer.components.util.componentCoroutineScopeIO
 import cat.petrushkacat.audiobookplayer.components.util.componentCoroutineScopeMain
 import cat.petrushkacat.audiobookplayer.domain.models.SettingsEntity
 import cat.petrushkacat.audiobookplayer.domain.usecases.settings.GetSettingsUseCase
 import cat.petrushkacat.audiobookplayer.domain.usecases.settings.SaveSettingsUseCase
 import com.arkivanov.decompose.ComponentContext
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -31,12 +33,10 @@ class BookPlayerToolbarComponentImpl(
     override fun getPlaySpeed() = audiobookServiceHandler.getPlaySpeed()
 
     private val scopeMain = componentCoroutineScopeMain()
-    private val scopeDefault = componentCoroutineScopeDefault()
     private val scopeIO = componentCoroutineScopeIO()
 
-
     init {
-        scopeDefault.launch {
+        scopeIO.launch {
             getSettingsUseCase().collect {
                 _settings.value = it
             }
@@ -63,7 +63,7 @@ class BookPlayerToolbarComponentImpl(
     }
 
     private fun saveLastManualSleepDuration(sleepTimerType: SettingsEntity.SleepTimerType) {
-        scopeIO.launch {
+        CoroutineScope(SupervisorJob() + Dispatchers.IO).launch {
             saveSettingsUseCase(
                 settings.value.copy(
                     sleepTimerType = sleepTimerType

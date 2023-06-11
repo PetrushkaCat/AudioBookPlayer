@@ -22,7 +22,7 @@ class SettingsComponentImpl(
     private val onBackClicked: () -> Unit
 ) : SettingsComponent, ComponentContext by componentContext {
 
-    private val scope = componentCoroutineScopeDefault()
+    private val scopeDefault = componentCoroutineScopeDefault()
     private val scopeIO = componentCoroutineScopeIO()
 
     private val _models = MutableStateFlow(cat.petrushkacat.audiobookplayer.domain.models.SettingsEntity())
@@ -30,7 +30,7 @@ class SettingsComponentImpl(
 
 
     init {
-        scope.launch {
+        scopeIO.launch {
             getSettingsUseCase().collect {
                 _models.value = it
             }
@@ -43,7 +43,7 @@ class SettingsComponentImpl(
     }
 
     override fun changeTheme(isDark: Boolean) {
-        scope.launch {
+        scopeDefault.launch {
             saveSettings(
                 models.value.copy(
                     theme = if (isDark) Theme.DARK else Theme.LIGHT
@@ -53,7 +53,7 @@ class SettingsComponentImpl(
     }
 
     override fun changeRewindTime(time: Long) {
-        scope.launch {
+        scopeDefault.launch {
             saveSettings(
                 models.value.copy(
                     rewindTime = time
@@ -71,7 +71,7 @@ class SettingsComponentImpl(
     }
 
     override fun changeAutoRewindTime(time: Long) {
-        scope.launch {
+        scopeDefault.launch {
             saveSettings(
                 models.value.copy(
                     autoRewindBackTime = time
@@ -81,7 +81,7 @@ class SettingsComponentImpl(
     }
 
     override fun changeAutoSleepTime(time: Long) {
-        scope.launch {
+        scopeDefault.launch {
             saveSettings(
                 models.value.copy(
                     autoSleepTime = time

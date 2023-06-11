@@ -10,7 +10,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.lifecycleScope
-import cat.petrushkacat.audiobookplayer.app.scanner.Scanner
+import cat.petrushkacat.audiobookplayer.app.scanner.BooksScanner
 import cat.petrushkacat.audiobookplayer.app.ui.components.RootComponentUi
 import cat.petrushkacat.audiobookplayer.app.ui.theme.AudioBookPlayerTheme
 import cat.petrushkacat.audiobookplayer.audioservice.AudiobookServiceHandler
@@ -50,7 +50,7 @@ class MainActivity : ComponentActivity() {
     lateinit var useCasesProvider: UseCasesProvider
 
     @Inject
-    lateinit var scanner: Scanner
+    lateinit var booksScanner: BooksScanner
 
     private val isDarkTheme = MutableStateFlow(true)
 
@@ -106,9 +106,9 @@ class MainActivity : ComponentActivity() {
 
     override fun onStart() {
         super.onStart()
-        lifecycleScope.launch {
+        lifecycleScope.launch(Dispatchers.IO) {
             kotlinx.coroutines.delay(300)
-            scanner.startScan()
+            booksScanner.startScan()
         }
     }
 

@@ -1,6 +1,6 @@
 package cat.petrushkacat.audiobookplayer.components.components.main.statistics.details
 
-import cat.petrushkacat.audiobookplayer.components.util.componentCoroutineScopeDefault
+import cat.petrushkacat.audiobookplayer.components.util.componentCoroutineScopeIO
 import cat.petrushkacat.audiobookplayer.domain.models.ListenedIntervals
 import cat.petrushkacat.audiobookplayer.domain.models.StatisticsEntity
 import cat.petrushkacat.audiobookplayer.domain.usecases.statistics.GetStatisticsDetailsUseCase
@@ -19,7 +19,7 @@ class StatisticsDetailsComponentImpl(
     private val onBackClicked: () -> Unit
 ) : StatisticsDetailsComponent, ComponentContext by componentContext {
 
-    private val scopeDefault = componentCoroutineScopeDefault()
+    private val scopeIO = componentCoroutineScopeIO()
     private val _models = MutableStateFlow(
         StatisticsEntity(1,1,1,1, ListenedIntervals(emptyList()))
     )
@@ -27,7 +27,7 @@ class StatisticsDetailsComponentImpl(
 
 
     init {
-        scopeDefault.launch {
+        scopeIO.launch {
             getStatisticsDetailsUseCase.invoke(year, month, day).collect {
                 _models.value = it
             }

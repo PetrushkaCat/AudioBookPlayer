@@ -8,7 +8,7 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat.startActivity
 import cat.petrushkacat.audiobookplayer.components.consts.Constants.SHARED_PREFS_NAME
 import cat.petrushkacat.audiobookplayer.components.consts.Constants.WAS_RATED_KEY
-import cat.petrushkacat.audiobookplayer.components.util.componentCoroutineScopeDefault
+import cat.petrushkacat.audiobookplayer.components.util.componentCoroutineScopeIO
 import cat.petrushkacat.audiobookplayer.domain.models.SettingsEntity
 import cat.petrushkacat.audiobookplayer.domain.usecases.settings.GetSettingsUseCase
 import com.arkivanov.decompose.ComponentContext
@@ -30,17 +30,16 @@ class DrawerComponentImpl(
     private val onStatisticsClicked: () -> Unit
 ) : DrawerComponent, ComponentContext by componentContext {
 
-    private val scopeDefault = componentCoroutineScopeDefault()
+    private val scopeIO = componentCoroutineScopeIO()
 
     private val _settings = MutableStateFlow(SettingsEntity())
     override val settings: StateFlow<SettingsEntity> = _settings
-
 
     private val _wasRated = MutableStateFlow(false)
     override val wasRated: StateFlow<Boolean> = _wasRated
 
     init {
-        scopeDefault.launch {
+        scopeIO.launch {
             getSettingsUseCase.invoke().collect {
                 _settings.value = it
             }
@@ -89,7 +88,7 @@ class DrawerComponentImpl(
         val prefs = context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE)
         prefs.edit().putBoolean(WAS_RATED_KEY, true).apply()
 
-        scopeDefault.launch {
+        scopeIO.launch {
             delay(2000)
             _wasRated.value = true
         }

@@ -11,7 +11,6 @@ import cat.petrushkacat.audiobookplayer.components.components.main.folderselecto
 import cat.petrushkacat.audiobookplayer.components.components.shared.bookdropdownmenu.BookDropdownMenuComponent
 import cat.petrushkacat.audiobookplayer.components.components.shared.bookdropdownmenu.BookDropdownMenuComponentImpl
 import cat.petrushkacat.audiobookplayer.components.states.RefreshingStates
-import cat.petrushkacat.audiobookplayer.components.util.componentCoroutineScopeDefault
 import cat.petrushkacat.audiobookplayer.components.util.componentCoroutineScopeIO
 import cat.petrushkacat.audiobookplayer.domain.models.BookEntity
 import cat.petrushkacat.audiobookplayer.domain.models.BookListEntity
@@ -41,6 +40,7 @@ import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.withContext
 import java.util.Date
 
 class BooksListComponentImpl(
@@ -65,7 +65,6 @@ class BooksListComponentImpl(
     )
 
     private val scopeIO = componentCoroutineScopeIO()
-    private val scope = componentCoroutineScopeDefault()
 
     private val _models = MutableStateFlow<List<BookListEntity>>(emptyList())
     override val models: StateFlow<List<BookListEntity>> = _models
@@ -83,7 +82,7 @@ class BooksListComponentImpl(
     private var folderUris: List<Uri> = emptyList()
 
     init {
-        scope.launch {
+        scopeIO.launch {
             launch {
                 getSettingsUseCase().collect {
                     _settings.value = it
@@ -100,11 +99,6 @@ class BooksListComponentImpl(
                         getBooksUseCase(GetBooksUseCase.BooksType.All).first()
                     }
                     _models.value = temp.toMutableList()
-                    var size = 0L
-                    it.forEach { book ->
-                        size += book.image?.size ?: 0
-                    }
-                    Log.d("size", size.toString())
                 }
             }
             launch {
@@ -135,6 +129,7 @@ class BooksListComponentImpl(
             }
         }
     }
+
     override fun onBookClick(uri: Uri) {
         if (!RefreshingStates.isAddingNewFolder) {
             onBookSelected(uri)
@@ -241,15 +236,19 @@ class BooksListComponentImpl(
                 jobs.joinAll()
 
                 name?.let {
-                    val sortedChapters = chapters.sortedWith { a, b ->
-                        extractInt(a) - extractInt(b)
+                    val sortedChapters = withContext(Dispatchers.Default) {
+                        val temp = chapters.sortedWith { a, b ->
+                            extractInt(a) - extractInt(b)
+                        }
+
+                        var timeFromBeginning = 0L
+                        temp.forEach {
+                            it.timeFromBeginning = timeFromBeginning
+                            timeFromBeginning += it.duration
+                        }
+                        temp
                     }
 
-                    var timeFromBeginning = 0L
-                    sortedChapters.forEach {
-                        it.timeFromBeginning = timeFromBeginning
-                        timeFromBeginning += it.duration
-                    }
                     if (!isActive) return@launch
                     saveBookUseCase(
                         BookEntity(

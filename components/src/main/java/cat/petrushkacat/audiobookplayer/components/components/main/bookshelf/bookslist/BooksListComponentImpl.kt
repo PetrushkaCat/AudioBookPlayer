@@ -79,6 +79,9 @@ class BooksListComponentImpl(
     private val _isSearching = MutableStateFlow(false)
     override val isSearching: StateFlow<Boolean> = _isSearching.asStateFlow()
 
+    private val _foldersCount = MutableStateFlow(0)
+    override val foldersCount: StateFlow<Int> = _foldersCount.asStateFlow()
+
     private var folderUris: List<Uri> = emptyList()
 
     init {
@@ -103,6 +106,7 @@ class BooksListComponentImpl(
             }
             launch {
                 getFoldersUseCase().collect { list ->
+                    _foldersCount.value = list.size
                     val selectedFolder = list.firstOrNull() {
                         it.isCurrent
                     }
@@ -193,9 +197,16 @@ class BooksListComponentImpl(
                         return@forEachIndexed
                     }
                     if (content.isAudio()) {
-                        jobs.add(launch {
+                        jobs.add(launch Chapter@{
                             val mmr = MediaMetadataRetriever()
-                            mmr.setDataSource(context, content.uri)
+
+                            //empty audio file crashes the app
+                            try {
+                                mmr.setDataSource(context, content.uri)
+                            } catch (e: Exception) {
+                                e.printStackTrace()
+                                return@Chapter
+                            }
 
                             if (name == null) {
                                 name =

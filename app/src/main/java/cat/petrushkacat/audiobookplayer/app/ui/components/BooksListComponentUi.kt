@@ -36,7 +36,6 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import cat.petrushkacat.audiobookplayer.R
 import cat.petrushkacat.audiobookplayer.app.ui.components.shared.BookDropdownMenuComponentUi
 import cat.petrushkacat.audiobookplayer.app.ui.components.shared.BookGridItem
 import cat.petrushkacat.audiobookplayer.app.ui.components.shared.BookListItem
@@ -60,6 +59,7 @@ fun BooksListComponentUi(component: BooksListComponent) {
     val isDropdownMenuExpanded = rememberSaveable { mutableStateOf(false) }
     val selectedBook = component.bookDropDownMenuComponent.selectedBook.collectAsState()
     val isSearching by component.isSearching.collectAsState()
+    val foldersCount by component.foldersCount.collectAsState()
 
     val strokeWidth = 5.dp
     val circleColor = Purple40
@@ -157,7 +157,7 @@ fun BooksListComponentUi(component: BooksListComponent) {
                 }
             }
 
-            if(model.isEmpty() && !isSearching) {
+            if(model.isEmpty() && !isSearching && foldersCount < 1) {
                 Column(
                     modifier = Modifier
                         .fillMaxSize()

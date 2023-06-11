@@ -18,6 +18,8 @@ interface BooksListComponent {
     val isRefreshing: StateFlow<Boolean>
 
     val isSearching: StateFlow<Boolean>
+
+    val foldersCount: StateFlow<Int>
     fun onBookClick(uri: Uri)
 
     fun refresh()

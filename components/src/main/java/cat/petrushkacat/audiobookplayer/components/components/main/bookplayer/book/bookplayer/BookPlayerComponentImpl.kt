@@ -94,11 +94,9 @@ class BookPlayerComponentImpl(
                     withContext(Dispatchers.Main) {
                         isStropped = audiobookServiceHandler.isStopped()
                     }
-                    Log.d("list null" , it?.toString() ?: "null")
-                    Log.d("list null" , it.chapters.chapters?.toString() ?: "null")
+
                     if (!isInitialized || isStropped) {
                         for (chapter in it.chapters.chapters) {
-                            Log.d("list null" , "2")
                             val mediaItem = MediaItem.Builder()
                                 .setUri(chapter.uri)
                                 .setMediaMetadata(
@@ -137,8 +135,6 @@ class BookPlayerComponentImpl(
                 }
             }
             launch {
-                Log.d("list null", "3")
-
                 sensorManager =
                     context.getSystemService(ComponentActivity.SENSOR_SERVICE) as SensorManager
                 val sensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)

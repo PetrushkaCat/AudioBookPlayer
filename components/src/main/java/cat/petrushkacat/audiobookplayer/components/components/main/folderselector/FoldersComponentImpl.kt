@@ -149,9 +149,17 @@ class FoldersComponentImpl(
                 }
 
                 if (content.isAudio()) {
-                    jobs.add(launch {
+                    jobs.add(launch Chapter@{
                         val mmr = MediaMetadataRetriever()
-                        mmr.setDataSource(context, content.uri)
+
+                        //empty audio file crashes the app
+                        try {
+                            mmr.setDataSource(context, content.uri)
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                            return@Chapter
+                        }
+
                         name = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM)
                             ?: bookFolder.name!!
 

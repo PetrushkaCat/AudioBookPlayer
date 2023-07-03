@@ -35,8 +35,8 @@
     <string name="auto_sleep">Auto sleep</string>
     <string name="rate_this_app">Rate the app :)</string>
     <string name="description">Description</string>
-    <string name="add_folder_description">(Add a new root folder, every book must be in its own subdirectory)</string>
-    <string name="no_books_text">Seems like there are no book folders..\nTap at folder icon at top right to add new</string>
+    <string name="add_folder_description">(To avoid mixing books every book must be in its own subdirectory)</string>
+    <string name="no_books_text">Seems like there are no book folders...\nTap the folder icon at the top-right corner to add new one</string>
     <string name="change_name">Change name</string>
     <string name="change_cover">Change cover</string>
     <string name="add_to_favorites">Add to favorites</string>

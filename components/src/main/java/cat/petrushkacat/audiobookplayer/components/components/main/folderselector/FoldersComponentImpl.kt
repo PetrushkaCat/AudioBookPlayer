@@ -248,6 +248,7 @@ fun extractInt(chapter: Chapter): Int {
         if (num.isEmpty()) {
             0
         }
+        //return the number if it's likely 1 2 3 .... 10 11 .... 101
         else if(num.length <= 3) {
             Integer.parseInt(num)
         }

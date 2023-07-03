@@ -167,11 +167,14 @@ fun BooksListComponentUi(component: BooksListComponent) {
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(horizontal = 12.dp),
+                        .padding(horizontal = 36.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
-                    Text(stringResource(id = cat.petrushkacat.audiobookplayer.strings.R.string.no_books_text), textAlign = TextAlign.Center)
+                    Text(
+                        stringResource(id = cat.petrushkacat.audiobookplayer.strings.R.string.no_books_text),
+                        textAlign = TextAlign.Center
+                    )
                 }
             } else if(model.isEmpty()) {
                     Column(

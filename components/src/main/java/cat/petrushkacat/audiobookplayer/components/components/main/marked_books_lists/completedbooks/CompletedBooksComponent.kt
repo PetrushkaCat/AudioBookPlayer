@@ -1,0 +1,5 @@
+package cat.petrushkacat.audiobookplayer.components.components.main.marked_books_lists.completedbooks
+
+import cat.petrushkacat.audiobookplayer.components.components.main.marked_books_lists.MarkedBooksList
+
+interface CompletedBooksComponent: MarkedBooksList

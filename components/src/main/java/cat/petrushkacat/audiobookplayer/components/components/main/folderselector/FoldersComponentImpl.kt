@@ -195,6 +195,7 @@ class FoldersComponentImpl(
 
                 val sortedChapters = withContext(Dispatchers.Default) {
                     val temp = chapters.sortedWith { a, b ->
+                        Log.d(name, extractInt(a).toString())
                         extractInt(a) - extractInt(b)
                     }
 
@@ -241,11 +242,23 @@ class FoldersComponentImpl(
 
 fun extractInt(chapter: Chapter): Int {
     val num = chapter.name.replace("\\D".toRegex(), "")
+
     // return 0 if no digits found
     return try {
-        if (num.isEmpty()) 0 else Integer.parseInt(num)
-    } catch (e: NumberFormatException) {
-        Integer.parseInt(num.subSequence(num.length - 9, num.length).toString())
+        if (num.isEmpty()) {
+            0
+        }
+        else if(num.length <= 3) {
+            Integer.parseInt(num)
+        }
+        else {
+            var temp = num
+            temp += "0".repeat(9 - temp.length)
+
+            Integer.parseInt(temp)
+        }
+    } catch (e: Exception) {
+        Integer.parseInt(num.substring(0, 9))
     }
 }
 

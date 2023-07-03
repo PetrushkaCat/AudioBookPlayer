@@ -1,4 +1,4 @@
-package cat.petrushkacat.audiobookplayer.components.components.main.completedbooks
+package cat.petrushkacat.audiobookplayer.components.components.main.marked_books_lists.completedbooks
 
 import cat.petrushkacat.audiobookplayer.components.components.shared.bookdropdownmenu.BookDropdownMenuComponent
 import cat.petrushkacat.audiobookplayer.components.components.shared.bookdropdownmenu.BookDropdownMenuComponentImpl

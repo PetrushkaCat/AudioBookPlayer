@@ -13,8 +13,8 @@ android {
         applicationId = "cat.petrushkacat.audiobookplayer"
         minSdk = 26
         targetSdk = 33
-        versionCode = 18
-        versionName = "1.0.5 patch 2"
+        versionCode = 19
+        versionName = "1.0.5 patch 3"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -46,14 +46,13 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.4.7"
+        kotlinCompilerExtensionVersion = "1.4.8"
     }
     packaging {
         resources {
             excludes.add("/META-INF/{AL2.0,LGPL2.1}")
         }
     }
-
 
 }
 
@@ -94,8 +93,8 @@ dependencies {
     implementation(libs.hilt.android)
     kapt(libs.hilt.compiler)
 
-    implementation("com.google.android.play:app-update:2.1.0")
-    implementation("com.google.android.play:app-update-ktx:2.1.0")
+    implementation(libs.app.update)
+    implementation(libs.app.update.ktx)
 
 
     testImplementation(libs.junit.junit)

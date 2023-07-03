@@ -10,10 +10,10 @@ import cat.petrushkacat.audiobookplayer.audioservice.sensors.SensorListener
 import cat.petrushkacat.audiobookplayer.components.components.main.bookplayer.BookComponentImpl
 import cat.petrushkacat.audiobookplayer.components.components.main.bookplayer.book.bookplayer.BookPlayerComponentImpl
 import cat.petrushkacat.audiobookplayer.components.components.main.bookshelf.BookshelfComponentImpl
-import cat.petrushkacat.audiobookplayer.components.components.main.completedbooks.CompletedBooksComponentImpl
-import cat.petrushkacat.audiobookplayer.components.components.main.favorites.FavoritesComponentImpl
 import cat.petrushkacat.audiobookplayer.components.components.main.folderselector.FoldersComponentImpl
-import cat.petrushkacat.audiobookplayer.components.components.main.listenlater.ListenLaterComponentImpl
+import cat.petrushkacat.audiobookplayer.components.components.main.marked_books_lists.completedbooks.CompletedBooksComponentImpl
+import cat.petrushkacat.audiobookplayer.components.components.main.marked_books_lists.favorites.FavoritesComponentImpl
+import cat.petrushkacat.audiobookplayer.components.components.main.marked_books_lists.listenlater.ListenLaterComponentImpl
 import cat.petrushkacat.audiobookplayer.components.components.main.settings.SettingsComponentImpl
 import cat.petrushkacat.audiobookplayer.components.components.main.statistics.StatisticsComponentImpl
 import cat.petrushkacat.audiobookplayer.components.util.componentCoroutineScopeIO

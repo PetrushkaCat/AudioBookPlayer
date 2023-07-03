@@ -1,4 +1,4 @@
-package cat.petrushkacat.audiobookplayer.components.components.main.listenlater
+package cat.petrushkacat.audiobookplayer.components.components.main.marked_books_lists.favorites
 
 import cat.petrushkacat.audiobookplayer.components.components.shared.bookdropdownmenu.BookDropdownMenuComponent
 import cat.petrushkacat.audiobookplayer.components.components.shared.bookdropdownmenu.BookDropdownMenuComponentImpl
@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class ListenLaterComponentImpl(
+class FavoritesComponentImpl(
     componentContext: ComponentContext,
     private val getBookUseCase: GetBookUseCase,
     private val updateBookUseCase: UpdateBookUseCase,
@@ -23,10 +23,10 @@ class ListenLaterComponentImpl(
     private val getSettingsUseCase: GetSettingsUseCase,
     private val onBackPressed: () -> Unit,
     private val onBookClicked: (bookUri: String) -> Unit
-) : ListenLaterComponent, ComponentContext by componentContext {
+) : FavoritesComponent, ComponentContext by componentContext {
 
     override val bookDropDownMenuComponent: BookDropdownMenuComponent = BookDropdownMenuComponentImpl(
-        childContext("listenLater_drop_down"),
+        childContext("favorites_drop_down"),
         getBookUseCase,
         updateBookUseCase
     )
@@ -39,10 +39,11 @@ class ListenLaterComponentImpl(
     private val _settings = MutableStateFlow(cat.petrushkacat.audiobookplayer.domain.models.SettingsEntity())
     override val settings: StateFlow<cat.petrushkacat.audiobookplayer.domain.models.SettingsEntity> = _settings.asStateFlow()
 
+
     init {
         scopeIO.launch {
             launch {
-                getBooksUseCase(GetBooksUseCase.BooksType.ListenLater).collect { books ->
+                getBooksUseCase(GetBooksUseCase.BooksType.Favorites).collect { books ->
                     _models.value = books
                 }
             }

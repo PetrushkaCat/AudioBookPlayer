@@ -15,7 +15,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
@@ -104,10 +106,14 @@ fun BooksListComponentUi(component: BooksListComponent) {
                     contentPadding = PaddingValues(4.dp),
                     state = rememberLazyGridState(0)
                 ) {
-                    items(model.size) {
+                    items(model,
+                    key = {
+                        it.duration.toString() + it.name.toString() + it.currentTime.toString()
+                    }) {
+                        //Log.d("list1", "recomposition")
                         Box {
                             if (isDropdownMenuExpanded.value &&
-                                selectedBook.value.folderUri == model[it].folderUri
+                                selectedBook.value.folderUri == it.folderUri
                             ) {
                                 BookDropdownMenuComponentUi(
                                     component = component.bookDropDownMenuComponent,
@@ -115,12 +121,12 @@ fun BooksListComponentUi(component: BooksListComponent) {
                                     modifier = Modifier.align(Alignment.Center)
                                 )
                             }
-                            BookGridItem(model = model[it], Modifier.combinedClickable(
+                            BookGridItem(model = it, Modifier.combinedClickable(
                                 onClick = {
-                                    component.onBookClick(Uri.parse(model[it].folderUri))
+                                    component.onBookClick(Uri.parse(it.folderUri))
                                 },
                                 onLongClick = {
-                                    component.bookDropDownMenuComponent.selectBook(model[it])
+                                    component.bookDropDownMenuComponent.selectBook(it)
                                     isDropdownMenuExpanded.value = true
                                 }
                             ))
@@ -132,10 +138,10 @@ fun BooksListComponentUi(component: BooksListComponent) {
                     contentPadding = PaddingValues(4.dp),
                     state = rememberLazyListState()
                 ) {
-                    items(model.size) {
+                    items(model) {
                         Box {
                             if (isDropdownMenuExpanded.value &&
-                                selectedBook.value.folderUri == model[it].folderUri
+                                selectedBook.value.folderUri == it.folderUri
                             ) {
                                 BookDropdownMenuComponentUi(
                                     component = component.bookDropDownMenuComponent,
@@ -143,12 +149,12 @@ fun BooksListComponentUi(component: BooksListComponent) {
                                     modifier = Modifier.align(Alignment.Center)
                                 )
                             }
-                            BookListItem(model = model[it], Modifier.combinedClickable(
+                            BookListItem(model = it, Modifier.combinedClickable(
                                 onClick = {
-                                    component.onBookClick(Uri.parse(model[it].folderUri))
+                                    component.onBookClick(Uri.parse(it.folderUri))
                                 },
                                 onLongClick = {
-                                    component.bookDropDownMenuComponent.selectBook(model[it])
+                                    component.bookDropDownMenuComponent.selectBook(it)
                                     isDropdownMenuExpanded.value = true
                                 }
                             ))

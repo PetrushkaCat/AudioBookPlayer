@@ -148,8 +148,9 @@ fun BookListItem(
             )
         }
         Column {
+            val duration = if(model.duration != 0L) model.duration else 1
             LinearProgressIndicator(
-                progress = model.currentTime.toFloat() / model.duration,
+                progress = model.currentTime.toFloat() / duration,
                 modifier = Modifier.fillMaxWidth()
             )
             Row(
@@ -261,7 +262,8 @@ fun BookGridItem(model: BookListEntity, modifier: Modifier) {
             ) {
                 Text(model.name, maxLines = 3, style = TextStyle(fontSize = 14.sp))
                 Column {
-                    LinearProgressIndicator(progress = model.currentTime.toFloat() / model.duration)
+                    val duration = if(model.duration != 0L) model.duration else 1
+                    LinearProgressIndicator(progress = model.currentTime.toFloat() / duration)
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween

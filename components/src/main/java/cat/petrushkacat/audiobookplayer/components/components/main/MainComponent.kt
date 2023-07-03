@@ -2,10 +2,10 @@ package cat.petrushkacat.audiobookplayer.components.components.main
 
 import cat.petrushkacat.audiobookplayer.components.components.main.bookplayer.BookComponent
 import cat.petrushkacat.audiobookplayer.components.components.main.bookshelf.BookshelfComponent
-import cat.petrushkacat.audiobookplayer.components.components.main.completedbooks.CompletedBooksComponent
-import cat.petrushkacat.audiobookplayer.components.components.main.favorites.FavoritesComponent
 import cat.petrushkacat.audiobookplayer.components.components.main.folderselector.FoldersComponent
-import cat.petrushkacat.audiobookplayer.components.components.main.listenlater.ListenLaterComponent
+import cat.petrushkacat.audiobookplayer.components.components.main.marked_books_lists.completedbooks.CompletedBooksComponent
+import cat.petrushkacat.audiobookplayer.components.components.main.marked_books_lists.favorites.FavoritesComponent
+import cat.petrushkacat.audiobookplayer.components.components.main.marked_books_lists.listenlater.ListenLaterComponent
 import cat.petrushkacat.audiobookplayer.components.components.main.settings.SettingsComponent
 import cat.petrushkacat.audiobookplayer.components.components.main.statistics.StatisticsComponent
 import com.arkivanov.decompose.router.stack.ChildStack

@@ -44,3 +44,8 @@
     <methods>;
 }
 ##---------------End: proguard configuration for kotlinx.serialization  ----------
+
+-keepclassmembers enum * {
+    public static **[] values();
+    public static ** valueOf(java.lang.String);
+}

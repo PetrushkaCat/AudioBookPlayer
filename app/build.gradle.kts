@@ -13,8 +13,8 @@ android {
         applicationId = "cat.petrushkacat.audiobookplayer"
         minSdk = 26
         targetSdk = 33
-        versionCode = 20
-        versionName = "1.0.5 patch 3"
+        versionCode = 21
+        versionName = "1.0.5 patch 4"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {

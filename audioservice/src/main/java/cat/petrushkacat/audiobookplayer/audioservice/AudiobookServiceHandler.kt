@@ -347,11 +347,6 @@ data class ManualSleepTimerState(
     val isActive: Boolean
 )
 
-data class AutoSleepTimerState(
-    val sleepAfter: Long,
-    val isActive: Boolean
-)
-
 sealed class PlayerEvent {
     object PlayPause : PlayerEvent()
     object Backward : PlayerEvent()

@@ -7,7 +7,6 @@ import android.net.Uri
 import androidx.core.app.ComponentActivity
 import cat.petrushkacat.audiobookplayer.audioservice.AudiobookMediaService
 import cat.petrushkacat.audiobookplayer.audioservice.AudiobookServiceHandler
-import cat.petrushkacat.audiobookplayer.audioservice.sensors.SensorListener
 import cat.petrushkacat.audiobookplayer.components.components.main.bookplayer.book.bookplayer.BookPlayerComponentImpl
 import cat.petrushkacat.audiobookplayer.components.components.main.bookplayer.book.toolbar.BookPlayerToolbarComponentImpl
 import cat.petrushkacat.audiobookplayer.domain.usecases.UseCasesProvider
@@ -19,7 +18,6 @@ class BookPlayerContainerComponentImpl(
     private val context: Context,
     private val useCasesProvider: UseCasesProvider,
     private val audiobookServiceHandler: AudiobookServiceHandler,
-    private val sensorListener: SensorListener,
     private val bookUri: Uri,
     private val onBack: () -> Unit,
     private val onNotesButtonClicked: () -> Unit,
@@ -43,7 +41,6 @@ class BookPlayerContainerComponentImpl(
         context,
         useCasesProvider.booksUseCases.getBookUseCase,
         audiobookServiceHandler,
-        sensorListener,
         bookUri,
         onBack = {
             doOnBack()
@@ -56,6 +53,5 @@ class BookPlayerContainerComponentImpl(
 
         context.stopService(Intent(context, AudiobookMediaService::class.java))
         audiobookServiceHandler.stopProgressUpdate()
-        sensorManager.unregisterListener(sensorListener)
     }
 }

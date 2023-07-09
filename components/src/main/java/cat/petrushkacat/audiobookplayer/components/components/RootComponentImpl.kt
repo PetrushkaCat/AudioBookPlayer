@@ -2,7 +2,6 @@ package cat.petrushkacat.audiobookplayer.components.components
 
 import android.content.Context
 import cat.petrushkacat.audiobookplayer.audioservice.AudiobookServiceHandler
-import cat.petrushkacat.audiobookplayer.audioservice.sensors.SensorListener
 import cat.petrushkacat.audiobookplayer.components.components.main.MainComponentImpl
 import cat.petrushkacat.audiobookplayer.components.components.splashscreen.SplashScreenComponentImpl
 import cat.petrushkacat.audiobookplayer.components.util.toStateFlow
@@ -21,7 +20,6 @@ class RootComponentImpl(
     private val context: Context,
     private val useCasesProvider: UseCasesProvider,
     private val audiobookServiceHandler: AudiobookServiceHandler,
-    private val sensorListener: SensorListener
 ) : RootComponent, ComponentContext by componentContext {
 
     private val navigation = StackNavigation<ChildConfig>()
@@ -45,8 +43,7 @@ class RootComponentImpl(
                     componentContext,
                     context,
                     useCasesProvider,
-                    audiobookServiceHandler,
-                    sensorListener
+                    audiobookServiceHandler
                 )
             )
         }

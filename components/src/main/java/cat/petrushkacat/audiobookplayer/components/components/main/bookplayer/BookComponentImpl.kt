@@ -3,7 +3,6 @@ package cat.petrushkacat.audiobookplayer.components.components.main.bookplayer
 import android.content.Context
 import android.net.Uri
 import cat.petrushkacat.audiobookplayer.audioservice.AudiobookServiceHandler
-import cat.petrushkacat.audiobookplayer.audioservice.sensors.SensorListener
 import cat.petrushkacat.audiobookplayer.components.components.main.bookplayer.book.BookPlayerContainerComponentImpl
 import cat.petrushkacat.audiobookplayer.components.components.main.bookplayer.notes.NotesComponentImpl
 import cat.petrushkacat.audiobookplayer.components.util.componentCoroutineScopeMain
@@ -25,7 +24,6 @@ class BookComponentImpl(
     private val context: Context,
     private val useCasesProvider: UseCasesProvider,
     private val audiobookServiceHandler: AudiobookServiceHandler,
-    private val sensorListener: SensorListener,
     private val bookUri: Uri,
     private val onBack: () -> Unit,
 ) : BookComponent, ComponentContext by componentContext {
@@ -52,7 +50,6 @@ class BookComponentImpl(
                     context = context,
                     useCasesProvider = useCasesProvider,
                     audiobookServiceHandler = audiobookServiceHandler,
-                    sensorListener = sensorListener,
                     bookUri = bookUri,
                     onBack = onBack,
                     onNotesButtonClicked = {

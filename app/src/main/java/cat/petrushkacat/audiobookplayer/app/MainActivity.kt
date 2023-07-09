@@ -14,7 +14,6 @@ import cat.petrushkacat.audiobookplayer.app.scanner.BooksScanner
 import cat.petrushkacat.audiobookplayer.app.ui.components.RootComponentUi
 import cat.petrushkacat.audiobookplayer.app.ui.theme.AudioBookPlayerTheme
 import cat.petrushkacat.audiobookplayer.audioservice.AudiobookServiceHandler
-import cat.petrushkacat.audiobookplayer.audioservice.sensors.SensorListener
 import cat.petrushkacat.audiobookplayer.components.components.RootComponentImpl
 import cat.petrushkacat.audiobookplayer.domain.usecases.UseCasesProvider
 import com.arkivanov.decompose.defaultComponentContext
@@ -42,9 +41,6 @@ class MainActivity : ComponentActivity() {
 
     @Inject
     lateinit var audiobookServiceHandler: AudiobookServiceHandler
-
-    @Inject
-    lateinit var sensorListener: SensorListener
 
     @Inject
     lateinit var useCasesProvider: UseCasesProvider
@@ -75,8 +71,7 @@ class MainActivity : ComponentActivity() {
             defaultComponentContext(),
             this,
             useCasesProvider,
-            audiobookServiceHandler,
-            sensorListener
+            audiobookServiceHandler
         )
 
         CoroutineScope(job + Dispatchers.Default).launch {

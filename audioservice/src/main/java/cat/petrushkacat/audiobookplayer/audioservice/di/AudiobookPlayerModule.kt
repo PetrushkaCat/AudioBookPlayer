@@ -9,7 +9,6 @@ import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
 import androidx.media3.session.MediaSession
 import cat.petrushkacat.audiobookplayer.audioservice.AudiobookServiceHandler
 import cat.petrushkacat.audiobookplayer.audioservice.notification.AudiobookNotificationManager
-import cat.petrushkacat.audiobookplayer.audioservice.sensors.SensorListener
 import cat.petrushkacat.audiobookplayer.domain.usecases.UseCasesProvider
 import cat.petrushkacat.audiobookplayer.domain.usecases.books.AddNoteUseCase
 import cat.petrushkacat.audiobookplayer.domain.usecases.books.UpdateNoteUseCase
@@ -69,15 +68,8 @@ class AudiobookPlayerModule {
 
     @Provides
     @Singleton
-    fun provideSensorListener(
-        useCasesProvider: UseCasesProvider
-    ): SensorListener = SensorListener(useCasesProvider.settingsUseCases.getSettingsUseCase)
-
-    @Provides
-    @Singleton
     fun provideServiceHandler(
         player: ExoPlayer,
-        sensorListener: SensorListener,
         saveStatisticsUseCase: SaveStatisticsUseCase,
         addNoteUseCase: AddNoteUseCase,
         updateNoteUseCase: UpdateNoteUseCase,
@@ -85,7 +77,6 @@ class AudiobookPlayerModule {
     ): AudiobookServiceHandler =
         AudiobookServiceHandler(
             player = player,
-            sensorListener = sensorListener,
             saveStatisticsUseCase = saveStatisticsUseCase,
             addNoteUseCase = addNoteUseCase,
             updateNoteUseCase = updateNoteUseCase,

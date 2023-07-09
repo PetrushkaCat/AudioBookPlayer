@@ -6,7 +6,6 @@ import android.util.Log
 import android.widget.Toast
 import androidx.documentfile.provider.DocumentFile
 import cat.petrushkacat.audiobookplayer.audioservice.AudiobookServiceHandler
-import cat.petrushkacat.audiobookplayer.audioservice.sensors.SensorListener
 import cat.petrushkacat.audiobookplayer.components.components.main.bookplayer.BookComponentImpl
 import cat.petrushkacat.audiobookplayer.components.components.main.bookplayer.book.bookplayer.BookPlayerComponentImpl
 import cat.petrushkacat.audiobookplayer.components.components.main.bookshelf.BookshelfComponentImpl
@@ -34,8 +33,7 @@ class MainComponentImpl(
     componentContext: ComponentContext,
     private val context: Context,
     private val useCasesProvider: UseCasesProvider,
-    private val audiobookServiceHandler: AudiobookServiceHandler,
-    private val sensorListener: SensorListener
+    private val audiobookServiceHandler: AudiobookServiceHandler
 ) : MainComponent, ComponentContext by componentContext {
 
     private val scopeIO = componentCoroutineScopeIO()
@@ -98,7 +96,7 @@ class MainComponentImpl(
             MainComponent.Child.Book(
                 BookComponentImpl(componentContext, context,
                     useCasesProvider,
-                    audiobookServiceHandler, sensorListener, config.bookUri,
+                    audiobookServiceHandler, config.bookUri,
                     onBack = {
                         navigation.pop()
                         BookPlayerComponentImpl.isInitialized = false

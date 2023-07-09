@@ -2,11 +2,9 @@ package cat.petrushkacat.audiobookplayer.components.components.main.bookplayer.b
 
 import android.content.Context
 import android.content.Intent
-import android.hardware.Sensor
 import android.hardware.SensorManager
 import android.net.Uri
 import android.util.Log
-import androidx.core.app.ComponentActivity
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import cat.petrushkacat.audiobookplayer.audioservice.AudiobookMediaService
@@ -16,7 +14,6 @@ import cat.petrushkacat.audiobookplayer.audioservice.DURATION_EXTRA
 import cat.petrushkacat.audiobookplayer.audioservice.FOLDER_NAME_EXTRA
 import cat.petrushkacat.audiobookplayer.audioservice.IS_COMPLETED_EXTRA
 import cat.petrushkacat.audiobookplayer.audioservice.PlayerEvent
-import cat.petrushkacat.audiobookplayer.audioservice.sensors.SensorListener
 import cat.petrushkacat.audiobookplayer.components.util.componentCoroutineScopeIO
 import cat.petrushkacat.audiobookplayer.components.util.componentCoroutineScopeMain
 import cat.petrushkacat.audiobookplayer.domain.models.BookEntity
@@ -37,7 +34,6 @@ class BookPlayerComponentImpl(
     private val context: Context,
     private val getBookUseCase: GetBookUseCase,
     private val audiobookServiceHandler: AudiobookServiceHandler,
-    sensorListener: SensorListener,
     private val bookUri: Uri,
     private val onBack: () -> Unit,
 ) : BookPlayerComponent, ComponentContext by componentContext {
@@ -132,22 +128,6 @@ class BookPlayerComponentImpl(
                         startService(it.chapters, it.folderName, it.duration, it.isCompleted)
                     }
 
-                }
-            }
-            launch {
-                sensorManager =
-                    context.getSystemService(ComponentActivity.SENSOR_SERVICE) as SensorManager
-                val sensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
-
-                try {
-                    sensorManager.registerListener(
-                        sensorListener,
-                        sensor!!,
-                        SensorManager.SENSOR_DELAY_NORMAL
-                    )
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                    Log.d("sensor", "no sensor Registered")
                 }
             }
         }

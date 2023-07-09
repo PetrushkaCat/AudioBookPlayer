@@ -5,7 +5,6 @@ import android.util.Log
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
-import cat.petrushkacat.audiobookplayer.audioservice.sensors.SensorListener
 import cat.petrushkacat.audiobookplayer.domain.models.Chapter
 import cat.petrushkacat.audiobookplayer.domain.models.ListenedInterval
 import cat.petrushkacat.audiobookplayer.domain.models.Note
@@ -24,15 +23,15 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import java.time.LocalDate
 import java.time.LocalTime
-import java.util.GregorianCalendar
 import javax.inject.Inject
 
 class AudiobookServiceHandler @Inject constructor(
     private val player: ExoPlayer,
-    private val sensorListener: SensorListener,
     private val saveStatisticsUseCase: SaveStatisticsUseCase,
     private val addNoteUseCase: AddNoteUseCase,
     private val updateNoteUseCase: UpdateNoteUseCase,
@@ -56,11 +55,16 @@ class AudiobookServiceHandler @Inject constructor(
     private var seek: Long = 0
     private var greatSeek: Long = 0
 
+    private var autoSleepTime = 0L
+    private var autoSleepAfter = 0L
+
     private var startedTime = 0L
     private lateinit var bookName: String
     private lateinit var bookUri: String
     private lateinit var chapters: List<Chapter>
     private lateinit var noteDescription: String
+
+    private val mutex = Mutex()
 
     init {
         CoroutineScope(SupervisorJob() + Dispatchers.IO).launch {
@@ -68,6 +72,8 @@ class AudiobookServiceHandler @Inject constructor(
                 autoSeekBack = settings.autoRewindBackTime
                 seek = settings.rewindTime
                 greatSeek = settings.greatRewindTime
+                autoSleepTime = settings.autoSleepTime
+
                 Log.d("Audiobook service handler init settings", settings.toString())
             }
         }
@@ -198,6 +204,9 @@ class AudiobookServiceHandler @Inject constructor(
         }
 
         _currentTimings.value = CurrentTimings(player.currentPosition, player.currentMediaItemIndex)
+        mutex.withLock {
+            autoSleepAfter = autoSleepTime
+        }
     }
 
     @SuppressLint("SwitchIntDef")
@@ -218,6 +227,7 @@ class AudiobookServiceHandler @Inject constructor(
             delay(300)
             this@AudiobookServiceHandler.isPlaying.value = player.isPlaying
         }
+        autoSleepAfter = autoSleepTime
     }
 
     fun stopProgressUpdate() {
@@ -248,15 +258,23 @@ class AudiobookServiceHandler @Inject constructor(
     private suspend fun updateTimings() {
         delay(500)
         _currentTimings.value = CurrentTimings(player.currentPosition, player.currentMediaItemIndex)
-        if(GregorianCalendar().timeInMillis >= sensorListener.timeToStop) {
-            player.pause()
-            stopProgressUpdate()
-        }
         val sleepAfter = manualSleepTimerState.value.sleepAfter - 500
         _manualSleepTimerState.value = _manualSleepTimerState.value.copy(sleepAfter = sleepAfter)
         if(sleepAfter <= 0 && _manualSleepTimerState.value.isActive) {
             _manualSleepTimerState.value = _manualSleepTimerState.value.copy(sleepAfter = 0, isActive = false)
             player.pause()
+        }
+        if(!_manualSleepTimerState.value.isActive) {
+            mutex.withLock {
+                autoSleepAfter -= 500
+                if (autoSleepAfter <= 0) {
+                    player.pause()
+                    autoSleepAfter = autoSleepTime
+                }
+            }
+        }
+        else {
+            autoSleepAfter = autoSleepTime
         }
     }
     
@@ -325,6 +343,11 @@ data class CurrentTimings(
 )
 
 data class ManualSleepTimerState(
+    val sleepAfter: Long,
+    val isActive: Boolean
+)
+
+data class AutoSleepTimerState(
     val sleepAfter: Long,
     val isActive: Boolean
 )

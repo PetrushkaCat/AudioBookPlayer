@@ -15,7 +15,7 @@ class StatisticsTypeConverters {
 
     @TypeConverter
     fun listenedIntervalsDBFromJson(json: String): ListenedIntervals {
-        return Json.decodeFromString<ListenedIntervals>(json)
+        return Json.decodeFromString(json)
     }
 
     @TypeConverter
@@ -25,6 +25,6 @@ class StatisticsTypeConverters {
 
     @TypeConverter
     fun listenedIntervalsFromJson(json: String): cat.petrushkacat.audiobookplayer.domain.models.ListenedIntervals {
-        return Json.decodeFromString<cat.petrushkacat.audiobookplayer.domain.models.ListenedIntervals>(json)
+        return Json.decodeFromString(json)
     }
 }

@@ -6,12 +6,12 @@ import android.net.Uri
 import android.util.Log
 import android.widget.Toast
 import androidx.documentfile.provider.DocumentFile
-import cat.petrushkacat.audiobookplayer.components.components.main.folderselector.extractInt
-import cat.petrushkacat.audiobookplayer.components.components.main.folderselector.isAudio
 import cat.petrushkacat.audiobookplayer.components.components.shared.bookdropdownmenu.BookDropdownMenuComponent
 import cat.petrushkacat.audiobookplayer.components.components.shared.bookdropdownmenu.BookDropdownMenuComponentImpl
 import cat.petrushkacat.audiobookplayer.components.states.RefreshingStates
 import cat.petrushkacat.audiobookplayer.components.util.componentCoroutineScopeIO
+import cat.petrushkacat.audiobookplayer.components.util.extractInt
+import cat.petrushkacat.audiobookplayer.components.util.isAudio
 import cat.petrushkacat.audiobookplayer.domain.models.BookEntity
 import cat.petrushkacat.audiobookplayer.domain.models.BookListEntity
 import cat.petrushkacat.audiobookplayer.domain.models.Chapter

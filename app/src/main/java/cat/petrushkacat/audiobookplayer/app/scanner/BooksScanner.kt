@@ -5,9 +5,9 @@ import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.util.Log
 import androidx.documentfile.provider.DocumentFile
-import cat.petrushkacat.audiobookplayer.components.components.main.folderselector.extractInt
-import cat.petrushkacat.audiobookplayer.components.components.main.folderselector.isAudio
 import cat.petrushkacat.audiobookplayer.components.states.RefreshingStates
+import cat.petrushkacat.audiobookplayer.components.util.extractInt
+import cat.petrushkacat.audiobookplayer.components.util.isAudio
 import cat.petrushkacat.audiobookplayer.domain.models.BookEntity
 import cat.petrushkacat.audiobookplayer.domain.models.BookUri
 import cat.petrushkacat.audiobookplayer.domain.models.Chapter

@@ -25,6 +25,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import cat.petrushkacat.audiobookplayer.components.components.main.marked_books_lists.MarkedBooksList
+import cat.petrushkacat.audiobookplayer.components.toCore
 import cat.petrushkacat.audiobookplayer.domain.models.Grid
 import cat.petrushkacat.audiobookplayer.strings.R
 
@@ -71,7 +72,7 @@ fun MarkedBooksListComponentUi(
                                 component.onBookClick(model[it].folderUri)
                             },
                             onLongClick = {
-                                component.bookDropDownMenuComponent.selectBook(model[it])
+                                component.bookDropDownMenuComponent.selectBook(model[it].toCore())
                                 isDropdownMenuExpanded.value = true
                             }
                         ))
@@ -99,7 +100,7 @@ fun MarkedBooksListComponentUi(
                                 component.onBookClick(model[it].folderUri)
                             },
                             onLongClick = {
-                                component.bookDropDownMenuComponent.selectBook(model[it])
+                                component.bookDropDownMenuComponent.selectBook(model[it].toCore())
                                 isDropdownMenuExpanded.value = true
                             }
                         ))

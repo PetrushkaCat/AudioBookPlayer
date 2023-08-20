@@ -7,12 +7,12 @@ plugins {
 
 android {
     namespace = "cat.petrushkacat.audiobookplayer"
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "cat.petrushkacat.audiobookplayer"
         minSdk = 26
-        targetSdk = 33
+        targetSdk = 34
         versionCode = 21
         versionName = "1.0.5 patch 4"
 

@@ -43,6 +43,7 @@ import cat.petrushkacat.audiobookplayer.app.ui.components.shared.BookGridItem
 import cat.petrushkacat.audiobookplayer.app.ui.components.shared.BookListItem
 import cat.petrushkacat.audiobookplayer.app.ui.theme.Purple40
 import cat.petrushkacat.audiobookplayer.components.components.main.bookshelf.bookslist.BooksListComponent
+import cat.petrushkacat.audiobookplayer.components.toCore
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
 @Composable
@@ -108,9 +109,8 @@ fun BooksListComponentUi(component: BooksListComponent) {
                 ) {
                     items(model,
                     key = {
-                        it.duration.toString() + it.name.toString() + it.currentTime.toString()
+                        it.duration.toString() + it.name + it.currentTime.toString()
                     }) {
-                        //Log.d("list1", "recomposition")
                         Box {
                             if (isDropdownMenuExpanded.value &&
                                 selectedBook.value.folderUri == it.folderUri
@@ -126,7 +126,7 @@ fun BooksListComponentUi(component: BooksListComponent) {
                                     component.onBookClick(Uri.parse(it.folderUri))
                                 },
                                 onLongClick = {
-                                    component.bookDropDownMenuComponent.selectBook(it)
+                                    component.bookDropDownMenuComponent.selectBook(it.toCore())
                                     isDropdownMenuExpanded.value = true
                                 }
                             ))
@@ -154,7 +154,7 @@ fun BooksListComponentUi(component: BooksListComponent) {
                                     component.onBookClick(Uri.parse(it.folderUri))
                                 },
                                 onLongClick = {
-                                    component.bookDropDownMenuComponent.selectBook(it)
+                                    component.bookDropDownMenuComponent.selectBook(it.toCore())
                                     isDropdownMenuExpanded.value = true
                                 }
                             ))

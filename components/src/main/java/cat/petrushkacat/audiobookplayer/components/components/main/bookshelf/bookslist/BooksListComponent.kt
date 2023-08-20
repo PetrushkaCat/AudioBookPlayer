@@ -1,7 +1,10 @@
 package cat.petrushkacat.audiobookplayer.components.components.main.bookshelf.bookslist
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import cat.petrushkacat.audiobookplayer.components.components.shared.bookdropdownmenu.BookDropdownMenuComponent
+import cat.petrushkacat.audiobookplayer.components.models.BookListItem
 import cat.petrushkacat.audiobookplayer.domain.models.BookListEntity
 import kotlinx.coroutines.flow.StateFlow
 
@@ -9,7 +12,7 @@ interface BooksListComponent {
 
     val bookDropDownMenuComponent: BookDropdownMenuComponent
 
-    val models: StateFlow<List<BookListEntity>>
+    val models: StateFlow<List<BookListItem>>
 
     val settings: StateFlow<cat.petrushkacat.audiobookplayer.domain.models.SettingsEntity>
 
@@ -23,5 +26,4 @@ interface BooksListComponent {
     fun onBookClick(uri: Uri)
 
     fun refresh()
-
 }

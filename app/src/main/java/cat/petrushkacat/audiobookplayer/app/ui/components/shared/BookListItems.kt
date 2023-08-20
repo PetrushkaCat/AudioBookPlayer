@@ -1,7 +1,9 @@
 package cat.petrushkacat.audiobookplayer.app.ui.components.shared
 
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -36,6 +38,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cat.petrushkacat.audiobookplayer.R
 import cat.petrushkacat.audiobookplayer.app.util.formatDuration
+import cat.petrushkacat.audiobookplayer.components.components.main.bookshelf.bookslist.BooksListComponent
+import cat.petrushkacat.audiobookplayer.components.models.BookListItem
+import cat.petrushkacat.audiobookplayer.components.util.arrayFromBitmap
 import cat.petrushkacat.audiobookplayer.domain.models.BookListEntity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -47,23 +52,12 @@ private val completedIconColor = Color(0xFFA8FFA2)
 
 @Composable
 fun BookListItem(
-    model: BookListEntity,
+    model: BookListItem,
     modifier: Modifier
 ) {
 
     val context = LocalContext.current
-    val scope = rememberCoroutineScope()
-    val bitmap = remember { mutableStateOf<Bitmap?>(null) }
-
-    LaunchedEffect(key1 = model.image) {
-        scope.launch(Dispatchers.IO) {
-            bitmap.value = if (model.image != null) {
-                BitmapFactory.decodeByteArray(model.image, 0, model.image!!.size)
-            } else {
-                BitmapFactory.decodeResource(context.resources, R.drawable.round_play_button)
-            }
-        }
-    }
+    val bitmap = remember { mutableStateOf<Bitmap?>(model.image ?: DefaultImage.getImage(context)) }
 
     Column(
         modifier = modifier
@@ -165,21 +159,12 @@ fun BookListItem(
 }
 
 @Composable
-fun BookGridItem(model: BookListEntity, modifier: Modifier) {
+fun BookGridItem(
+    model: BookListItem,
+    modifier: Modifier) {
 
     val context = LocalContext.current
-    val scope = rememberCoroutineScope()
-    val bitmap = remember { mutableStateOf<Bitmap?>(null) }
-
-    LaunchedEffect(key1 = model.image) {
-        scope.launch(Dispatchers.IO) {
-            bitmap.value = if (model.image != null) {
-                BitmapFactory.decodeByteArray(model.image, 0, model.image!!.size)
-            } else {
-                BitmapFactory.decodeResource(context.resources, R.drawable.round_play_button)
-            }
-        }
-    }
+    val bitmap = remember { mutableStateOf<Bitmap?>( model.image ?: DefaultImage.getImage(context)) }
 
     Box(modifier = modifier.padding(4.dp)) {
         Column(
@@ -275,5 +260,18 @@ fun BookGridItem(model: BookListEntity, modifier: Modifier) {
             }
         }
 
+    }
+}
+
+object DefaultImage {
+    private lateinit var image: Bitmap
+
+    fun getImage(context: Context): Bitmap {
+        return if (!::image.isInitialized) {
+            image = BitmapFactory.decodeResource(context.resources, R.drawable.round_play_button)
+            image
+        } else {
+            image
+        }
     }
 }

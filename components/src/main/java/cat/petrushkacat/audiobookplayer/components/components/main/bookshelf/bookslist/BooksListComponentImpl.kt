@@ -1,6 +1,8 @@
 package cat.petrushkacat.audiobookplayer.components.components.main.bookshelf.bookslist
 
 import android.content.Context
+import android.content.res.Resources
+import android.graphics.BitmapFactory
 import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.util.Log
@@ -8,7 +10,10 @@ import android.widget.Toast
 import androidx.documentfile.provider.DocumentFile
 import cat.petrushkacat.audiobookplayer.components.components.shared.bookdropdownmenu.BookDropdownMenuComponent
 import cat.petrushkacat.audiobookplayer.components.components.shared.bookdropdownmenu.BookDropdownMenuComponentImpl
+import cat.petrushkacat.audiobookplayer.components.models.BookListItem
 import cat.petrushkacat.audiobookplayer.components.states.RefreshingStates
+import cat.petrushkacat.audiobookplayer.components.toPresentation
+import cat.petrushkacat.audiobookplayer.components.util.arrayFromBitmap
 import cat.petrushkacat.audiobookplayer.components.util.componentCoroutineScopeIO
 import cat.petrushkacat.audiobookplayer.components.util.extractInt
 import cat.petrushkacat.audiobookplayer.components.util.isAudio
@@ -35,6 +40,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
@@ -66,8 +72,8 @@ class BooksListComponentImpl(
 
     private val scopeIO = componentCoroutineScopeIO()
 
-    private val _models = MutableStateFlow<List<BookListEntity>>(emptyList())
-    override val models: StateFlow<List<BookListEntity>> = _models
+    private val _models = MutableStateFlow<List<BookListItem>>(emptyList())
+    override val models: StateFlow<List<BookListItem>> = _models.asStateFlow()
 
     private val _settings = MutableStateFlow(cat.petrushkacat.audiobookplayer.domain.models.SettingsEntity())
     override val settings: StateFlow<cat.petrushkacat.audiobookplayer.domain.models.SettingsEntity> = _settings.asStateFlow()
@@ -101,7 +107,9 @@ class BooksListComponentImpl(
                     } else {
                         getBooksUseCase(GetBooksUseCase.BooksType.All).first()
                     }
-                    _models.value = temp.toMutableList()
+                    _models.value = temp.toMutableList().map {
+                        it.toPresentation()
+                    }
                 }
             }
             launch {
@@ -112,10 +120,18 @@ class BooksListComponentImpl(
                     }
                     delay(200)
                     folderUris = if(selectedFolder != null) {
-                        _models.value = getBooksUseCase(GetBooksUseCase.BooksType.Folder(selectedFolder.uri)).first()
+                        _models.value = getBooksUseCase(GetBooksUseCase.BooksType.Folder(selectedFolder.uri))
+                            .first()
+                            .map {
+                                it.toPresentation()
+                            }
                         listOf(Uri.parse(selectedFolder.uri))
                     } else {
-                        _models.value = getBooksUseCase(GetBooksUseCase.BooksType.All).first()
+                        _models.value = getBooksUseCase(GetBooksUseCase.BooksType.All)
+                            .first()
+                            .map {
+                                it.toPresentation()
+                            }
                         list.map { Uri.parse(it.uri) }
                     }
                 }
@@ -129,6 +145,9 @@ class BooksListComponentImpl(
                     ).first()
                     _isSearching.value = it.isNotEmpty()
                     _models.value = books
+                        .map {
+                            it.toPresentation()
+                        }
                 }
             }
         }

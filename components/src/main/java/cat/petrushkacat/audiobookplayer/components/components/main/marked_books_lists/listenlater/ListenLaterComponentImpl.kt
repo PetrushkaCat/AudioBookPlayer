@@ -2,8 +2,9 @@ package cat.petrushkacat.audiobookplayer.components.components.main.marked_books
 
 import cat.petrushkacat.audiobookplayer.components.components.shared.bookdropdownmenu.BookDropdownMenuComponent
 import cat.petrushkacat.audiobookplayer.components.components.shared.bookdropdownmenu.BookDropdownMenuComponentImpl
+import cat.petrushkacat.audiobookplayer.components.models.BookListItem
+import cat.petrushkacat.audiobookplayer.components.toPresentation
 import cat.petrushkacat.audiobookplayer.components.util.componentCoroutineScopeIO
-import cat.petrushkacat.audiobookplayer.domain.models.BookListEntity
 import cat.petrushkacat.audiobookplayer.domain.usecases.books.GetBookUseCase
 import cat.petrushkacat.audiobookplayer.domain.usecases.books.GetBooksUseCase
 import cat.petrushkacat.audiobookplayer.domain.usecases.books.UpdateBookUseCase
@@ -33,7 +34,7 @@ class ListenLaterComponentImpl(
 
     private val scopeIO = componentCoroutineScopeIO()
 
-    private val _models = MutableStateFlow<List<BookListEntity>>(emptyList())
+    private val _models = MutableStateFlow<List<BookListItem>>(emptyList())
     override val models = _models.asStateFlow()
 
     private val _settings = MutableStateFlow(cat.petrushkacat.audiobookplayer.domain.models.SettingsEntity())
@@ -43,7 +44,9 @@ class ListenLaterComponentImpl(
         scopeIO.launch {
             launch {
                 getBooksUseCase(GetBooksUseCase.BooksType.ListenLater).collect { books ->
-                    _models.value = books
+                    _models.value = books.map {
+                        it.toPresentation()
+                    }
                 }
             }
             launch {

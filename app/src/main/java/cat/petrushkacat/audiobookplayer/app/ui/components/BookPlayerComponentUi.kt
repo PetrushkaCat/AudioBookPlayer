@@ -167,7 +167,6 @@ fun PlayerControllers(
     chapters: Chapters,
     currentTimings: CurrentTimings,
     progress: Float,
-    //duration: Long,
     isPlaying: Boolean,
     modifier: Modifier = Modifier
 ) {

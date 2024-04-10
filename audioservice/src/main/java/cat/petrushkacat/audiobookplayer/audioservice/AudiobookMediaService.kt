@@ -19,7 +19,7 @@ const val DURATION_EXTRA = "duration_extra"
 const val CHAPTER_DURATIONS_EXTRA = "chapter_durations"
 const val IS_COMPLETED_EXTRA = "is_completed"
 
-@AndroidEntryPoint
+@UnstableApi @AndroidEntryPoint
 class AudiobookMediaService : MediaSessionService() {
 
     @Inject

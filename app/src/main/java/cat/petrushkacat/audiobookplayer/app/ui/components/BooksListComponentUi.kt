@@ -107,10 +107,7 @@ fun BooksListComponentUi(component: BooksListComponent) {
                     contentPadding = PaddingValues(4.dp),
                     state = rememberLazyGridState(0)
                 ) {
-                    items(model,
-                    key = {
-                        it.duration.toString() + it.name + it.currentTime.toString()
-                    }) {
+                    items(items = model) {
                         Box {
                             if (isDropdownMenuExpanded.value &&
                                 selectedBook.value.folderUri == it.folderUri

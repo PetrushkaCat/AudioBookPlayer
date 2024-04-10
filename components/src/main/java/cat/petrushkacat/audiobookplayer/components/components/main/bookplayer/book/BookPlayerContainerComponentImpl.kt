@@ -49,9 +49,8 @@ class BookPlayerContainerComponentImpl(
     )
 
     private fun doOnBack() {
-        val sensorManager = context.getSystemService(ComponentActivity.SENSOR_SERVICE) as SensorManager
-
         context.stopService(Intent(context, AudiobookMediaService::class.java))
         audiobookServiceHandler.stopProgressUpdate()
     }
+
 }

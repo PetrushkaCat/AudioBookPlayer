@@ -43,7 +43,6 @@ class BookPlayerComponentImpl(
     private val scopeMain = componentContext.componentCoroutineScopeMain()
 
     private val mediaItems: MutableList<MediaItem> = mutableListOf()
-    private lateinit var sensorManager: SensorManager
 
     override val isPlaying = audiobookServiceHandler.isPlaying.asStateFlow()
 
@@ -74,7 +73,7 @@ class BookPlayerComponentImpl(
     init {
         scopeIO.launch {
             launch {
-                Log.d("player-5", isInitialized.toString() + " $counter")
+                Log.d("player-5", "$isInitialized $counter")
                 backHandler.register(BackCallback {
                     onBack()
                 })

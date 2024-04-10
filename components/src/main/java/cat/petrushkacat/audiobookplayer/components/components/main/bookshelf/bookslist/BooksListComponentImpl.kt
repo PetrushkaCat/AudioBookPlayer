@@ -45,7 +45,9 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.sync.withPermit
 import kotlinx.coroutines.withContext
 import java.util.Date
 
@@ -178,9 +180,12 @@ class BooksListComponentImpl(
                 _foldersProcessed.value = 0
                 _foldersToProcess.value = 0
 
+                val semaphore = Semaphore(5)
                 for (uri in folderUris) {
                     launch {
-                        parseBooks(uri)
+                        semaphore.withPermit {
+                            parseBooks(uri)
+                        }
                     }
                 }
             }
@@ -194,10 +199,10 @@ class BooksListComponentImpl(
     private fun parseBooks(folderUri: Uri) {
         val file = DocumentFile.fromTreeUri(context, folderUri)!!
         Log.d("refreshing folder", file.name.toString())
-        parseCycle(file, folderUri, Mutex())
+        parseCycle(file, folderUri, Mutex(), Semaphore(5))
     }
 
-    private fun parseCycle(bookFolder: DocumentFile, rootFolderUri: Uri, mutex: Mutex) {
+    private fun parseCycle(bookFolder: DocumentFile, rootFolderUri: Uri, mutex: Mutex, semaphore: Semaphore) {
         CoroutineScope(SupervisorJob() + Dispatchers.IO).launch {
             Log.d("refreshing started", bookFolder.name.toString())
             globalMutex.withLock {
@@ -212,52 +217,54 @@ class BooksListComponentImpl(
                 bookFolder.listFiles().forEachIndexed { index, content ->
                     if (content == null) return@forEachIndexed
                     if (content.isDirectory) {
-                        parseCycle(content, rootFolderUri, Mutex())
+                        parseCycle(content, rootFolderUri, Mutex(), semaphore)
                         return@forEachIndexed
                     }
                     if (content.isAudio()) {
                         jobs.add(launch Chapter@{
-                            val mmr = MediaMetadataRetriever()
+                            semaphore.withPermit {
+                                val mmr = MediaMetadataRetriever()
 
-                            //empty audio file crashes the app
-                            try {
-                                mmr.setDataSource(context, content.uri)
-                            } catch (e: Exception) {
-                                e.printStackTrace()
-                                return@Chapter
-                            }
+                                //empty audio file crashes the app
+                                try {
+                                    mmr.setDataSource(context, content.uri)
+                                } catch (e: Exception) {
+                                    e.printStackTrace()
+                                    return@Chapter
+                                }
 
-                            if (name == null) {
-                                name =
-                                    mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM)
-                                        ?: bookFolder.name!!
-                            }
+                                if (name == null) {
+                                    name =
+                                        mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM)
+                                            ?: bookFolder.name!!
+                                }
 
-                            val chapterDuration =
-                                mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
-                                    ?.toLong() ?: 0
+                                val chapterDuration =
+                                    mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
+                                        ?.toLong() ?: 0
 
-                            mutex.withLock {
-                                bookDuration += chapterDuration
-                            }
+                                mutex.withLock {
+                                    bookDuration += chapterDuration
+                                }
 
-                            if (image == null) {
-                                image = mmr.embeddedPicture
-                            }
+                                if (image == null) {
+                                    image = mmr.embeddedPicture
+                                }
 
-                            mmr.release()
+                                mmr.release()
 
-                            mutex.withLock {
-                                chapters.add(
-                                    Chapter(
-                                        bookFolder.uri.toString(),
-                                        content.name?.substringBeforeLast('.')
-                                            ?: "Chapter ${index + 1}",
-                                        chapterDuration,
-                                        bookDuration - chapterDuration,
-                                        content.uri.toString()
+                                mutex.withLock {
+                                    chapters.add(
+                                        Chapter(
+                                            bookFolder.uri.toString(),
+                                            content.name?.substringBeforeLast('.')
+                                                ?: "Chapter ${index + 1}",
+                                            chapterDuration,
+                                            bookDuration - chapterDuration,
+                                            content.uri.toString()
+                                        )
                                     )
-                                )
+                                }
                             }
                         })
                     }
